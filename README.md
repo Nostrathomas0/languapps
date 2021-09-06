@@ -73,27 +73,27 @@ footer {
 </head>
 <body>
 
-<h2>CSS Layout Float</h2>
+<h2>Online English lessons</h2>
 <p>In this example, we have created a header, two columns/boxes and a footer. On smaller screens, the columns will stack on top of each other.</p>
 <p>Resize the browser window to see the responsive effect (you will learn more about this in our next chapter - HTML Responsive.)</p>
 
 <header>
-  <h2>IELTS training</h2>
+  <h2>Exam training</h2>
 </header>
 
 <section>
   <nav>
     <ul>
-      <li><a href="#">London</a></li>
-      <li><a href="#">Paris</a></li>
-      <li><a href="#">Tokyo</a></li>
+      <li><a href="#">IELTS/B</a></li>
+      <li><a href="#">TOEFL</a></li>
+      <li><a href="#">BULATS, PET, KET. I also conduct CEFR tests</a></li>
     </ul>
   </nav>
   
   <article>
-    <h1>London</h1>
-    <p>London is the capital city of England. It is the most populous city in the  United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
-    <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.</p>
+    <h1>IELTS</h1>
+    <p>The International English Language Testing System is designed to help you work, study or migrate to a country where English is the majority language.</p>
+    <p><a href="/IELTSMap"</a></p>
   </article>
 </section>
 
