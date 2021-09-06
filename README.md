@@ -93,6 +93,7 @@ footer {
   <article>
     <h1>IELTS</h1>
     <p>The International English Language Testing System is designed to help you work, study or migrate to a country where English is the majority language.</p>
+    <p><a href="https://docs.google.com/document/d/e/2PACX-1vRlBYG73opkNETHTCl7__XKpxBUH9tDsIHRATwa8b_6EW1-IupzLx6DMow5yJuirLNKt-dvJ5woPuXp/pub"> IELTS lessons, tailored</a>
     <p><a href="/IELTSMap"</a></p>
   </article>
 </section>
