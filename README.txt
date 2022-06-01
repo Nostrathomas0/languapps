@@ -1,39 +1,32 @@
-Big Picture by HTML5 UP
-html5up.net | @ajlkn
+Languapps is Internet for Internats
+Nostrathomas@ | Languapps.com
 Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 
 
-This is Big Picture, a simple, single page responsive site template by HTML5 UP.
+This is a nested repo of directories of single page responsive site template by HTML5 UP.
 
-So I've been on a single page kick as of late, partly because I'm lazy, but
-mostly because they kick ass for experimentation. In this case, Big Picture
-makes heavy use of my (tentatively named and soon to be released) "scrollgress"
-and "scrollwatch" jQuery plugins to pull off some interesting effects as you
-scroll around the page. In addition to said interesting effects, Big Picture
-also includes a nice lightbox-style gallery, styling for basic page elements,
-and thoroughly commented code for your editing pleasure (with instructions!
--- see below).
+Languapps is a project to provide a forum for self-directed language learners. I started 
+this as a jeckyll blog hosted and launched by github pages so there may be remnents of 
+that css online. The page makes heavy use of the "scrollgress" and "scrollwatch" jQuery 
+plugins to pull off some interesting effects as you scroll around the page. In addition 
+to said interesting effects, Big Picture also includes a nice lightbox-style gallery, 
+styling for basic page elements, and thoroughly commented code for your editing pleasure.
 
-Many thanks to my good friends Felicia Simion (ineedchemicalx.deviantart.com)
-and Michael Domaradzki (md.photomerchant.net) for allowing me to use their amazing
-photos in Big Picture's demo*.
+Many thanks to my good friends Steve Anderson github id - bootladder for helping me with 
+the initial code commits. 
 
-(* = Not included! Only meant for use with my own on-site demo, so please do NOT
-download and/or use any of Felicia's or Michael's work without their explicit
-permission!)
+Thomas
+nostrathomas@languapps.com | @languapps
 
-AJ
-aj@lkn.io | @ajlkn
-
-PS: Not sure how to get that contact form working? Give formspree.io a try (it's awesome).
+PS: That contact form is from formspree.io. It's awesome.
 
 
 Instructions:
 
 	Overview:
 
-		Being a single pager, Big Picture should be way simpler to work with than
-		some of the heavier stuff I've released in the past. In fact, aside from
+		Languapps was cloned from aj's single pager so it's way simpler to work with than
+		some of the heavier stuff he's released in the past. In fact, aside from
 		a main page <header> and <footer>, it's pretty much just a stack of "main"
 		<section> elements that follow the same basic pattern:
 
