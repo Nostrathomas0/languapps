@@ -9,6 +9,7 @@ body {
 
 
 header {
+  display: "inline-block"
   background-color: #ffd700;
   padding: 30px;
   text-align: center;
