@@ -16,6 +16,8 @@ header {
   color: ff0000;
   white-space: nowrap;
 }
+.inline-block {
+  display: inline-block;
 
 nav {
   float: left;
