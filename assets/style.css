@@ -1,6 +1,6 @@
 body {
   background: url(../images/wallpaper.png) blue;
-   box-sizing: border-box;
+  box-sizing: initial;
 }
 
 header {
