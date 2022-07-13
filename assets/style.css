@@ -1,10 +1,6 @@
-<!-- just css styles for now, looking for place to place scheduler.py in a div class -->
-{
-  box-sizing: border-box;
-}
-
 body {
   background: url(../images/wallpaper.png) blue;
+   box-sizing: border-box;
 }
 
 header {
