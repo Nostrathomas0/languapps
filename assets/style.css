@@ -3,7 +3,7 @@
   box-sizing: border-box;
 }
 
-h2. h4 {
+h2, h4 {
   text-align: left;
   color: gold;
 }
