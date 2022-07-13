@@ -8,7 +8,7 @@ body {
   background-image: url(/images/wallpaper.png);
   width: 80%;
   
- }
+}
 
 
 header {
@@ -18,8 +18,6 @@ header {
   color: ff0000;
   white-space: nowrap;
 }
-.inline-block {
-  display: inline-block;
 
 nav {
   float: left;
