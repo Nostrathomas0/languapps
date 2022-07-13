@@ -17,6 +17,7 @@ header {
   background-color: #0000ff;
   padding: 30px;
   font-size: 15px;
+  text-align: center;
   color: ff0000;
   white-space: nowrap;
 }
@@ -32,7 +33,7 @@ nav {
 nav ul {
   list-style-type: none;
   padding: 16;
-  background-color: #f5f2f5;
+  background-color: #ff0000;
 }
 
 article {
