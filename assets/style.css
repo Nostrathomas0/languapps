@@ -5,6 +5,7 @@
 
 h2. h4 {
   text-align: left;
+  color: gold;
 }
 
 body {
@@ -24,7 +25,6 @@ nav {
   float: left;
   width: 30%;
   height: 300px; 
-  background: #390;
   padding: 20px;
 }
 
@@ -32,13 +32,14 @@ nav {
 nav ul {
   list-style-type: none;
   padding: 16;
+  background-color: #f5f2f5;
 }
 
 article {
   float: left;
   padding: 20px;
   width: 70%;
-  background-color: #f5f2f5;
+  
  }
 
 /* Clear floats after the columns */
