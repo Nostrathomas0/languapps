@@ -3,10 +3,6 @@
   box-sizing: border-box;
 }
 
-.links {
-    color: gold;
-}
-
 body {
   background: url(../images/wallpaper.png) blue;
 }
@@ -21,6 +17,8 @@ header {
 }
 .links p {
   display: inline-block;
+  color: gold;
+}  
 .right {
   text-align: right;
   width: 50%;
