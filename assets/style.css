@@ -1,10 +1,10 @@
 body {
-  background: url(../images/wallpaper.png) #383e65;
+  background: url(../images/wallpaper.png) #a0d6b4;
   box-sizing: border-box;
 }
 
 header {
-  background-color: #a0d6b4;
+  background-color: #003153;
   padding: 3px;
   white-space: nowrap;
 }
@@ -26,7 +26,7 @@ header {
 }
 
 nav {
-  color: #73fffe
+  color: #08777a
   float: left;
   width: 30%;
   height: 300px; 
@@ -41,7 +41,7 @@ nav ul {
 }
 
 article {
-  color: #6287f8
+  color: #a0d6b4
   float: left;
   padding: 20px;
   width: 70%;
