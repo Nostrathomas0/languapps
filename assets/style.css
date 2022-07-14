@@ -6,7 +6,7 @@ body {
 header {
   background-color: #6287f8;
   padding: 3px;
-  white-space: nowrap;
+  white-space: wrap;
 }
 
 .links a {
