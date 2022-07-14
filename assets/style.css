@@ -9,6 +9,7 @@ header {
   font-size: 15px;
   text-align: center;
   color: gold;
+  white-space: nowrap;
 }
 
 .links p {
