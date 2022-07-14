@@ -17,10 +17,12 @@ header {
 
 .right {
   text-align: right;
+  width: 35;
 }
 
 .left {
   text-align: left;
+  width: 35;
 }
 
 nav {
