@@ -5,7 +5,7 @@ body {
 
 header {
   background-color: #6287f8;
-  padding: 30px;
+  padding: 3px;
   font-size: 15px;
   text-align: center;
   color: gold;
@@ -41,7 +41,7 @@ nav ul {
 }
 
 article {
-  color: #73fffe
+  color: #6287f8
   float: left;
   padding: 20px;
   width: 70%;
