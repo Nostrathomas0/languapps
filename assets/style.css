@@ -6,13 +6,12 @@ body {
 header {
   background-color: #6287f8;
   padding: 3px;
-  font-size: 12px;
-  color: gold;
   white-space: nowrap;
 }
 
 .links a {
   display: inline-block;
+  font-size: 12px;
   color: gold;
 }  
 
