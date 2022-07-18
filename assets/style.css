@@ -26,6 +26,7 @@ header {
 }
 
 nav {
+  display: inline-block
   color: #dd9933
   float: left;
   width: 30%;
@@ -42,6 +43,7 @@ article ul {
 }
 
 article {
+  display: inline-block
   color: #a0d6b4
   float: right;
   padding: 20px;
