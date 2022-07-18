@@ -35,7 +35,7 @@ nav {
 }
 
 /* Style the list inside the menu */
-nav ul {
+article ul {
   list-style-type: none;
   padding: 16;
   background-color: #0000ff;
@@ -43,7 +43,7 @@ nav ul {
 
 article {
   color: #a0d6b4
-  float: left;
+  float: right;
   padding: 20px;
   width: 70%;
   
