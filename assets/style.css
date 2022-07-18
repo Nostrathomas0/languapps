@@ -31,6 +31,7 @@ nav {
   width: 30%;
   height: 300px; 
   padding: 20px;
+  frame: 22px solid black;
 }
 
 /* Style the list inside the menu */
