@@ -37,7 +37,7 @@ section {
 }
 
 nav {
-  
+  display: border-box;
   float: left;
   width: 69%;
   height: 300px; 
@@ -53,7 +53,7 @@ article ul {
 }
 
 article {
-  color: #a0d6b4
+  color: #a0d6b4;
   float: right;
   padding: 20px;
   width: 29%;
