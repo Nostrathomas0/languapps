@@ -40,7 +40,7 @@ nav {
   display: flex;
   background-color: #67074e;
   float: left;
-  width: 69%;
+  width: 65;
   height: 300px; 
   padding: 20px;
   frame: 22px solid black;
@@ -54,10 +54,11 @@ article ul {
 }
 
 article {
+  background-color: #dd9933;
   color: #a0d6b4;
   float: right;
   padding: 20px;
-  width: 29%;
+  width: 25%;
   
  }
 
