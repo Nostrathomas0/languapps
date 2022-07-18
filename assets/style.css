@@ -32,7 +32,7 @@ profile {
 }
 
 section {
-  display: inline-block;
+  display: flex;
   color: gold;
 }
 
