@@ -32,7 +32,7 @@ section {
 nav {
   color: #dd9933;
   float: left;
-  width: 30%;
+  width: 70%;
   height: 300px; 
   padding: 20px;
   frame: 22px solid black;
@@ -49,7 +49,7 @@ article {
   color: #a0d6b4
   float: right;
   padding: 20px;
-  width: 70%;
+  width: 30%;
   
  }
 
