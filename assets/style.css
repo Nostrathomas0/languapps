@@ -25,6 +25,11 @@ header {
   width: 35%;
 }
 
+profile {
+  color: #67074e;
+  border: 15px solid black;
+}
+
 section {
   display: inline-block;
 }
