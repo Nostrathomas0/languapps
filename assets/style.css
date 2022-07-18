@@ -25,9 +25,12 @@ header {
   width: 35%;
 }
 
+section {
+  display: inline-block;
+}
+
 nav {
-  display: inline-block
-  color: #dd9933
+  color: #dd9933;
   float: left;
   width: 30%;
   height: 300px; 
@@ -43,7 +46,6 @@ article ul {
 }
 
 article {
-  display: inline-block
   color: #a0d6b4
   float: right;
   padding: 20px;
