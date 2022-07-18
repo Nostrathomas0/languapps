@@ -37,7 +37,7 @@ section {
 }
 
 nav {
-  display: inline-block;
+  display: flex;
   background-color: #67074e;
   float: left;
   width: 69%;
