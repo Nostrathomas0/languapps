@@ -32,11 +32,12 @@ profile {
 
 section {
   display: inline-block;
+  background-color: #67074e;
+  color: gold;
 }
 
 nav {
-  background-color: #67074e;
-  color: gold;
+  
   float: left;
   width: 69%;
   height: 300px; 
