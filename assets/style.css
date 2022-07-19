@@ -41,22 +41,21 @@ img {
 }
 
 .clout {
-
+  max-height: 270px;
+  max-width: 540px;
+  text-align: left;
+}
 
 .clout1 {
   max-height: 60px;
   max-width: 270;
   text-align: center;
 }
-  height: 88px;
-  max-width:188;
-  float: left;
-}
 
 .clout2 {
   height: 88px;
   max-width:188;
-  float: left;
+  float: center;
 }
   
 /* Style the list inside the menu */
