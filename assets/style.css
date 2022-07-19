@@ -52,6 +52,19 @@ div {
   object-fit: contain;
 }
 
+.clout1 {
+  height: 88px;
+  max-width:188;
+  float: left;
+}
+
+.clout2 {
+  clout1. {
+  height: 88px;
+  max-width:188;
+  float: left;
+}
+  
 /* Style the list inside the menu */
 article ul {
   list-style-type: none;
@@ -69,7 +82,7 @@ article {
 
  /* Clear floats after the columns */
 section::after {
-  content: "";
+  content: "Nat Geo";
   display: table;
   clear: both;
 }
