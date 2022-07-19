@@ -54,7 +54,7 @@ div {
 .clout {
   max-height: 50%;
   max-width: 50%;
-  object-fit: contain;
+  text-align: center;
 }
 
 .clout1 {
