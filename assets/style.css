@@ -27,7 +27,7 @@ header {
 }
 
 profile {
-  display: flex;
+  display: block;
   background-color: #67074e;
   float: left;
   width: 65%;
@@ -47,12 +47,13 @@ img {
   object-fit: contain;
 
 .clout {
-  max-height: 50%;
-  max-width: 50%;
-  text-align: center;
-}
+
 
 .clout1 {
+  max-height: 60px;
+  max-width: 270;
+  text-align: center;
+}
   height: 88px;
   max-width:188;
   float: left;
