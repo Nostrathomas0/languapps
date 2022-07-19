@@ -36,6 +36,11 @@ section {
   color: gold;
 }
 
+img {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+
 div {
   display: flex;
   background-color: #67074e;
