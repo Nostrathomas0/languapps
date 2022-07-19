@@ -46,6 +46,10 @@ div {
   frame: 22px solid black;
 }
 
+ul {
+  color: blue;
+}
+
 .clout {
   max-height: 50%;
   max-width: 50%;
