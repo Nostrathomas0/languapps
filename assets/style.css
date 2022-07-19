@@ -51,10 +51,6 @@ div {
   frame: 22px solid black;
 }
 
-ul {
-  color: blue;
-}
-
 .clout {
   max-height: 50%;
   max-width: 50%;
@@ -81,10 +77,10 @@ article ul {
 
 article {
   background-color: #dd9933;
-  color: #a0d6b4;
+  color: #003153;
   float: right;
-  padding: 20px;
-  width: 25%;
+  padding: 5px;
+  width:35%;
   
  }
 
