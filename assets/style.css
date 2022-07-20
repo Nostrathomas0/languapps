@@ -10,6 +10,10 @@ header {
   text-align: center;
 }
 
+.color ul {
+  color: gold;
+}
+
 .links a {
   display: inline-block;
   font-size: 12px;
