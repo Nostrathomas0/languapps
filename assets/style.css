@@ -10,10 +10,6 @@ header {
   text-align: center;
 }
 
-h1 {
-  color: gold;
-}
-  
 .links a {
   display: inline-block;
   font-size: 12px;
@@ -39,7 +35,11 @@ profile {
   padding: 2px;
   frame: 2px solid black;
 }
-
+h1 {
+  color: gold;
+  text align: left;
+}
+ 
 img {
   object-fit: contain;
 }
