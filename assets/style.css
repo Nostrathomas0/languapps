@@ -61,7 +61,12 @@ img {
 /* Style the list inside the menu */
 article ul {
   list-style-type: none;
-  padding: 16;
+  padding: 4;
+}
+
+.icon {
+  height: 45px;
+  width: auto;
 }
 
 article {
