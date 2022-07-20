@@ -31,8 +31,8 @@ profile {
   background-color: #67074e;
   float: left;
   width: 65%;
-  height: 300px; 
-  padding: 20px;
+  height: 300opx; 
+  padding: 2px;
   frame: 2px solid black;
 }
 
