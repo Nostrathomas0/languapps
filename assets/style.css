@@ -58,7 +58,12 @@ img {
   height: auto;
   width: 200px
 }
-  
+
+allClout {
+  height: 50%;
+  width: auto;
+}
+
 /* Style the list inside the menu */
 article ul {
   list-style-type: none;
