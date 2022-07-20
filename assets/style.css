@@ -30,7 +30,7 @@ div {
   display: inline-block;
   background-color: #67074e;
   float: left;
-  width: 65%;
+  width: 64%;
   height: auto; 
   padding: 2px;
   frame: 2px solid black;
@@ -75,7 +75,7 @@ article {
   color: gold;
   float: right;
   padding: 5px;
-  width: 33%;
+  width: 32%;
   height: 98%;
 }
 
