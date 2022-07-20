@@ -75,11 +75,11 @@ article ul {
 
 article {
   background-color: #dd9933;
-  color: #003153;
+  color: gold;
   float: right;
   padding: 5px;
   width: 33%;
-  height: auto;
+  height: 98%;
 }
 
  /* Clear floats after the columns */
@@ -94,7 +94,6 @@ footer {
   background-color: #003153;
   padding: 10px;
   text-align: center;
-  color: white;
 }
 
 /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
