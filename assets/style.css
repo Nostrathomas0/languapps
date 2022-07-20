@@ -45,21 +45,18 @@ img {
 }
 
 .clout {
-  max-height: 270px;
-  max-width: 540px;
-  text-align: left;
+  height: 420px;
+  width: auto;
 }
 
 .clout1 {
   height: 100px;
   width: auto;
-  text-align: left;
 }
 
 .clout2 {
-  height: 66px;
+  height: 100px;
   width: auto;
-  text-align: left;
 }
   
 /* Style the list inside the menu */
