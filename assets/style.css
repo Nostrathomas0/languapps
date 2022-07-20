@@ -31,7 +31,7 @@ profile {
   background-color: #67074e;
   float: left;
   width: 65%;
-  height: 300opx; 
+  height: auto; 
   padding: 2px;
   frame: 2px solid black;
 }
@@ -53,9 +53,9 @@ img {
 }
 
 .clout2 {
-  height: 88px;
-  max-width:188;
-  float: center;
+  height: 66px;
+  width: auto;
+  float: right;
 }
   
 /* Style the list inside the menu */
@@ -67,15 +67,15 @@ article ul {
 article {
   background-color: #dd9933;
   color: #003153;
-  float: top-right;
+  float: right;
   padding: 5px;
-  width:35%;
-  
- }
+  width: 33%;
+  height: auto;
+}
 
  /* Clear floats after the columns */
 section::after {
-  content: "Nat Geo";
+  content: "main";
   display: table;
   clear: both;
 }
