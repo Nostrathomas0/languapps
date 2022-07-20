@@ -53,13 +53,13 @@ img {
 .clout1 {
   height: 100px;
   width: auto;
-  text-align: right;
+  text-align: left;
 }
 
 .clout2 {
   height: 66px;
   width: auto;
-  float: right;
+  text-align: left;
 }
   
 /* Style the list inside the menu */
