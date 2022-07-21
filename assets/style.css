@@ -44,8 +44,8 @@ div {
 profile a {
   font-size: large;
   float: left;
-  margin-right: 10pxx
-
+  margin-right: 10px;
+}
 h1 {
   color: #67074e;
   text align: left;
@@ -64,6 +64,11 @@ h1 {
 .clout2 {
   height: auto;
   width: 220px
+}
+
+.clout3 {
+   height: 77;
+   width: auto: 
 }
 
 allClout {
