@@ -5,7 +5,7 @@ body {
 
 header {
   background-color: #003153;
-  padding: 10px;
+  padding: 4px;
   white-space: nowrap;
   text-align: center;
 }
@@ -16,7 +16,7 @@ header {
 
 .links a {
   display: inline-block;
-  font-size: 12px;
+  font-size: 22px;
   color: gold;
 }  
 
@@ -34,20 +34,17 @@ div {
   display: inline-block;
   background-color: #67074e;
   float: left;
-  width: 64%;
+  width: 62%;
   height: auto; 
   padding: 2px;
   frame: 2px solid black;
+  object-fit: contain;
 }
 h1 {
   color: #67074e;
   text align: left;
 }
  
-img {
-  object-fit: contain;
-}
-
 .clout {
   height: 320px;
   width: auto;
