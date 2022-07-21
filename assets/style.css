@@ -73,6 +73,11 @@ h1 {
    width: auto: 
 }
 
+.clout4 {
+  height: auto;
+  width: 333px;
+}  
+  
 moreClout {
   height: 50%;
   max-width: 330px;
