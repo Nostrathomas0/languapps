@@ -11,13 +11,13 @@ header {
 }
 
 .color ul {
-  color: gold;
+  color: #dd9933;
 }
 
 .links a {
   display: inline-block;
   font-size: 22px;
-  color: gold;
+  color: #dd9933;
 }  
 
 .right {
