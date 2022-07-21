@@ -73,9 +73,9 @@ h1 {
    width: auto: 
 }
 
-allClout {
+moreClout {
   height: 50%;
-  width: auto;
+  max-width: 330px;
 }
 
 /* Style the list inside the menu */
