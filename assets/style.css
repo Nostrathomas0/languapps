@@ -40,6 +40,12 @@ div {
   frame: 2px solid black;
   object-fit: contain;
 }
+
+profile a {
+  font-size: large;
+  float: left;
+  margin-right: 10pxx
+
 h1 {
   color: #67074e;
   text align: left;
