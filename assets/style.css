@@ -10,15 +10,11 @@ header {
   text-align: center;
 }
 
-.color ul {
-  color: #dd9933;
-}
-
 .links a {
   display: inline-block;
   font-size: 22px;
   color: #dd9933;
-}  
+}
 
 .right {
   text-align: right;
@@ -35,20 +31,20 @@ div {
   background-color: #67074e;
   float: left;
   width: 62%;
-  height: auto; 
+  height: auto;
   padding: 2px;
-  frame: 2px solid;
+  margin: 2px solid;
   object-fit: contain;
 }
 
 p {
   color: #dd9933;
-  font-size: 33px;  
+  font-size: 33px;
 }
 
 h1 {
   color: #67074e;
-  text align: center;
+  text-align: center;
 }
  
 .clout {
@@ -63,20 +59,20 @@ h1 {
 
 .clout2 {
   height: auto;
-  width: 220px
+  width: 220px;
 }
 
 .clout3 {
    height: 127px;
-   width: auto: 
+   width: auto;
 }
 
 .clout4 {
   height: auto;
   width: 333px;
-}  
+}
   
-moreClout {
+.moreclout {
   height: 50%;
   max-width: 330px;
 }
@@ -85,6 +81,10 @@ moreClout {
 article ul {
   list-style-type: none;
   padding: 4;
+}
+
+.color ul {
+  color: #dd9933;
 }
 
 .icon li {
