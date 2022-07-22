@@ -41,9 +41,7 @@ div {
   object-fit: contain;
 }
 
-
-
-profile a {
+.profile a {
   font-size: 50px;
   float: left;
   margin-right: 10px;
