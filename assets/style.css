@@ -37,15 +37,15 @@ div {
   width: 62%;
   height: auto; 
   padding: 2px;
-  frame: 2px solid black;
+  frame: 2px solid;
   object-fit: contain;
 }
 
-.profile a {
-  font-size: 50px;
-  float: left;
-  margin-left: 10px;
+p {
+  color: #dd9933;
+  font-size: 33px;  
 }
+
 h1 {
   color: #67074e;
   text align: center;
