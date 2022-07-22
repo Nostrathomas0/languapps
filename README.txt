@@ -1,13 +1,13 @@
+Big Picture | HTML5 UP
 Languapps is Internet for Internats
-Nostrathomas@ | Languapps.com
+Nostrathomas@ | nostrathomas@languapps.com
 Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 
-
-This is a nested repo of directories of single page responsive site template by HTML5 UP.
+Credits to the single page responsive site template cloned from aj at HTML5UP.
 
 Languapps is a project to provide a forum for self-directed language learners. I started 
-this as a jeckyll blog hosted and launched by github pages so there may be remnents of 
-that css online. The page makes heavy use of the "scrollgress" and "scrollwatch" jQuery 
+this as a jeckyll blog hosted and launched by github pages and there are scraps of code
+from that era. The page makes heavy use of the "scrollgress" and "scrollwatch" jQuery 
 plugins to pull off some interesting effects as you scroll around the page. In addition 
 to said interesting effects, Big Picture also includes a nice lightbox-style gallery, 
 styling for basic page elements, and thoroughly commented code for your editing pleasure.
