@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<!--
+	HTML5UP TEMP, thanks JPAvery
+		 ___        __      __   _     _       _     _      __      ___      ___      __  
+ | |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
+ | |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
+ | |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
+ |____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
+-->
+<html>
+	<head>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+		  gtag('config', 'UA-171464578-1');
+		</script>
+		
+		<!-- Facebook Pixel Code -->
+		<script>
+			!function(f,b,e,v,n,t,s){
+				if(f.fbq)return;
+				n=f.fbq=function(){
+					n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)
+				};
+				if(!f._fbq)f._fbq=n;n.push=n;
+				n.loaded=!0;
+				n.version='2.0';
+				n.queue=[];
+				t=b.createElement(e);
+				t.async=!0;
+				t.src=v;
+				s=b.getElementsByTagName(e)[0];
+				s.parentNode.insertBefore(t,s)
+			}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
+			fbq('init', '348427750356175'); 
+			fbq('track', 'PageView');</script><noscript> <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1"/></noscript>
+		<!-- End Facebook Pixel Code -->
+
+		<title>LANGUAPPS</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="shortcut icon" href="images/yata.ico">
+		<!-- Include your JavaScript file here -->
+		<script src="random.js"></script> <!-- Include your JavaScript file here -->
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		
+		
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<h1>Learn Language with applications</h1>
+				<nav>
+					<ul>
+						<a href="/services" target="_blank" rel="noopener noreferrer">TESOL</a>
+						<a href="/reviews" target="_blank" rel="noopener noreferrer">Reviews</a>
+						<a href="/pragmatics">Terms</a>
+						<a>  :page - site: </a>
+						<li><a href="#intro">Let's play</a></li>
+						<li><a href="#one">Languapps</a></li>
+						<li><a href="#two">and</a></li>
+						<li><a href="#work">how to</a></li>
+						<li><a href="#contact">Contact</a></li>
+						</ul>
+				</nav>
+			</header>
+
+		<!-- Intro -->
+			<section id="intro" class="main style1 dark fullscreen">
+				<div class="content">
+					<header>  <!-- Hangman Game Elements -->
+						<div id="word-display"></div>
+						<div id="hangman-figure"></div>
+						<input type="text" id="guess-input" placeholder="Enter a letter">
+						<button onclick="makeGuess()">Guess</button>
+						<button onclick="startGame()">Start New Game</button>
+					
+						<!-- Letters for User to Choose -->
+						<div id="letter-buttons">
+							<button onclick="chooseLetter('A')">A</button>
+							<button onclick="chooseLetter('B')">B</button>
+							<button onclick="chooseLetter('C')">C</button>
+							<button onclick="chooseLetter('D')">D</button>
+							<button onclick="chooseLetter('E')">E</button>
+							<button onclick="chooseLetter('F')">F</button>
+							<button onclick="chooseLetter('G')">G</button>
+							<button onclick="chooseLetter('H')">H</button>
+							<button onclick="chooseLetter('I')">I</button>
+							<button onclick="chooseLetter('J')">J</button>
+							<button onclick="chooseLetter('K')">K</button>
+							<button onclick="chooseLetter('L')">L</button>
+							<button onclick="chooseLetter('M')">M</button>
+							<button onclick="chooseLetter('N')">N</button>
+							<button onclick="chooseLetter('O')">O</button>
+							<button onclick="chooseLetter('P')">P</button>
+							<button onclick="chooseLetter('Q')">Q</button>
+							<button onclick="chooseLetter('R')">R</button>
+							<button onclick="chooseLetter('S')">S</button>
+							<button onclick="chooseLetter('T')">T</button>
+							<button onclick="chooseLetter('U')">U</button>
+							<button onclick="chooseLetter('V')">V</button>
+							<button onclick="chooseLetter('W')">W</button>
+							<button onclick="chooseLetter('X')">X</button>
+							<button onclick="chooseLetter('Y')">Y</button>
+							<button onclick="chooseLetter('Z')">Z</button>
+							
+						
+						</div>
+						<script>	const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"];
+							let wordToGuess = "";
+							let guessedLetters = [];
+
+							function startGame() {
+								wordToGuess = words[Math.floor(Math.random() * words.length)];
+								guessedLetters = [];
+								displayWord();
+							}
+
+							function displayWord() {
+								const wordDisplay = document.getElementById("word-display");
+								wordDisplay.innerHTML = "";
+								for (const letter of wordToGuess) {
+									if (guessedLetters.includes(letter)) {
+										wordDisplay.innerHTML += letter + " ";
+									} else {
+										wordDisplay.innerHTML += "_ ";
+									}
+								}
+							}
+
+							function makeGuess() {
+								const guessInput = document.getElementById("guess-input");
+								const guess = guessInput.value.toLowerCase();
+								if (guess.length === 1 && /[a-z]/.test(guess) && !guessedLetters.includes(guess)) {
+									guessedLetters.push(guess);
+									displayWord();
+									checkGameOver();
+								}
+								guessInput.value = "";
+							}
+
+							function checkGameOver() {
+								if (wordToGuess.split("").every(letter => guessedLetters.includes(letter))) {
+									alert("Congratulations! You guessed the word: " + wordToGuess);
+									startGame();
+								}
+							}
+
+							startGame();
+							</script>
+						<h2>Languapps</h2>
+				
+						
+					</header>
+					<footer>
+						<a href="#one" class="button style2 down">More</a>
+					</footer>
+				</div>
+			</section>
+
+		<!-- One -->
+			<section id="one" class="main style2 right dark fullscreen">
+				<div class="content box style2">
+					<header>
+						<h2>Get Random</h2>
+						<form action="/generate-sentence" method="POST">
+							<input type="submit" value="Generate Random Sentence">
+						</form>
+					</header>
+					<p>Digital Publishing<br>Review Software<br>Live stream<br>Independant<br>Writing Contests<br>Puppet Shows<br></p>
+				</div>
+				<body>
+					<h1>Click for a Random Swadish Sentence!</h1>
+					<div id="output"></div>
+					<script>
+					// use AJAX to fetch the output from app.py and display it in the div
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+						document.getElementById("output").innerHTML = this.responseText;
+						}
+					};
+					xhttp.open("GET", "/output", true);
+					xhttp.send();
+					</script>
+					<script src="random_sentence.js"></script>
+
+				</body>
+				<a href="#two" class="button style2 down anchored">Next</a>
+			</section>
+
+		<!-- Two -->
+			<section id="two" class="main style2 left dark fullscreen">
+				<div class="content box style2">
+					<header>
+						<h2>I Am</h2>
+					</header>
+					<p>a reporter and a code user who teachs English abroad. I provide learning tasks as a web developer and an applied linguist. This website's my work. This is my <a href="https://nostrathomas0.github.io/Web_CV" target="_blank" rel="noopener noreferrer">Curriculum Vitae</a></p> 
+					<p>Get us Occulus and we'll be nerds in the Metaverse learning ESP  <a href="https://www.facebook.com/ESLforInternats/shop/?referral_code=page_shop_tab&preview=1" target="_blank" rel="noopener noreferrer"></p>
+				</div>
+				<a href="#work" class="button style2 down anchored">Next</a>
+			</section>
+
+		<!-- Work -->
+			<section id="work" class="main style3 primary">
+				<div class="content">
+					<header>
+						<h2>I Work</h2>
+						<p>with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses. Check our expanding <a href="/services" alt="Book">list of courses.</a></p>
+						<p><a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL" target="_blank" rel="noopener noreferrer">Book Thomas</a></p>
+					</header>
+
+					<!-- Gallery  -->
+						<div class="gallery">
+							<article class="from-left">
+								<a href="images/fulls/01.mp4" class="image fit"><img src="images/thumbs/01.jpg" title="5⭐ VIPKid rating" alt="" /></a>
+							</article>
+							<article class="from-right">
+								<a href="images/fulls/02.jpg" class="image fit"><img src="images/thumbs/02.jpg" title="We Chat & xiaohongshu" alt="" /></a>
+							</article>
+							<article class="from-left">
+								<a href="images/fulls/03.jpg" class="image fit"><img src="images/thumbs/03.jpg" title="Stop Animation" alt="" /></a>
+							</article>
+							<article class="from-right">
+								<a href="images/fulls/04.jpg" class="image fit"><img src="images/thumbs/04.jpg" title="Bilingual Development" alt="" /></a>
+							</article>
+							<article class="from-left">
+								<a href="images/fulls/05.jpg" class="image fit"><img src="images/thumbs/05.jpg" title="Exam Preperation" alt="" /></a>
+							</article>
+							<article class="from-right">
+								<a href="images/fulls/06.mp4" class="image fit"><img src="images/thumbs/06.jpg" title="Singing and Clapping" alt="" /></a>
+							</article>
+						</div>
+
+				</div>
+			</section>
+
+		<!-- Contact -->
+			<section id="contact" class="main style3 secondary">
+				<div class="content">
+					<header>
+						<h2>Contact</h2>
+					</header>
+					<div class="box">
+						<form method="post" action="https://formspree.io/mknqjaeg">
+							<div class="fields">
+								<div class="field half"><input type="text" name="name" placeholder="Name" /></div>
+								<div class="field half"><input type="email" name="email" placeholder="Email" /></div>
+								<div class="field"><textarea name="message" placeholder="Message" rows="6"></textarea></div>
+							</div>
+							<ul class="actions special">
+								<li><input type="submit" value="Send Message" /></li>
+							</ul>
+						</form>
+					</div>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+
+				<!-- Icons -->
+					<ul class="icons">
+						<li><a href="https://facecbook.com/ESLforInternats" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="https://instagram.com/languapps" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="https://www.linkedin.com/in/thomas-schwartz-b9899417/" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+						<li><a href="https://dribbble.com/nostrathomas" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="https://pin.it/4dKl3hd" class="icon brands fa-pinterest"><span class="label">Pinterest</span></a></li>
+					</ul>
+
+				<!-- Menu -->
+					<ul class="menu">
+						<li>&copy; Languapps</li><li>Design credits: <a href="https://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

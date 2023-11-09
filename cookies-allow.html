@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cookie Settings</title>
+    <!-- Add your CSS styles here -->
+    <style>
+        /* CSS styles for the settings page */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cookie Settings</h1>
+        <form id="cookieSettingsForm">
+            <label>
+                <input type="checkbox" name="essentialCookies" checked disabled>
+                Essential Cookies
+            </label>
+            <label>
+                <input type="checkbox" name="deepCookies">
+                Deep Cookies
+            </label>
+            <label>
+                <input type="checkbox" name="plainCookies">
+                Plain Cookies
+            </label>
+            <button type="submit">Save Preferences</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript code to handle the form submission
+        document.getElementById('cookieSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var analyticalCookies = form.elements['deepCookies'].checked;
+            var marketingCookies = form.elements['plainCookies'].checked;
+
+            // Update the cookie preferences in the stored cookie or local storage
+            setCookiePreference('deepCookies', deepCookies);
+            setCookiePreference('plainCookies', plainCookies);
+
+            // Display a confirmation message or redirect the user to another page
+            // ... add your code here ...
+        });
+
+        // Function to update the cookie preferences in the stored cookie or local storage
+        function setCookiePreference(cookieName, enabled) {
+            // Update the cookie or local storage with the new preference
+            // ... add your code here ...
+        }
+    </script>
+</body>
+</html>
