@@ -45,7 +45,7 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="shortcut icon" href="images/yata.ico">
 		<!-- Include your JavaScript file here -->
-		<script src="random.js"></script> <!-- Include your JavaScript file here -->
+		<script src="games.js"></script> <!-- Include your JavaScript file here -->
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		
 		
@@ -75,7 +75,10 @@
 				<div class="content">
 					<header>  <!-- Hangman Game Elements -->
 						<div id="word-display"></div>
-						<div id="hangman-figure"></div>
+						<div id="hangman-container" style="width: 300px; height: 300px; position: relative;">
+							<!-- Images will be loaded here -->
+						</div>
+						
 						<input type="text" id="guess-input" placeholder="Enter a letter">
 						<button onclick="makeGuess()">Guess</button>
 						<button onclick="startGame()">Start New Game</button>
@@ -168,8 +171,8 @@
 				<div class="content box style2">
 					<header>
 						<h2>Get Random</h2>
-						<form action="/generate-sentence" method="POST">
-							<input type="submit" value="Generate Random Sentence">
+						<form id="random"> 
+							<input type="submit" value="Generate">
 						</form>
 					</header>
 					<p>Digital Publishing<br>Review Software<br>Live stream<br>Independant<br>Writing Contests<br>Puppet Shows<br></p>
