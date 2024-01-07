@@ -9,6 +9,12 @@
 -->
 <html>
 	<head>
+		<meta charset="utf-8">
+		<title>LANGUAPPS</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="assets/css/main.css">
+		<link rel="shortcut icon" href="images/yata.ico">
+
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
 		<script>
@@ -36,19 +42,14 @@
 				s.parentNode.insertBefore(t,s)
 			}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
 			fbq('init', '348427750356175'); 
-			fbq('track', 'PageView');</script><noscript> <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1"/></noscript>
+			fbq('track', 'PageView');</script>
+			<noscript> 
+				<img height="1" width="1" alt="pixel" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1">
+			</noscript>
 		<!-- End Facebook Pixel Code -->
 
-		<title>LANGUAPPS</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<link rel="shortcut icon" href="images/yata.ico">
-		<!-- Include your JavaScript file here -->
 		<script src="games.js"></script> <!-- Include your JavaScript file here -->
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		
-		
 	</head>
 	<body class="is-preload">
 
@@ -177,23 +178,12 @@
 					</header>
 					<p>Digital Publishing<br>Review Software<br>Live stream<br>Independant<br>Writing Contests<br>Puppet Shows<br></p>
 				</div>
-				<body>
-					<h1>Click for a Random Swadish Sentence!</h1>
+				<div>
+					<h1>Click for a Random Sentence!</h1>
 					<div id="output"></div>
-					<script>
-					// use AJAX to fetch the output from app.py and display it in the div
-					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function() {
-						if (this.readyState == 4 && this.status == 200) {
-						document.getElementById("output").innerHTML = this.responseText;
-						}
-					};
-					xhttp.open("GET", "/output", true);
-					xhttp.send();
-					</script>
 					<script src="random_sentence.js"></script>
 
-				</body>
+				</div>
 				<a href="#two" class="button style2 down anchored">Next</a>
 			</section>
 

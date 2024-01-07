@@ -48,9 +48,81 @@ document.getElementById('random').addEventListener('submit', function(event) {
     generateRandomSentence(); // Calls your function to generate a sentence
 });
 
-function generateRandomSentence() {
-    // Your existing logic to generate a random sentence
-    // For example, you can modify the content of a specific element on the page
-    var sentence = "Your generated sentence"; // Replace this with actual sentence generation logic
-    document.getElementById('output').innerHTML = sentence; // Assuming 'output' is the ID of the element where you want to display the sentence
+   
+const pronouns = {
+    subject: ['I', 'You', 'He', 'She', 'They'],
+    object: ['me', 'you', 'him', 'her', 'them']
+};
+
+const verbs = ['love', 'hate', 'enjoy', 'dislike', 'prefer'];
+
+const nounPhrases = {
+    determiners: ['The', 'A', 'An', 'My', 'Your'],
+    nouns: ['cat', 'dog', 'pizza', 'coding', 'music']
+};
+
+function getRandomElement(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
+
+function generateRandomSentence() {
+    // Elements for constructing the sentence
+    const subjectPronouns = ['I', 'You', 'He', 'She', 'They'];
+    const objectPronouns = ['me', 'you', 'him', 'her', 'them'];
+    const determiners = ['the', 'a', 'an', 'my', 'your'];
+    const nouns = ['cat', 'dog', 'pizza', 'music', 'car'];
+
+    // Verbs in their base form
+    const verbs = {
+        base: ['love', 'hate', 'enjoy', 'dislike', 'prefer'],
+        thirdPersonSingular: ['loves', 'hates', 'enjoys', 'dislikes', 'prefers']
+    };
+
+    // Helper functions
+    function getRandomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function isThirdPersonSingular(subject) {
+        return !['I', 'You', 'They'].includes(subject);
+    }
+
+    function getSubject() {
+        // Randomly choose between a pronoun or a noun phrase
+        if (Math.random() < 0.5) {
+            // Use a subject pronoun
+            return getRandomElement(subjectPronouns);
+        } else {
+            // Use a noun phrase
+            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
+        }
+    }
+
+    function getObject() {
+        // Randomly choose between an object pronoun or a noun phrase
+        if (Math.random() < 0.5) {
+            return getRandomElement(objectPronouns);
+        } else {
+            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
+        }
+    }
+
+    // Generate the sentence
+    const subject = getSubject();
+    const verb = isThirdPersonSingular(subject) ? getRandomElement(verbs.thirdPersonSingular) : getRandomElement(verbs.base);
+    const object = getObject();
+
+    return `${subject} ${verb} ${object}.`;
+}
+
+// Example usage
+const randomSentence = generateRandomSentence();
+document.getElementById('random-sentence').innerHTML = randomSentence;
+
+// DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('random').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting in the traditional way
+        generateRandomSentence(); // Call the function to generate and display the sentence
+    });
+});
