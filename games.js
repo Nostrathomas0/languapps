@@ -4,6 +4,27 @@ const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape"
 let wordToGuess = "";
 let guessedLetters = [];
 
+const hangmanImages = [
+    '~/languapps/images/hang/h0.png',
+    '~/languapps/images/hang/h1.png',
+    '~/languapps/images/hang/h2.png',
+    '~/languapps/images/hang/h3.png',
+    '~/languapps/images/hang/h4.png',
+    '~/languapps/images/hang/h5.png',
+    '~/languapps/images/hang/h6.png',
+    '~/languapps/images/hang/h7.png',
+    '~/languapps/images/hang/h8.png',
+    '~/languapps/images/hang/h9.png',
+    '~/languapps/images/hang/h10.png'
+    // Add more as needed
+];
+
+function updateHangmanImage(wrongGuesses) {
+    const imageElement = document.getElementById('hangman-image');
+    imageElement.src = hangmanImages[wrongGuesses];
+}
+
+
 function startGame() {
     wordToGuess = words[Math.floor(Math.random() * words.length)];
     guessedLetters = [];
@@ -22,23 +43,43 @@ function displayWord() {
     }
 }
 
-function makeGuess() {
-    const guessInput = document.getElementById("guess-input");
-    const guess = guessInput.value.toLowerCase();
-    if (guess.length === 1 && /[a-z]/.test(guess) && !guessedLetters.includes(guess)) {
+function makeGuess(guess) {
+    // Check if guessed letter is in the word
+    if (wordToGuess.includes(guess)) {
+        // Correct guess
         guessedLetters.push(guess);
-        displayWord();
-        checkGameOver();
+    } else {
+        // Wrong guess
+        wrongGuesses++;
+        updateHangmanImage(wrongGuesses);
     }
-    guessInput.value = "";
+
+    displayWord();
+    checkGameOver();
+    // Disable the guessed letter button to prevent repeated guesses
+    document.getElementById("button-" + guess).disabled = true;
 }
+
 
 function checkGameOver() {
     if (wordToGuess.split("").every(letter => guessedLetters.includes(letter))) {
+        // Play win sound and show message
+        playSound('win_sound.mp3');  // Replace with your sound file path
         alert("Congratulations! You guessed the word: " + wordToGuess);
+        startGame();
+    } else if (wrongGuesses >= hangmanImages.length - 1) {
+        // Play lose sound and show message
+        playSound('lose_sound.mp3');  // Replace with your sound file path
+        alert("Game over! The word was: " + wordToGuess);
         startGame();
     }
 }
+
+function playSound(soundFile) {
+    const audio = new Audio(soundFile);
+    audio.play();
+}
+
 
 startGame();
 
