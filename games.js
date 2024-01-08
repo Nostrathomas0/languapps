@@ -3,6 +3,7 @@
 const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"];
 let wordToGuess = "";
 let guessedLetters = [];
+let wrongGuesses = [];
 
 const hangmanImages = [
     '~/languapps/images/hang/h0.png',
@@ -16,7 +17,6 @@ const hangmanImages = [
     '~/languapps/images/hang/h8.png',
     '~/languapps/images/hang/h9.png',
     '~/languapps/images/hang/h10.png'
-    // Add more as needed
 ];
 
 function updateHangmanImage(wrongGuesses) {
@@ -29,6 +29,9 @@ function startGame() {
     wordToGuess = words[Math.floor(Math.random() * words.length)];
     guessedLetters = [];
     displayWord();
+    wrongGuesses = 0;
+    updateHangmanImage(wrongGuesses);
+
 }
 
 function displayWord() {

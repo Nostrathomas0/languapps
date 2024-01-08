@@ -48,8 +48,9 @@
 			</noscript>
 		<!-- End Facebook Pixel Code -->
 
-		<script src="games.js"></script> <!-- Include your JavaScript file here -->
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<noscript>
+			<link rel="stylesheet" href="assets/css/noscript.css" />
+		</noscript>
 	</head>
 	<body class="is-preload">
 
@@ -80,84 +81,39 @@
 							<img id="hangman-image" src="~/languapps/images/hang/h0.png" alt="Hangman">
 							<!-- Images will be loaded here -->
 						</div>
-						
-						<input type="text" id="guess-input" placeholder="Enter a letter">
-						<button onclick="makeGuess()">Guess</button>
 						<button onclick="startGame()">Start New Game</button>
 					
 						<!-- Letters for User to Choose -->
 						<div id="letter-buttons">
-							<button onclick="chooseLetter('A')">A</button>
-							<button onclick="chooseLetter('B')">B</button>
-							<button onclick="chooseLetter('C')">C</button>
-							<button onclick="chooseLetter('D')">D</button>
-							<button onclick="chooseLetter('E')">E</button>
-							<button onclick="chooseLetter('F')">F</button>
-							<button onclick="chooseLetter('G')">G</button>
-							<button onclick="chooseLetter('H')">H</button>
-							<button onclick="chooseLetter('I')">I</button>
-							<button onclick="chooseLetter('J')">J</button>
-							<button onclick="chooseLetter('K')">K</button>
-							<button onclick="chooseLetter('L')">L</button>
-							<button onclick="chooseLetter('M')">M</button>
-							<button onclick="chooseLetter('N')">N</button>
-							<button onclick="chooseLetter('O')">O</button>
-							<button onclick="chooseLetter('P')">P</button>
-							<button onclick="chooseLetter('Q')">Q</button>
-							<button onclick="chooseLetter('R')">R</button>
-							<button onclick="chooseLetter('S')">S</button>
-							<button onclick="chooseLetter('T')">T</button>
-							<button onclick="chooseLetter('U')">U</button>
-							<button onclick="chooseLetter('V')">V</button>
-							<button onclick="chooseLetter('W')">W</button>
-							<button onclick="chooseLetter('X')">X</button>
-							<button onclick="chooseLetter('Y')">Y</button>
-							<button onclick="chooseLetter('Z')">Z</button>
+							<button onclick="makeGuess('A')">A</button>
+							<button onclick="makeGuess('B')">B</button>
+							<button onclick="makeGuess('C')">C</button>
+							<button onclick="makeGuess('D')">D</button>
+							<button onclick="makeGuess('E')">E</button>
+							<button onclick="makeGuess('F')">F</button>
+							<button onclick="makeGuess('G')">G</button>
+							<button onclick="makeGuess('H')">H</button>
+							<button onclick="makeGuess('I')">I</button>
+							<button onclick="makeGuess('J')">J</button>
+							<button onclick="makeGuess('K')">K</button>
+							<button onclick="makeGuess('L')">L</button>
+							<button onclick="makeGuess('M')">M</button>
+							<button onclick="makeGuess('N')">N</button>
+							<button onclick="makeGuess('O')">O</button>
+							<button onclick="makeGuess('P')">P</button>
+							<button onclick="makeGuess('Q')">Q</button>
+							<button onclick="makeGuess('R')">R</button>
+							<button onclick="makeGuess('S')">S</button>
+							<button onclick="makeGuess('T')">T</button>
+							<button onclick="makeGuess('U')">U</button>
+							<button onclick="makeGuess('V')">V</button>
+							<button onclick="makeGuess('W')">W</button>
+							<button onclick="makeGuess('X')">X</button>
+							<button onclick="makeGuess('Y')">Y</button>
+							<button onclick="makeGuess('Z')">Z</button>
 							
 						
-						</div>
-						<script>	const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"];
-							let wordToGuess = "";
-							let guessedLetters = [];
-
-							function startGame() {
-								wordToGuess = words[Math.floor(Math.random() * words.length)];
-								guessedLetters = [];
-								displayWord();
-							}
-
-							function displayWord() {
-								const wordDisplay = document.getElementById("word-display");
-								wordDisplay.innerHTML = "";
-								for (const letter of wordToGuess) {
-									if (guessedLetters.includes(letter)) {
-										wordDisplay.innerHTML += letter + " ";
-									} else {
-										wordDisplay.innerHTML += "_ ";
-									}
-								}
-							}
-
-							function makeGuess() {
-								const guessInput = document.getElementById("guess-input");
-								const guess = guessInput.value.toLowerCase();
-								if (guess.length === 1 && /[a-z]/.test(guess) && !guessedLetters.includes(guess)) {
-									guessedLetters.push(guess);
-									displayWord();
-									checkGameOver();
-								}
-								guessInput.value = "";
-							}
-
-							function checkGameOver() {
-								if (wordToGuess.split("").every(letter => guessedLetters.includes(letter))) {
-									alert("Congratulations! You guessed the word: " + wordToGuess);
-									startGame();
-								}
-							}
-
-							startGame();
-							</script>
+										
 						<h2>Languapps</h2>
 				
 						
@@ -182,7 +138,7 @@
 				<div>
 					<h1>Click for a Random Sentence!</h1>
 					<div id="output"></div>
-					<script src="random_sentence.js"></script>
+					<script src="games.js"></script>
 
 				</div>
 				<a href="#two" class="button style2 down anchored">Next</a>
@@ -283,6 +239,6 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-
+			<script src="games.js"></script>	
 	</body>
 </html>
