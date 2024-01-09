@@ -43,28 +43,26 @@ function startGame() {
 
 
 function makeGuess(guess) {
-    // Check if guessed letter is in the word
+    guess = guess.toLowerCase(); // Convert guess to lowercase
+    let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
+
+    console.log("Guessed letter: ", guess);
     if (wordToGuess.includes(guess)) {
-        // Correct guess
-        guessedLetters.push(guess);
+        console.log("Correct guess");
+        if (!guessedLetters.includes(guess)) {
+            guessedLetters.push(guess);
+        }
     } else {
-        // Wrong guess
+        console.log("Incorrect guess");
         wrongGuesses++;
         updateHangmanImage(wrongGuesses);
-       
     }
-
     updateGuessedLettersDisplay();
     displayWord();
-    checkGameOver;
-    document.getElementById("button-" +guess).disabled = true;
-
-
-    displayWord();
     checkGameOver();
-    // Disable the guessed letter button to prevent repeated guesses
     document.getElementById("button-" + guess).disabled = true;
 }
+
 
 function displayWord() {
     const wordDisplay = document.getElementById("word-display");
@@ -97,9 +95,10 @@ function playSound(soundFile) {
     audio.play();
 }
 
+document.addEventListener('DOMContentLoaded', function() {
 
 startGame();
-
+});
 
 document.getElementById('random').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevents the default form submission
