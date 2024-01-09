@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
 	HTML5UP TEMP, thanks JPAvery
- ___        __      __   _     _       _     _      __      ___      ___      __  
+  _         __      __   _     _       _     _      __      ___      ___      __  
  | |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
  | |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
  | |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
@@ -78,8 +78,9 @@
 					<header>  <!-- Hangman Game Elements -->
 						<div id="word-display"></div>
 						<div id="hangman-container" style="width: 300px; height: 300px; position: relative;">
-							<img id="hangman-image" src="~/languapps/images/hang/h0.png" alt="Hangman">
-							<!-- Images will be loaded here -->
+							<img id="hangman-image" src="/images/hang/h0.png" alt="Hangman">
+							<div id="guessed-letters">Guessed Letters: <span id="guessed-letters-list"></span></div>
+
 						</div>
 						<button onclick="startGame()">Start New Game</button>
 					
@@ -138,7 +139,7 @@
 				<div>
 					<h1>Click for a Random Sentence!</h1>
 					<div id="output"></div>
-					<script src="games.js"></script>
+					
 
 				</div>
 				<a href="#two" class="button style2 down anchored">Next</a>

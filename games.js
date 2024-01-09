@@ -6,18 +6,25 @@ let guessedLetters = [];
 let wrongGuesses = [];
 
 const hangmanImages = [
-    '~/languapps/images/hang/h0.png',
-    '~/languapps/images/hang/h1.png',
-    '~/languapps/images/hang/h2.png',
-    '~/languapps/images/hang/h3.png',
-    '~/languapps/images/hang/h4.png',
-    '~/languapps/images/hang/h5.png',
-    '~/languapps/images/hang/h6.png',
-    '~/languapps/images/hang/h7.png',
-    '~/languapps/images/hang/h8.png',
-    '~/languapps/images/hang/h9.png',
-    '~/languapps/images/hang/h10.png'
+    '/images/hang/h0.png',
+    '/images/hang/h1.png',
+    '/images/hang/h2.png',
+    '/images/hang/h3.png',
+    '/images/hang/h4.png',
+    '/images/hang/h5.png',
+    '/images/hang/h6.png',
+    '/images/hang/h7.png',
+    '/images/hang/h8.png',
+    '/images/hang/h9.png',
+    '/images/hang/h10.png'
 ];
+
+
+function updateGuessedLettersDisplay() {
+    const guessedLettersElement = document.getElementById('guessed-letters-list');
+    guessedLettersElement.textContent = guessedLetters.join(', ');
+}
+
 
 function updateHangmanImage(wrongGuesses) {
     const imageElement = document.getElementById('hangman-image');
@@ -28,10 +35,35 @@ function updateHangmanImage(wrongGuesses) {
 function startGame() {
     wordToGuess = words[Math.floor(Math.random() * words.length)];
     guessedLetters = [];
-    displayWord();
     wrongGuesses = 0;
     updateHangmanImage(wrongGuesses);
+    updateGuessedLettersDisplay();
+    displayWord();
+}
 
+
+function makeGuess(guess) {
+    // Check if guessed letter is in the word
+    if (wordToGuess.includes(guess)) {
+        // Correct guess
+        guessedLetters.push(guess);
+    } else {
+        // Wrong guess
+        wrongGuesses++;
+        updateHangmanImage(wrongGuesses);
+       
+    }
+
+    updateGuessedLettersDisplay();
+    displayWord();
+    checkGameOver;
+    document.getElementById("button-" +guess).disabled = true;
+
+
+    displayWord();
+    checkGameOver();
+    // Disable the guessed letter button to prevent repeated guesses
+    document.getElementById("button-" + guess).disabled = true;
 }
 
 function displayWord() {
@@ -45,24 +77,6 @@ function displayWord() {
         }
     }
 }
-
-function makeGuess(guess) {
-    // Check if guessed letter is in the word
-    if (wordToGuess.includes(guess)) {
-        // Correct guess
-        guessedLetters.push(guess);
-    } else {
-        // Wrong guess
-        wrongGuesses++;
-        updateHangmanImage(wrongGuesses);
-    }
-
-    displayWord();
-    checkGameOver();
-    // Disable the guessed letter button to prevent repeated guesses
-    document.getElementById("button-" + guess).disabled = true;
-}
-
 
 function checkGameOver() {
     if (wordToGuess.split("").every(letter => guessedLetters.includes(letter))) {
