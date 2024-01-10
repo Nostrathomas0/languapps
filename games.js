@@ -1,6 +1,6 @@
 // games.js
 
-const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "cauliflower", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"
+const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"
 ];
 let wordToGuess = "";
 let guessedLetters = [];
@@ -21,20 +21,13 @@ const hangmanImages = [
     '/images/hang/h10.png'
 ];
 
-
-function updateWrongGuessesDisplay() {
-    const wrongGuessesElement = document.getElementById('wrong-guesses-list');
-    if (wrongGuessesElement) {
-        wrongGuessesElement.textContent = wrongLetters.join(', ');
-    }
-}
-
 function updateHangmanImage(wrongGuesses) {
     console.log("Updating hangman image, wrong guesses:", wrongGuesses);
     const imageElement = document.getElementById('hangman-image');
     if (imageElement) {
+        let imageIndex = wrongGuesses < hangmanImages.length ? wrongGuesses : hangmanImages.length - 1;
         console.log("New image source:", hangmanImages[wrongGuesses]);
-        imageElement.src = hangmanImages[wrongGuesses];
+        imageElement.src = hangmanImages[imageIndex];
     } else {
         console.log("Hangman image element not found");
     }
@@ -46,7 +39,6 @@ function startGame() {
     wrongGuesses = 0;
     wrongLetters = [];
     updateHangmanImage(wrongGuesses);
-    updateWrongGuessesDisplay();
     displayWord();
 
     // Reset button styles
@@ -76,23 +68,13 @@ function makeGuess(guess) {
             wrongLetters.push(guess);
             wrongGuesses++; // Increment wrongGuesses
             updateHangmanImage(wrongGuesses);
-            updateWrongGuessesDisplay();
-        }
+            }
     }
     document.getElementById("button-" + guess).classList.add('guessed');
 
     checkGameOver();
     document.getElementById("button-" + guess).disabled = true; // Disable guessed letter button
 }
-
-function updateWrongGuessesDisplay() {
-    const wrongGuessesElement = document.getElementById('wrong-guesses-list');
-    if (wrongGuessesElement) {
-        wrongGuessesElement.textContent = wrongLetters.join(', ');
-    }
-}
-
-
 
 function displayWord() {
     const wordDisplay = document.getElementById("word-display");
@@ -120,10 +102,6 @@ function checkGameOver() {
     }
 }
 
-function playSound(soundFile) {
-    const audio = new Audio(soundFile);
-    audio.play();
-}
 
 document.addEventListener('DOMContentLoaded', function() {
 
