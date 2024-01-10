@@ -2310,3 +2310,35 @@ input, select, textarea {
 			}
 
 		}
+
+		#word-display, #guessed-letters-list {
+			font-size: 60px; /* Adjust size as needed */
+			font-weight: bold;
+		}
+		
+		#intro p {
+			color: black; /* Change text color to black */
+			font-size: 40px; /* Adjust size as needed */
+			font-family: 'FancyFont', cursive; /* Change font - replace 'FancyFont' with your actual font */
+		}
+		
+		#button-a, #button-b, #button-c, #button-d, #button-e, #button-f, #button-g,
+		#button-h, #button-i, #button-j, #button-k, #button-l, #button-m, #button-n,
+		#button-o, #button-p, #button-q, #button-r, #button-s, #button-t, #button-u,
+		#button-v, #button-w, #button-x, #button-y, #button-z {
+			font-size: 20px; /* Adjust the size as needed */
+			font-weight: bold; /* Makes the text bolder */
+		}
+		
+		#wrong-guesses {
+			color: black;
+			font-size: 40px;
+				}
+		
+		
+		.guessed {
+			background-color: darkgrey; /* or any other color */
+			color: white; /* optional, for text color */
+		}
+				
+				

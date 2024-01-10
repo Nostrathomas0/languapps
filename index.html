@@ -7,7 +7,7 @@
  | |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
  |____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 -->
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>LANGUAPPS</title>
@@ -43,15 +43,7 @@
 			}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
 			fbq('init', '348427750356175'); 
 			fbq('track', 'PageView');</script>
-			<noscript> 
-				<img height="1" width="1" alt="pixel" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1">
-			</noscript>
-		<!-- End Facebook Pixel Code -->
-
-		<noscript>
-			<link rel="stylesheet" href="assets/css/noscript.css" />
-		</noscript>
-	</head>
+		</head>
 	<body class="is-preload">
 
 		<!-- Header -->
@@ -59,10 +51,6 @@
 				<h1>Learn Language with applications</h1>
 				<nav>
 					<ul>
-						<a href="/services" target="_blank" rel="noopener noreferrer">TESOL</a>
-						<a href="/reviews" target="_blank" rel="noopener noreferrer">Reviews</a>
-						<a href="/pragmatics">Terms</a>
-						<a>  :page - site: </a>
 						<li><a href="#intro">Let's play</a></li>
 						<li><a href="#one">Languapps</a></li>
 						<li><a href="#two">and</a></li>
@@ -75,49 +63,49 @@
 		<!-- Intro -->
 			<section id="intro" class="main style1 dark fullscreen">
 				<div class="content">
+					<h2>Languapps</h2>
+					<p>Learn languages to open doors, meet people, find success and plan your future. Play this classroom game to get motivated. <br>Hint: fruits and vegetables. </p>
 					<header>  <!-- Hangman Game Elements -->
 						<div id="word-display"></div>
 						<div id="hangman-container" style="width: 300px; height: 300px; position: relative;">
-							<img id="hangman-image" src="/images/hang/h0.png" alt="Hangman">
-							<div id="guessed-letters">Guessed Letters: <span id="guessed-letters-list"></span></div>
-
+							<img id="hangman-image" src="/images/hang/h0.png" alt="hangman">
+							<div id="wrong-guesses">Guessed Letters: <span id="wrong-guesses-list"></span></div>
 						</div>
 						<button onclick="startGame()">Start New Game</button>
-					
-						<!-- Letters for User to Choose -->
 						<div id="letter-buttons">
-							<button id="button-A" onclick="makeGuess('A')">A</button>
-							<button id="button-B" onclick="makeGuess('B')">B</button>
-							<button id="button-C" onclick="makeGuess('C')">C</button>
-							<button id="button-D" onclick="makeGuess('D')">D</button>
-							<button id="button-E" onclick="makeGuess('E')">E</button>
-							<button id="button-F" onclick="makeGuess('F')">F</button>
-							<button id="button-G" onclick="makeGuess('G')">G</button>
-							<button id="button-H" onclick="makeGuess('H')">H</button>
-							<button id="button-I" onclick="makeGuess('I')">I</button>
-							<button id="button-J" onclick="makeGuess('J')">J</button>
-							<button id="button-K" onclick="makeGuess('K')">K</button>
-							<button id="button-L" onclick="makeGuess('L')">L</button>
-							<button id="button-M" onclick="makeGuess('M')">M</button>
-							<button id="button-N" onclick="makeGuess('N')">N</button>
-							<button id="button-O" onclick="makeGuess('O')">O</button>
-							<button id="button-P" onclick="makeGuess('P')">P</button>
-							<button id="button-Q" onclick="makeGuess('Q')">Q</button>
-							<button id="button-R" onclick="makeGuess('R')">R</button>
-							<button id="button-S" onclick="makeGuess('S')">S</button>
-							<button id="button-T" onclick="makeGuess('T')">T</button>
-							<button id="button-U" onclick="makeGuess('U')">U</button>
-							<button id="button-V" onclick="makeGuess('V')">V</button>
-							<button id="button-W" onclick="makeGuess('W')">W</button>
-							<button id="button-X" onclick="makeGuess('X')">X</button>
-							<button id="button-Y" onclick="makeGuess('Y')">Y</button>
-							<button id="button-Z" onclick="makeGuess('Z')">Z</button>
-							
+							<button id="button-a" onclick="makeGuess('a')">a</button>
+							<button id="button-b" onclick="makeGuess('b')">b</button>
+							<button id="button-c" onclick="makeGuess('c')">c</button>
+							<button id="button-d" onclick="makeGuess('d')">d</button>
+							<button id="button-e" onclick="makeGuess('e')">e</button>
+							<button id="button-f" onclick="makeGuess('f')">f</button>
+							<button id="button-g" onclick="makeGuess('g')">g</button>
+							<button id="button-h" onclick="makeGuess('h')">h</button>
+							<button id="button-i" onclick="makeGuess('i')">i</button>
+							<button id="button-j" onclick="makeGuess('j')">j</button>
+							<button id="button-k" onclick="makeGuess('k')">k</button>
+							<button id="button-l" onclick="makeGuess('l')">l</button>
+							<button id="button-m" onclick="makeGuess('m')">m</button>
+							<button id="button-n" onclick="makeGuess('n')">n</button>
+							<button id="button-o" onclick="makeGuess('o')">o</button>
+							<button id="button-p" onclick="makeGuess('p')">p</button>
+							<button id="button-q" onclick="makeGuess('q')">q</button>
+							<button id="button-r" onclick="makeGuess('r')">r</button>
+							<button id="button-s" onclick="makeGuess('s')">s</button>
+							<button id="button-t" onclick="makeGuess('t')">t</button>
+							<button id="button-u" onclick="makeGuess('u')">u</button>
+							<button id="button-v" onclick="makeGuess('v')">v</button>
+							<button id="button-w" onclick="makeGuess('w')">w</button>
+							<button id="button-x" onclick="makeGuess('x')">x</button>
+							<button id="button-y" onclick="makeGuess('y')">y</button>
+							<button id="button-z" onclick="makeGuess('z')">z</button>
+						</div>
 						
-										
-						<h2>Languapps</h2>
-				
 						
+						
+						<a href="/reviews" target="_blank" rel="noopener noreferrer">Reviews</a>
+						<a href="/pragmatics">Terms</a>
+						<a href="/services" target="_blank" rel="noopener noreferrer">TESOL</a>
 					</header>
 					<footer>
 						<a href="#one" class="button style2 down">More</a>
