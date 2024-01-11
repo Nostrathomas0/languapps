@@ -155,8 +155,10 @@
 
 					<!-- Gallery  -->
 						<div class="gallery">
-							<article class="from-left">
-								<a href="images/fulls/01.mp4" class="image fit"><img src="images/thumbs/01.jpg" title="5⭐ VIPKid rating" alt="" /></a>
+							<article class="from-right">
+								<a href="#videoModal" class="image fit" data-video="images/fulls/06.mp4">
+									<img src="images/thumbs/06.jpg" title="Singing and Clapping" alt="" />
+								</a>
 							</article>
 							<article class="from-right">
 								<a href="images/fulls/02.jpg" class="image fit"><img src="images/thumbs/02.jpg" title="We Chat & xiaohongshu" alt="" /></a>
@@ -227,6 +229,37 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-			<script src="games.js"></script>	
+			<script src="games.js"></script>
+			<div id="videoModal" class="modal">
+				<span class="close">&times;</span>
+				<video class="modal-content" id="videoContent">
+					<source src="" type="video/mp4">
+					Your browser does not support the video tag.
+				</video>
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						// Attach click event to gallery items
+						document.querySelectorAll('.gallery a').forEach(item => {
+							item.addEventListener('click', function(event) {
+								event.preventDefault();
+								var modal = document.getElementById('videoModal');
+								var videoSrc = this.getAttribute('data-video');
+								document.getElementById('videoContent').querySelector('source').src = videoSrc;
+								document.getElementById('videoContent').load();
+								modal.style.display = "block";
+							});
+						});
+				
+						// Close the modal
+						var span = document.getElementsByClassName("close")[0];
+						span.onclick = function() {
+							var modal = document.getElementById('videoModal');
+							modal.style.display = "none";
+							document.getElementById('videoContent').pause();
+						}
+					});
+				</script>	
+			</div>
+				
 	</body>
 </html>

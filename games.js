@@ -191,3 +191,13 @@ document.addEventListener('DOMContentLoaded', function() {
         generateRandomSentence(); // Call the function to generate and display the sentence
     });
 });
+document.querySelectorAll('.gallery a').forEach(item => {
+    item.addEventListener('click', function(event) {
+        event.preventDefault();
+        var modal = document.getElementById('videoModal');
+        var videoSrc = this.getAttribute('data-video');
+        document.getElementById('videoContent').querySelector('source').src = videoSrc;
+        document.getElementById('videoContent').load();
+        modal.style.display = "block";
+    });
+});
