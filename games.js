@@ -1,7 +1,9 @@
 // games.js
 
-const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"
-];
+// Section 1
+// Hangman Game
+
+const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
 let wordToGuess = "";
 let guessedLetters = [];
 let wrongGuesses = 0;
@@ -48,7 +50,6 @@ function startGame() {
         button.disabled = false;
     });
 }
-
 
 function makeGuess(guess) {
     console.log("Trying to disable button with ID:", "button-" + guess);
@@ -103,11 +104,9 @@ function checkGameOver() {
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
 
-startGame();
-});
-
+// Section 2
+// Random sentence generator
 document.getElementById('random').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevents the default form submission
     generateRandomSentence(); // Calls your function to generate a sentence
@@ -184,23 +183,10 @@ function generateRandomSentence() {
 const randomSentence = generateRandomSentence();
 document.getElementById('random-sentence').innerHTML = randomSentence;
 
-// DOMContentLoaded event listener
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('random').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting in the traditional way
-        generateRandomSentence(); // Call the function to generate and display the sentence
-    });
-});
-document.querySelectorAll('.gallery a').forEach(item => {
-    item.addEventListener('click', function(event) {
-        event.preventDefault();
-        var modal = document.getElementById('videoModal');
-        var videoSrc = this.getAttribute('data-video');
-        document.getElementById('videoContent').querySelector('source').src = videoSrc;
-        document.getElementById('videoContent').load();
-        modal.style.display = "block";
-    });
-});
+
+
+//Section 3 Cookies
+//Cookie setter
 function setCookie(name, value, days) {
     var expires = "";
     if (days) {
@@ -226,11 +212,25 @@ function eraseCookie(name) {
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    var modal = document.getElementById('cookie-consent-modal');
-    var acceptBtn = document.getElementById('accept-cookies');
-    var declineBtn = document.getElementById('decline-cookies');
-    var bodyContent = document.querySelector('.main-content');
+function setLanguagePreference(language) {
+    setCookie('userLanguage', language, 30); // Store the language preference
+    applyLanguageSettings(language); // Apply the language immediately
+}
+
+function setLanguagePreference(language) {
+    setCookie('userLanguage', language, 30); // Store the language preference for 30 days
+}
+
+function applyLanguageSettings(language) {
+    if (language === 'fr') {
+        // Apply French language settings
+    } else {
+        // Apply default language settings
+    }
+}
+
+
+
 
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
@@ -245,7 +245,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setCookie('cookieConsent', 'accepted', 30);
         modal.style.display = 'none';
         bodyContent.classList.remove('blur-background');
-        // Set essential cookies here if needed
+        // Load and apply language preference
+        var userLanguage = getCookie('userLanguage')
+        if (userLanguage) {
+            // Apply the language setting
+            applyLanguageSetting(userLanguage);
+        }
     });
 
     // Event listener for decline
@@ -255,4 +260,42 @@ document.addEventListener('DOMContentLoaded', function() {
         bodyContent.classList.remove('blur-background');
         // Actions to take on decline
     });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Start the hangman game
+    startGame();
+
+    // Set up the cookie consent modal
+    var modal = document.getElementById('cookie-consent-modal');
+    var acceptBtn = document.getElementById('accept-cookies');
+    var declineBtn = document.getElementById('decline-cookies');
+    var bodyContent = document.querySelector('.main-content');
+
+    // Check cookie consent status
+    if (!getCookie('cookieConsent')) {
+        modal.style.display = 'block';
+        bodyContent.classList.add('blur-background');
+    }
+
+    // Event listeners for accept and decline buttons
+    acceptBtn.addEventListener('click', function() {
+        setCookie('cookieConsent', 'accepted', 30);
+        modal.style.display = 'none';
+        bodyContent.classList.remove('blur-background');
+    });
+
+    declineBtn.addEventListener('click', function() {
+        setCookie('cookieConsent', 'declined', 30);
+        modal.style.display = 'none';
+        bodyContent.classList.remove('blur-background');
+    });
+
+    // Set up the random sentence generator form submission
+    document.getElementById('random').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting in the traditional way
+        generateRandomSentence(); // Call the function to generate and display the sentence
+    });
 });
+
+
