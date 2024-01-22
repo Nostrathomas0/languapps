@@ -201,3 +201,58 @@ document.querySelectorAll('.gallery a').forEach(item => {
         modal.style.display = "block";
     });
 });
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setDate(date.getDate() + days);
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {   
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('cookie-consent-modal');
+    var acceptBtn = document.getElementById('accept-cookies');
+    var declineBtn = document.getElementById('decline-cookies');
+    var bodyContent = document.querySelector('.main-content');
+
+    // Only show modal if cookie consent hasn't been given
+    console.log("Checking cookie consent status");
+    if (!getCookie('cookieConsent')) {
+        console.log("No cookie consent found, displaying modal");
+        modal.style.display = 'block';
+        bodyContent.classList.add('blur-background');
+    }
+
+    // Event listener for accept
+    acceptBtn.addEventListener('click', function() {
+        setCookie('cookieConsent', 'accepted', 30);
+        modal.style.display = 'none';
+        bodyContent.classList.remove('blur-background');
+        // Set essential cookies here if needed
+    });
+
+    // Event listener for decline
+    declineBtn.addEventListener('click', function() {
+        setCookie('cookieConsent', 'declined', 30);
+        modal.style.display = 'none';
+        bodyContent.classList.remove('blur-background');
+        // Actions to take on decline
+    });
+});

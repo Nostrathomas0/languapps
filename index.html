@@ -45,7 +45,7 @@
 			fbq('track', 'PageView');</script>
 		</head>
 	<body class="is-preload">
-
+		
 		<!-- Header -->
 			<header id="header">
 				<h1>Learn Language with applications</h1>
@@ -59,7 +59,7 @@
 						</ul>
 				</nav>
 			</header>
-
+		<div class="main-content">
 		<!-- Intro -->
 			<section id="intro" class="main style1 dark fullscreen">
 				<div class="content">
@@ -139,7 +139,7 @@
 						<h2>I Am</h2>
 					</header>
 					<p>a reporter and a code user who teachs English abroad. I provide learning tasks as a web developer and an applied linguist. This website's my work. This is my <a href="https://nostrathomas0.github.io/Web_CV" target="_blank" rel="noopener noreferrer">Curriculum Vitae</a></p> 
-					<p>Get us Occulus and we'll be nerds in the Metaverse learning ESP  <a href="https://www.facebook.com/ESLforInternats/shop/?referral_code=page_shop_tab&preview=1" target="_blank" rel="noopener noreferrer"></p>
+					<p>Get us Occulus and we'll be nerds in the Metaverse learning ESP  <a href="https://www.facebook.com/ESLforInternats/shop/?referral_code=page_shop_tab&preview=1" target="_blank" rel="noopener noreferrer">English Plus </a></p>
 				</div>
 				<a href="#work" class="button style2 down anchored">Next</a>
 			</section>
@@ -149,31 +149,41 @@
 				<div class="content">
 					<header>
 						<h2>I Work</h2>
-						<p>with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses. Check our expanding <a href="/services" alt="Book">list of courses.</a></p>
+						<p>with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses. Check our expanding <a href="/services">list of courses.</a></p>
 						<p><a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL" target="_blank" rel="noopener noreferrer">Book Thomas</a></p>
 					</header>
 
 					<!-- Gallery  -->
 						<div class="gallery">
-							<article class="from-right">
-								<a href="#videoModal" class="image fit" data-video="images/fulls/06.mp4">
-									<img src="images/thumbs/06.jpg" title="Singing and Clapping" alt="" />
+							<article class="from-left">
+								<a href="#videoModal" class="image fit" data-video="images/fulls/01.mp4">
+									<img src="images/thumbs/01.jpg" title="Online English Lessons" alt="" />
 								</a>
 							</article>
 							<article class="from-right">
-								<a href="images/fulls/02.jpg" class="image fit"><img src="images/thumbs/02.jpg" title="We Chat & xiaohongshu" alt="" /></a>
+								<a href="images/fulls/02.jpg" class="image fit">
+									<img src="images/thumbs/02.jpg" title="We Chat & xiaohongshu" alt="" />
+								</a>
 							</article>
 							<article class="from-left">
-								<a href="images/fulls/03.jpg" class="image fit"><img src="images/thumbs/03.jpg" title="Stop Animation" alt="" /></a>
+								<a href="images/fulls/03.jpg" class="image fit">
+									<img src="images/thumbs/03.jpg" title="Stop Animation" alt="">
+								</a>
 							</article>
 							<article class="from-right">
-								<a href="images/fulls/04.jpg" class="image fit"><img src="images/thumbs/04.jpg" title="Bilingual Development" alt="" /></a>
+								<a href="images/fulls/04.jpg" class="image fit">
+									<img src="images/thumbs/04.jpg" title="Bilingual Development" alt="" />
+								</a>
 							</article>
 							<article class="from-left">
-								<a href="images/fulls/05.jpg" class="image fit"><img src="images/thumbs/05.jpg" title="Exam Preperation" alt="" /></a>
+								<a href="images/fulls/05.jpg" class="image fit">
+									<img src="images/thumbs/05.jpg" title="Exam Preperation" alt="" />
+								</a>
 							</article>
 							<article class="from-right">
-								<a href="images/fulls/06.mp4" class="image fit"><img src="images/thumbs/06.jpg" title="Singing and Clapping" alt="" /></a>
+								<a href="images/fulls/06.jpg" class="image fit">
+									<img src="images/thumbs/06.jpg" title="Singing and Clapping" alt="" />
+								</a>
 							</article>
 						</div>
 
@@ -217,20 +227,20 @@
 					<ul class="menu">
 						<li>&copy; Languapps</li><li>Design credits: <a href="https://html5up.net">HTML5 UP</a></li>
 					</ul>
-
+				
 			</footer>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.poptrox.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-			<script src="games.js"></script>
-			<div id="videoModal" class="modal">
+			</div>
+		
+				<div id="cookie-consent-modal" class="cookie-modal">
+					<div class="modal-content">
+						<h2>Cookie Consent</h2>
+						<p>We use cookies to improve your experience on our site. By continuing, you agree to our use of cookies.</p>
+						<button id="accept-cookies">Accept</button>
+						<button id="decline-cookies">Decline</button>
+					</div>
+				</div>
+			
+			<div id="videoModal" class="video-modal">
 				<span class="close">&times;</span>
 				<video class="modal-content" id="videoContent">
 					<source src="" type="video/mp4">
@@ -259,7 +269,18 @@
 						}
 					});
 				</script>	
-			</div>
-				
+			</div>	
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="games.js"></script>
+			
+						
 	</body>
 </html>
