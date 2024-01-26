@@ -291,40 +291,52 @@ function applyLanguageSettings(language) {
     });
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Start the hangman game
-    startGame();
-
-    // Set up the cookie consent modal
-    var modal = document.getElementById('cookie-consent-modal');
-    var acceptBtn = document.getElementById('accept-cookies');
-    var declineBtn = document.getElementById('decline-cookies');
-    var bodyContent = document.querySelector('.main-content');
-
-    // Check cookie consent status
-    if (!getCookie('cookieConsent')) {
-        modal.style.display = 'block';
-        bodyContent.classList.add('blur-background');
-    }
-
-    // Event listeners for accept and decline buttons
-    acceptBtn.addEventListener('click', function() {
-        setCookie('cookieConsent', 'accepted', 30);
-        modal.style.display = 'none';
-        bodyContent.classList.remove('blur-background');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Start the hangman game
+        startGame();
+    
+        // Set up the cookie consent modal
+        var modal = document.getElementById('cookie-consent-modal');
+        var acceptBtn = document.getElementById('accept-cookies');
+        var declineBtn = document.getElementById('decline-cookies');
+        var bodyContent = document.querySelector('.main-content');
+        var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    
+        // Check cookie consent status
+        if (!getCookie('cookieConsent')) {
+            modal.style.display = 'block';
+            bodyContent.classList.add('blur-background');
+        }
+    
+        // Event listeners for accept and decline buttons
+        acceptBtn.addEventListener('click', function() {
+            setCookie('cookieConsent', 'accepted', 30);
+            modal.style.display = 'none';
+            bodyContent.classList.remove('blur-background');
+        });
+    
+        declineBtn.addEventListener('click', function() {
+            setCookie('cookieConsent', 'declined', 30);
+            modal.style.display = 'none';
+            bodyContent.classList.remove('blur-background');
+        });
+    
+        // Setup event listeners for letter buttons
+        letters.forEach(function(letter) {
+            var button = document.getElementById('button-' + letter);
+            if (button) {
+                button.addEventListener('click', function() {
+                    makeGuess(letter);
+                });
+            }
+        });
+    
+        // Set up the random sentence generator form submission
+        document.getElementById('random').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting in the traditional way
+            generateRandomSentence(); // Call the function to generate and display the sentence
+        });
+    
+        // Additional code if needed
     });
-
-    declineBtn.addEventListener('click', function() {
-        setCookie('cookieConsent', 'declined', 30);
-        modal.style.display = 'none';
-        bodyContent.classList.remove('blur-background');
-    });
-
-    // Set up the random sentence generator form submission
-    document.getElementById('random').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting in the traditional way
-        generateRandomSentence(); // Call the function to generate and display the sentence
-    });
-});
-
-
+    
