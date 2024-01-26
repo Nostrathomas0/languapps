@@ -1,6 +1,6 @@
 Big Picture | HTML5 UP
 Languapps is Internet for Internats
-Nostrathomas@ | nostrathomas@languapps.com
+Nostrathomas@ | thomas@languapps.com
 Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 
 Credits to the single page responsive site template cloned from aj at HTML5UP.
@@ -116,27 +116,7 @@ Instructions:
      	fontawesome.io
 
 
-	Other Stuff:
-
-		- If you don't like the way images are tinted, either change "images/overlay.png"
-		  to something else, or remove all references to it from css/style.css.
-
-
 Credits:
-
-	Demo Images:
-		Felicia Simion (ineedchemicalx.deviantart.com)
-			"The Swallow Song"
-			"Mind is a clear stage"
-			"The Anonymous Red"
-			"The sparkling shell"
-			"Carry on"
-
-		Michael Domaradzki (md.photomerchant.net)
-			"Vine Country"
-			"Airchitecture II"
-			"Bent IX"
-			"Air Lounge"
 
 	Icons:
 		Font Awesome (fontawesome.io)
