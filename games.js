@@ -246,10 +246,6 @@ function setLanguagePreference(language) {
     applyLanguageSettings(language); // Apply the language immediately
 }
 
-function setLanguagePreference(language) {
-    setCookie('userLanguage', language, 30); // Store the language preference for 30 days
-}
-
 function applyLanguageSettings(language) {
     if (language === 'fr') {
         // Apply French language settings
@@ -259,7 +255,17 @@ function applyLanguageSettings(language) {
 }
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Start the hangman game
+    startGame();
 
+    // Set up the cookie consent modal
+    var modal = document.getElementById('cookie-consent-modal');
+    var acceptBtn = document.getElementById('accept-cookies');
+    var declineBtn = document.getElementById('decline-cookies');
+    var bodyContent = document.querySelector('.main-content');
+    var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    var userLanguage = getCookie('userLanguage')
 
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
@@ -269,74 +275,39 @@ function applyLanguageSettings(language) {
         bodyContent.classList.add('blur-background');
     }
 
-    // Event listener for accept
+    // Event listeners for accept and decline buttons
     acceptBtn.addEventListener('click', function() {
         setCookie('cookieConsent', 'accepted', 30);
         modal.style.display = 'none';
         bodyContent.classList.remove('blur-background');
-        // Load and apply language preference
-        var userLanguage = getCookie('userLanguage')
         if (userLanguage) {
-            // Apply the language setting
-            applyLanguageSetting(userLanguage);
+            // Apply the langage settings
+            applyLanguageSettings(userLanguage);
         }
     });
 
-    // Event listener for decline
     declineBtn.addEventListener('click', function() {
         setCookie('cookieConsent', 'declined', 30);
         modal.style.display = 'none';
         bodyContent.classList.remove('blur-background');
-        // Actions to take on decline
     });
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Start the hangman game
-        startGame();
-    
-        // Set up the cookie consent modal
-        var modal = document.getElementById('cookie-consent-modal');
-        var acceptBtn = document.getElementById('accept-cookies');
-        var declineBtn = document.getElementById('decline-cookies');
-        var bodyContent = document.querySelector('.main-content');
-        var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-    
-        // Check cookie consent status
-        if (!getCookie('cookieConsent')) {
-            modal.style.display = 'block';
-            bodyContent.classList.add('blur-background');
+   
+    // Setup event listeners for letter buttons
+    letters.forEach(function(letter) {
+        var button = document.getElementById('button-' + letter);
+        if (button) {
+            button.addEventListener('click', function() {
+                makeGuess(letter);
+            });
         }
-    
-        // Event listeners for accept and decline buttons
-        acceptBtn.addEventListener('click', function() {
-            setCookie('cookieConsent', 'accepted', 30);
-            modal.style.display = 'none';
-            bodyContent.classList.remove('blur-background');
-        });
-    
-        declineBtn.addEventListener('click', function() {
-            setCookie('cookieConsent', 'declined', 30);
-            modal.style.display = 'none';
-            bodyContent.classList.remove('blur-background');
-        });
-    
-        // Setup event listeners for letter buttons
-        letters.forEach(function(letter) {
-            var button = document.getElementById('button-' + letter);
-            if (button) {
-                button.addEventListener('click', function() {
-                    makeGuess(letter);
-                });
-            }
-        });
-    
-        // Set up the random sentence generator form submission
-        document.getElementById('random').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the form from submitting in the traditional way
-            generateRandomSentence(); // Call the function to generate and display the sentence
-        });
-    
-        // Additional code if needed
     });
+
+    // Set up the random sentence generator form submission
+    document.getElementById('random').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting in the traditional way
+        generateRandomSentence(); // Call the function to generate and display the sentence
+    });
+
+    // Additional code if needed
+});
     
