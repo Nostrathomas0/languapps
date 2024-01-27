@@ -266,7 +266,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var bodyContent = document.querySelector('.main-content');
     var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     var userLanguage = getCookie('userLanguage')
-
+    var languageDropdown = document.getElementById('language-dropdown');
+    
+    
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
     if (!getCookie('cookieConsent')) {
@@ -292,6 +294,11 @@ document.addEventListener('DOMContentLoaded', function() {
         bodyContent.classList.remove('blur-background');
     });
    
+    if (languageDropdown) {
+        languageDropdown.addEventListener('change', function() {
+            setLanguagePreference(this.value);
+        });
+    }
     // Setup event listeners for letter buttons
     letters.forEach(function(letter) {
         var button = document.getElementById('button-' + letter);
