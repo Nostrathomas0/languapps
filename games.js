@@ -28,6 +28,25 @@
 			}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
 			fbq('init', '348427750356175'); 
 			fbq('track', 'PageView');
+// Section 1/2
+// Language Toggle
+var translations = {
+    statement: {
+        fr: "Apprenez des langues pour ouvrir des portes, rencontrer des gens, réussir et planifier votre avenir. Jouez à ce jeu en classe pour vous motiver. Astuce : mots anglais pour les fruits et légumes.",
+        zh: "学习语言可以打开大门、结识新朋友、找到成功并规划您的未来。 玩这个课堂游戏可以激发动力。 <br>提示：水果和蔬菜的英语单词。"
+    }
+    // Add more translations here
+};
+
+function switchLanguage(lang) {
+    document.querySelectorAll('[data-translate]').forEach(function(elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][lang]) {
+            elem.textContent = translations[key][lang];
+        }
+    });
+}
+
 
 // Section 1
 // Hangman Game
@@ -267,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     var userLanguage = getCookie('userLanguage')
     var languageDropdown = document.getElementById('language-dropdown');
-    
     
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
