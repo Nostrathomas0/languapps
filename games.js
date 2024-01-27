@@ -1,33 +1,34 @@
 // games.js
 // Section 0
 // Gtag & FBpixel 
-	
-		
-		  window.dataLayer = window.dataLayer || [];
-		  function gtag(){dataLayer.push(arguments);}
-		  gtag('js', new Date());
-		  gtag('config', 'UA-171464578-1');
-		
-		
-		
-		
-			!function(f,b,e,v,n,t,s){
-				if(f.fbq)return;
-				n=f.fbq=function(){
-					n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)
-				};
-				if(!f._fbq)f._fbq=n;n.push=n;
-				n.loaded=!0;
-				n.version='2.0';
-				n.queue=[];
-				t=b.createElement(e);
-				t.async=!0;
-				t.src=v;
-				s=b.getElementsByTagName(e)[0];
-				s.parentNode.insertBefore(t,s)
-			}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
-			fbq('init', '348427750356175'); 
-			fbq('track', 'PageView');
+
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-171464578-1');
+
+
+
+
+!function(f,b,e,v,n,t,s){
+    if(f.fbq)return;
+    n=f.fbq=function(){
+        n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)
+    };
+    if(!f._fbq)f._fbq=n;n.push=n;
+    n.loaded=!0;
+    n.version='2.0';
+    n.queue=[];
+    t=b.createElement(e);
+    t.async=!0;
+    t.src=v;
+    s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)
+}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
+fbq('init', '348427750356175'); 
+fbq('track', 'PageView');
+
 // Section 1/2
 // Language Toggle
 var translations = {
@@ -266,12 +267,14 @@ function setLanguagePreference(language) {
 }
 
 function applyLanguageSettings(language) {
-    if (language === 'fr') {
-        // Apply French language settings
-    } else {
-        // Apply default language settings
-    }
+    document.querySelectorAll('[data-translate]').forEach(function(elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][language]) {
+            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
+        }
+    });
 }
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
