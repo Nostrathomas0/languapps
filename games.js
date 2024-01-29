@@ -35,7 +35,12 @@ var translations = {
     statement: {
         fr: "Apprenez des langues pour ouvrir des portes, rencontrer des gens, réussir et planifier votre avenir. Jouez à ce jeu en classe pour vous motiver. Astuce : mots anglais pour les fruits et légumes.",
         zh: "学习语言可以打开大门、结识新朋友、找到成功并规划您的未来。 玩这个课堂游戏可以激发动力。 <br>提示：水果和蔬菜的英语单词。"
+    },
+    does: {
+        fr: "Édition numérique<br>Logiciel de révision<br>Diffusion en direct<br>Indépendant<br>Concours d'écriture<br>Spectacles de marionnettes<br>Phrases aléatoires !",
+        zh: "数字出版<br>评论软件<br>直播<br>独立<br>写作比赛<br>木偶剧<br>随机英语句子！"
     }
+
     // Add more translations here
 };
 
@@ -289,7 +294,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     var userLanguage = getCookie('userLanguage')
     var languageDropdown = document.getElementById('language-dropdown');
-    
+    var hamburger = document.querySelector('.hamburger-menu');
+    var navUL = document.querySelector('nav ul');
+
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
     if (!getCookie('cookieConsent')) {
@@ -320,6 +327,9 @@ document.addEventListener('DOMContentLoaded', function() {
             setLanguagePreference(this.value);
         });
     }
+    hamburger.addEventListener('click', function() {
+        navUL.classList.toggle('active');
+    });
     // Setup event listeners for letter buttons
     letters.forEach(function(letter) {
         var button = document.getElementById('button-' + letter);
@@ -338,4 +348,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Additional code if needed
 });
-    

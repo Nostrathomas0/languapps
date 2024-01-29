@@ -2335,6 +2335,9 @@ input, select, textarea {
 			font-size: 40px;
 				}
 		
+		#language-dropdown {
+			min-width: 95px;
+		}
 		
 		.guessed {
 			background-color: darkgrey; /* or any other color */
@@ -2392,3 +2395,60 @@ input, select, textarea {
 		.blur-background .main-content{
 			filter: blur(5px);
 		}			
+
+		/* Hamburger Menu Button - Visible only on mobile */
+		.hamburger-menu {
+			display:none;
+			position: absolute; /* Position the menu absolutely within the header */
+			top: 50%; /* Center it vertically */
+			right: 15px; /* Place it towards the right */
+			display: inline-block;
+			cursor: pointer;
+			background-color: white; /* White background */
+			border: none; /* No border */
+			padding: 5px; /* Smaller size */
+			margin: 3px; /* Adjust as needed for positioning */
+		}
+		.hamburger-menu div {
+			width: 20px; /* Width of bars */
+			height: 2px; /* Height of bars */
+			background-color: black; /* Black bars */
+			margin: 5px 0; /* Space between bars */
+			transition: 0.4s; /* Smooth transition for animations */
+		}
+		  
+		@media screen and (max-width: 480px) {
+			#intro .content header #hangman-container {
+				width: 100px; /* Adjust the width as needed */
+				height: 100px; /* Adjust the height as needed */
+				margin: 0 auto; /* Center the container */
+			}	
+		
+			#intro .content p[data-translate="statement"] {
+				font-size: 16px; /* Adjust the font size for mobile screens */
+				padding: 0 10px; /* Add some padding if needed for better spacing */
+				text-align: center; /* Center the text if it fits your design better */
+			}
+		
+			#letter-buttons button {
+				font-size: 14px; /* Smaller font size */
+				padding: 5px 10px; /* Smaller padding */
+				margin: 5px; /* Space out buttons */
+			}
+		
+			#word-display {
+				font-size: 24px;
+			}
+			.hamburger-menu {
+				display: inline-block; /* Show button on mobile */
+			}
+		
+			nav ul {
+			display: none; /* Hide navigation menu by default on mobile */
+			}
+		
+			nav ul.active {
+			display: block; /* Show menu when active */
+			}
+		}
+		
