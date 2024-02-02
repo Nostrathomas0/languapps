@@ -2310,11 +2310,6 @@ input, select, textarea {
 			}
 
 		}
-
-		#word-display, #guessed-letters-list {
-			font-size: 60px; /* Adjust size as needed */
-			font-weight: bold;
-		}
 		
 		#intro p {
 			color: black; /* Change text color to black */
@@ -2396,6 +2391,11 @@ input, select, textarea {
 			filter: blur(5px);
 		}			
 
+		#hangman-container {
+			width: 300px;
+			height: 300px;
+		}
+
 		/* Hamburger Menu Button - Visible only on mobile */
 		.hamburger-menu {
 			display:none;
@@ -2418,12 +2418,17 @@ input, select, textarea {
 		}
 		  
 		@media screen and (max-width: 480px) {
-			#intro .content header #hangman-container {
+			#hangman-container {
 				width: 100px; /* Adjust the width as needed */
 				height: 100px; /* Adjust the height as needed */
 				margin: 0 auto; /* Center the container */
 			}	
 		
+			#hangman-image {
+				width: 100%; /* Ensure the image fills the container */
+				height: auto; /* Maintain aspect ratio */
+			}
+			
 			#intro .content p[data-translate="statement"] {
 				font-size: 16px; /* Adjust the font size for mobile screens */
 				padding: 0 10px; /* Add some padding if needed for better spacing */
