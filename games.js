@@ -296,7 +296,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var languageDropdown = document.getElementById('language-dropdown');
     var hamburger = document.querySelector('.hamburger-menu');
     var navUL = document.querySelector('nav ul');
-
+    var startGameButton = document.getElementById('start-game');
+    
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
     if (!getCookie('cookieConsent')) {
@@ -330,6 +331,12 @@ document.addEventListener('DOMContentLoaded', function() {
     hamburger.addEventListener('click', function() {
         navUL.classList.toggle('active');
     });
+
+    // Start Game button 
+    if (startGameButton) {
+        startGameButton.addEventListener('click', startGame);
+    }
+    
     // Setup event listeners for letter buttons
     letters.forEach(function(letter) {
         var button = document.getElementById('button-' + letter);
