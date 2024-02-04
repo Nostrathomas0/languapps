@@ -2295,166 +2295,186 @@ input, select, textarea {
 			transform: translateY(100%);
 		}
 
-		@media screen and (max-width: 736px) {
+@media screen and (max-width: 736px) {
 
-			#contact .box {
-				padding: 1.5em 1.5em 2em 1.5em;
-			}
+	#contact .box {
+		padding: 1.5em 1.5em 2em 1.5em;
+	}
 
-		}
+}
 
-		@media screen and (max-width: 480px) {
+@media screen and (max-width: 480px) {
 
-			#contact .box {
-				padding: 1em 1em 2em 1em;
-			}
+	#contact .box {
+		padding: 1em 1em 2em 1em;
+	}
 
-		}
-		
-		#intro p {
-			color: black; /* Change text color to black */
-			font-size: 40px; /* Adjust size as needed */
-			font-family: 'FancyFont', cursive; /* Change font - replace 'FancyFont' with your actual font */
-		}
-		
-		#button-a, #button-b, #button-c, #button-d, #button-e, #button-f, #button-g,
-		#button-h, #button-i, #button-j, #button-k, #button-l, #button-m, #button-n,
-		#button-o, #button-p, #button-q, #button-r, #button-s, #button-t, #button-u,
-		#button-v, #button-w, #button-x, #button-y, #button-z {
-			font-size: 20px; /* Adjust the size as needed */
-			font-weight: bold; /* Makes the text bolder */
-		}
-		
-		#wrong-guesses {
-			color: black;
-			font-size: 40px;
-				}
-		
-		#language-dropdown {
-			min-width: 95px;
-		}
-		
-		.guessed {
-			background-color: darkgrey; /* or any other color */
-			color: white; /* optional, for text color */
-		}
-		.video-modal {
-			display: none;
-			position: fixed;
-			z-index: 1000;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgb(0,0,0);
-			background-color: rgba(0,0,0,0.9);
-		}
-		
-		.modal-content {
-			margin: auto;
-			display: block;
-			width: 80%;
-			max-width: 700px;
-		}
-		
-		.close {
-			position: absolute;
-			top: 15px;
-			right: 35px;
-			color: #f1f1f1;
-			font-size: 40px;
-			font-weight: bold;
-			cursor: pointer;
-		}
- 		
-		.cookie-modal {
-			display: none;
-			position: fixed;
-			z-index: 1;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: rgba(0,0,0,0.4); /* Black with opacity */
-		}
-		.modal-content {
-			margin: 15% auto;
-			padding: 20px;
-			border: 1px solid #888;
-			width: 80%;
-			box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-			text-align: center;
-		}
-		.blur-background .main-content{
-			filter: blur(5px);
-		}			
+}
 
-		#hangman-container {
-			width: 300px;
-			height: 300px;
+#intro p {
+	color: black; /* Change text color to black */
+	font-size: 40px; /* Adjust size as needed */
+	font-family: 'FancyFont', cursive; /* Change font - replace 'FancyFont' with your actual font */
+}
+
+#button-a, #button-b, #button-c, #button-d, #button-e, #button-f, #button-g,
+#button-h, #button-i, #button-j, #button-k, #button-l, #button-m, #button-n,
+#button-o, #button-p, #button-q, #button-r, #button-s, #button-t, #button-u,
+#button-v, #button-w, #button-x, #button-y, #button-z {
+	font-size: 20px; /* Adjust the size as needed */
+	font-weight: bold; /* Makes the text bolder */
+}
+
+#wrong-guesses {
+	color: black;
+	font-size: 40px;
 		}
 
-		/* Hamburger Menu Button - Visible only on mobile */
-		.hamburger-menu {
-			display:none;
-			position: absolute; /* Position the menu absolutely within the header */
-			top: 50%; /* Center it vertically */
-			right: 15px; /* Place it towards the right */
-			display: inline-block;
-			cursor: pointer;
-			background-color: white; /* White background */
-			border: none; /* No border */
-			padding: 5px; /* Smaller size */
-			margin: 3px; /* Adjust as needed for positioning */
-		}
-		.hamburger-menu div {
-			width: 20px; /* Width of bars */
-			height: 2px; /* Height of bars */
-			background-color: black; /* Black bars */
-			margin: 5px 0; /* Space between bars */
-			transition: 0.4s; /* Smooth transition for animations */
-		}
-		  
-		@media screen and (max-width: 480px) {
-			#hangman-container {
-				width: 100px; /* Adjust the width as needed */
-				height: 100px; /* Adjust the height as needed */
-				margin: 0 auto; /* Center the container */
-				position: relative;
-			}	
-		
-			#hangman-image {
-				width: 100%; /* Ensure the image fills the container */
-				height: auto; /* Maintain aspect ratio */
-			}
-			
-			#intro .content p[data-translate="statement"] {
-				font-size: 16px; /* Adjust the font size for mobile screens */
-				padding: 0 10px; /* Add some padding if needed for better spacing */
-				text-align: center; /* Center the text if it fits your design better */
-			}
-		
-			#letter-buttons button {
-				font-size: 14px; /* Smaller font size */
-				padding: 5px 10px; /* Smaller padding */
-				margin: 5px; /* Space out buttons */
-			}
-		
-			#word-display {
-				font-size: 24px;
-			}
-			.hamburger-menu {
-				display: inline-block; /* Show button on mobile */
-			}
-		
-			nav ul {
-			display: none; /* Hide navigation menu by default on mobile */
-			}
-		
-			nav ul.active {
-			display: block; /* Show menu when active */
-			}
-		}
+#language-dropdown {
+	min-width: 95px;
+}
+
+.guessed {
+	background-color: darkgrey; /* or any other color */
+	color: white; /* optional, for text color */
+}
+.video-modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+	margin: auto;
+	display: block;
+	width: 80%;
+	max-width: 700px;
+}
+
+.close {
+	position: absolute;
+	top: 15px;
+	right: 35px;
+	color: #f1f1f1;
+	font-size: 40px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.cookie-modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: #FFFFFF;
+}
+.modal-content {
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	text-align: center;
+}
+.blur-background .main-content{
+	filter: blur(5px);
+}			
+
+#hangman-container {
+	width: 300px;
+	height: 300px;
+}
+
+/* Hamburger Menu Button - Visible only on mobile */
+.hamburger-menu {
+	display:none;
+	position: absolute; /* Position the menu absolutely within the header */
+	top: 50%; /* Center it vertically */
+	right: 15px; /* Place it towards the right */
+	display: inline-block;
+	cursor: pointer;
+	background-color: white; /* White background */
+	border: none; /* No border */
+	padding: 5px; /* Smaller size */
+	margin: 3px; /* Adjust as needed for positioning */
+}
+.hamburger-menu div {
+	width: 20px; /* Width of bars */
+	height: 2px; /* Height of bars */
+	background-color: black; /* Black bars */
+	margin: 5px 0; /* Space between bars */
+	transition: 0.4s; /* Smooth transition for animations */
+}
+	
+@media screen and (max-width: 480px) {
+	#hangman-container {
+		width: 100px; /* Adjust the width as needed */
+		height: 100px; /* Adjust the height as needed */
+		margin: 0 auto; /* Center the container */
+		position: relative;
+	}	
+
+	#hangman-image {
+		width: 100%; /* Ensure the image fills the container */
+		height: auto; /* Maintain aspect ratio */
+	}
+	
+	#intro .content p[data-translate="statement"] {
+		font-size: 16px; /* Adjust the font size for mobile screens */
+		padding: 0 10px; /* Add some padding if needed for better spacing */
+		text-align: center; /* Center the text if it fits your design better */
+	}
+
+	#letter-buttons button {
+		font-size: 14px; /* Smaller font size */
+		padding: 5px 10px; /* Smaller padding */
+		margin: 5px; /* Space out buttons */
+	}
+
+	#word-display {
+		font-size: 24px;
+	}
+	.hamburger-menu {
+		display: inline-block; /* Show button on mobile */
+	}
+
+	nav ul {
+	display: none; /* Hide navigation menu by default on mobile */
+	}
+
+	nav ul.active {
+	display: block; /* Show menu when active */
+	}
+}
+
+@media screen and (min-width: 1024px) {
+    #navigation {
+        display: block !important; /* Override any previous display property */
+    }
+    .hamburger-menu {
+        display: none; /* Hide the hamburger menu on larger screens */
+    }
+}
+
+
+#navigation {
+    display: none;
+    /* Other styling */
+}
+
+#navigation.active {
+    display: block; /* or 'flex', depending on your layout */
+}
+
 		

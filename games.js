@@ -355,3 +355,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Additional code if needed
 });
+
+$(document).ready(function() {
+    $('#hamburger-toggle').click(function() {
+        $('#navigation').toggleClass('active');
+    });
+});
