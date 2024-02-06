@@ -39,7 +39,12 @@ var translations = {
     does: {
         fr: "Édition numérique<br>Logiciel de révision<br>Diffusion en direct<br>Indépendant<br>Concours d'écriture<br>Spectacles de marionnettes<br>Phrases aléatoires !",
         zh: "数字出版<br>评论软件<br>直播<br>独立<br>写作比赛<br>木偶剧<br>随机英语句子！"
+    },
+    is: {
+        fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
+        zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
     }
+
 
     // Add more translations here
 };
@@ -49,6 +54,15 @@ function switchLanguage(lang) {
         var key = elem.getAttribute('data-translate');
         if (translations[key] && translations[key][lang]) {
             elem.textContent = translations[key][lang];
+        }
+    });
+}
+
+function applyLanguageSettings(language) {
+    document.querySelectorAll('[data-translate]').forEach(function(elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][language]) {
+            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
         }
     });
 }
@@ -271,14 +285,6 @@ function setLanguagePreference(language) {
     applyLanguageSettings(language); // Apply the language immediately
 }
 
-function applyLanguageSettings(language) {
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
-        }
-    });
-}
 
 
 
