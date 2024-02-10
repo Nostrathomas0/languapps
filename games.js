@@ -29,21 +29,27 @@ gtag('config', 'UA-171464578-1');
 fbq('init', '348427750356175'); 
 fbq('track', 'PageView');
 
-// Firebase Initialization (pseudo-code, replace with actual Firebase setup)
+// Firebase Initialization 
 function firebaseInit() {
     // Your Firebase configuration
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        apiKey: "AIzaSyA_bq5-hmAlNbK-2ZgHSFl0Iew4uphF_Eo",
+        authDomain: "languapps.firebaseapp.com",
+        projectId: "languapps",
+        storageBucket: "languapps.appspot.com",
+        messagingSenderId: "866735367707",
+        appId: "1:866735367707:web:6154b4ab63fcab0272fabe",
+        measurementId: "G-MCZY61SSMM"
       // other config
     };
   
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    window.db = firebase.firestore();
   }
   
-
+// Call firebaseInit to initialize Firebase
+firebaseInit();
 
 // Section 1/2
 // Language Toggle
@@ -301,13 +307,28 @@ function setLanguagePreference(language) {
     applyLanguageSettings(language); // Apply the language immediately
 }
 
-
+// Section 4 Firebase Blog
+async function loadBlogPosts() {
+    const blogSection = document.getElementById('blog-posts');
+    const querySnapshot = await window.db.collection("blogPosts").get();
+    querySnapshot.forEach((doc) => {
+      const post = doc.data();
+      const postElement = document.createElement('div');
+      postElement.classList.add('blog-post');
+      postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+      blogSection.appendChild(postElement);
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadBlogPosts);
+  
 
 
 document.addEventListener('DOMContentLoaded', function() {
     // Start the hangman game
     startGame();
-
+    // Blog load 
+    loadBlogPosts();
     // Set up the cookie consent modal
     var modal = document.getElementById('cookie-consent-modal');
     var acceptBtn = document.getElementById('accept-cookies');
