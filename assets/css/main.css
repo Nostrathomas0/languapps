@@ -2078,6 +2078,41 @@ input, select, textarea {
 			background-attachment: scroll !important;
 		}
 
+
+/* Blog Section Styling */
+#blog {
+	margin: 2em 0;
+	padding: 2em;
+	background: #f5f6f7; /* Light grey background for contrast */
+	border-radius: 8px; /* Rounded corners */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Individual Blog Post Styling */
+.blog-post {
+	margin-bottom: 2em; /* Space between blog posts */
+	padding: 1em;
+	background: #ffffff; /* White background for each post */
+	border: 1px solid #e5e6e7; /* Subtle border */
+	border-radius: 4px; /* Slightly rounded corners for each post */
+}
+
+.blog-post:last-child {
+	margin-bottom: 0; /* Remove margin from the last post */
+}
+
+.blog-post h3 {
+	margin-top: 0; /* Remove top margin from post titles for better spacing */
+	color: #39454b; /* Dark grey color for titles */
+	font-size: 1.5em; /* Slightly larger font size for titles */
+}
+
+.blog-post p {
+	margin-bottom: 0; /* Remove bottom margin from last paragraph in each post */
+	color: #39454b; /* Dark grey color for text, ensuring readability */
+	line-height: 1.6; /* Improved line spacing for readability */
+}
+		
 		@media screen and (max-width: 1920px) {
 
 			.main.style2 .content {
@@ -2416,6 +2451,11 @@ input, select, textarea {
 	margin: 5px 0; /* Space between bars */
 	transition: 0.4s; /* Smooth transition for animations */
 }
+
+#word-display {
+	font-size: 24pt;
+}
+
 	
 @media screen and (max-width: 480px) {
 	#hangman-container {
@@ -2443,7 +2483,7 @@ input, select, textarea {
 	}
 
 	#word-display {
-		font-size: 24px;
+		font-size: 18pt;
 	}
 	.hamburger-menu {
 		display: inline-block; /* Show button on mobile */
@@ -2465,7 +2505,7 @@ input, select, textarea {
     .hamburger-menu {
         display: none; /* Hide the hamburger menu on larger screens */
     }
-}
+
 
 
 #navigation {
@@ -2476,5 +2516,5 @@ input, select, textarea {
 #navigation.active {
     display: block; /* or 'flex', depending on your layout */
 }
-
+}
 		

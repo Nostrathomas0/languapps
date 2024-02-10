@@ -29,6 +29,22 @@ gtag('config', 'UA-171464578-1');
 fbq('init', '348427750356175'); 
 fbq('track', 'PageView');
 
+// Firebase Initialization (pseudo-code, replace with actual Firebase setup)
+function firebaseInit() {
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      // other config
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  }
+  
+
+
 // Section 1/2
 // Language Toggle
 var translations = {
