@@ -51,6 +51,23 @@ function firebaseInit() {
 // Call firebaseInit to initialize Firebase
 firebaseInit();
 
+function addBlogPost(title, content, author) {
+    const post = {
+      title: title,
+      content: content,
+      author: author,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp() // Adds a timestamp
+    };
+  
+    db.collection("blogPosts").add(post).then(docRef => {
+      console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(error => {
+      console.error("Error adding document: ", error);
+    });
+  }
+  
+
 // Section 1/2
 // Language Toggle
 var translations = {
@@ -340,7 +357,24 @@ document.addEventListener('DOMContentLoaded', function() {
     var hamburger = document.querySelector('.hamburger-menu');
     var navUL = document.querySelector('nav ul');
     var startGameButton = document.getElementById('start-game');
-    
+    // Form submission for adding blog posts
+    var addPostForm = document.getElementById('addBlogPostForm');
+    if (addPostForm) {
+        addPostForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission action
+
+            // Retrieve the title and content from the form
+            var title = document.getElementById('title').value;
+            var content = document.getElementById('content').value;
+
+            // Call the function to add the blog post to Firestore
+            addBlogPost(title, content, "Author Name"); // Replace "Author Name" with your actual name or a dynamic author name if you have one
+
+            // Optional: clear the form fields after submission
+            addPostForm.reset();
+        });
+    }
+
     // Only show modal if cookie consent hasn't been given
     console.log("Checking cookie consent status");
     if (!getCookie('cookieConsent')) {

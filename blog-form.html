@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Write a blog</title>
+</head>
+<body>
+    <h1>Write a new blog here</h1>
+    <form id="addBlogPostForm">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+
+        <label for="content">Content:</label><br>
+        <textarea id="content" name="content"></textarea><br>
+
+        <button type="submit">Add Post</button>
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <!-- Include your games.js or a specific JavaScript file where your Firebase init and addBlogPost function are defined -->
+    <script src="path/to/your/games.js"></script>
+</body>
+</html>
