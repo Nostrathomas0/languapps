@@ -45,11 +45,12 @@ function firebaseInit() {
   
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    console.log("Firebase Initialized");
+
     window.db = firebase.firestore();
+    console.log("Firebase Initialized", window.db);
   }
   
-// Call firebaseInit to initialize Firebase
-firebaseInit();
 
 function addBlogPost(title, content, author) {
     const post = {
@@ -59,11 +60,11 @@ function addBlogPost(title, content, author) {
       timestamp: firebase.firestore.FieldValue.serverTimestamp() // Adds a timestamp
     };
   
-    db.collection("blogPosts").add(post).then(docRef => {
-      console.log("Document written with ID: ", docRef.id);
+    window.db.collection("blogPosts").add(post).then(docRef => {
+        console.log("Document written with ID:", docRef.id); // Confirm successful addition
     })
     .catch(error => {
-      console.error("Error adding document: ", error);
+        console.error("Error adding document:", error); // Log any errors
     });
   }
   
@@ -342,6 +343,8 @@ async function loadBlogPosts() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Call firebaseInit to initialize Firebase
+    firebaseInit();
     // Start the hangman game
     startGame();
     // Blog load 
