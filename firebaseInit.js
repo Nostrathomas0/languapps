@@ -10,4 +10,5 @@ const firebaseConfig = {
   };
   
   // Initialize Firebase
-  export const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+  window.app = app; // Make the app instance globally available 

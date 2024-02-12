@@ -342,6 +342,9 @@ async function loadBlogPosts() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Access Firestore from the global app instance
+    const db = getFirestore(window.app);
+    
     // Start the hangman game
     startGame();
     // Blog load 
