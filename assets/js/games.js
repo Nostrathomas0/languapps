@@ -1,15 +1,67 @@
 // games.js
-import { app } from './assets/js/firebaseInit.js';
+import { app } from './firebaseInit.js';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 // Exporting necessary functions
-export function startGame() { /* implementation */ }
-export function makeGuess(letter) { /* implementation */ }
-export function switchLanguage(lang) { /* implementation */ }
-export function applyLanguageSettings(language) { /* implementation */ }
-export function setLanguagePreference(language) { /* implementation */ }
-export async function loadBlogPosts() { /* implementation */ }
-export function addBlogPost(title, content, author) { /* implementation */ }
+export function startGame() { 
+    wordToGuess = words[Math.floor(Math.random() * words.length)];
+    guessedLetters = [];
+    wrongGuesses = 0;
+    wrongLetters = [];
+    updateHangmanImage(wrongGuesses);
+    displayWord();
+     // Reset button styles
+     const letterButtons = document.querySelectorAll('#letter-buttons button');
+     letterButtons.forEach(button => {
+         button.classList.remove('guessed');
+         button.disabled = false;
+     });
+ }
+export function makeGuess(letter) { 
+    console.log("Trying to disable button with ID:", "button-" + guess);
+    guess = guess.toLowerCase(); // Convert guess to lowercase
+    let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
+
+    console.log("Guessed letter: ", guess);
+    if (wordToGuessLower.includes(guess)) {
+        console.log("Correct guess");
+        if (!guessedLetters.includes(guess)) {
+            guessedLetters.push(guess);
+            displayWord();
+        }
+    } else {
+        console.log("Incorrect guess");
+        if (!wrongLetters.includes(guess)) {
+            wrongLetters.push(guess);
+            wrongGuesses++; // Increment wrongGuesses
+            updateHangmanImage(wrongGuesses);
+            }
+    }
+    document.getElementById("button-" + guess).classList.add('guessed');
+
+    checkGameOver();
+    document.getElementById("button-" + guess).disabled = true; // Disable guessed letter button
+}
+export function switchLanguage(lang) { 
+    document.querySelectorAll('[data-translate]').forEach(function(elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][lang]) {
+            elem.textContent = translations[key][lang];
+        }
+    });
+ }
+export function applyLanguageSettings(language) { 
+    document.querySelectorAll('[data-translate]').forEach(function(elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][language]) {
+            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
+        }
+    });
+ }
+export function setLanguagePreference(language) { 
+    setCookie('userLanguage', language, 30); // Store the language preference
+    applyLanguageSettings(language); // Apply the language immediately
+ }
 export async function addBlogPost(title, content, author) {
     const db = getFirestore(app); // Get Firestore instance
 
@@ -25,7 +77,19 @@ export async function addBlogPost(title, content, author) {
         console.error("Error adding document: ", e);
     }
 }
-
+document.addEventListener('DOMContentLoaded', loadBlogPosts);
+  
+export async function loadBlogPosts() {
+const blogSection = document.getElementById('blog-posts');
+    const querySnapshot = await window.db.collection("blogPosts").get();
+    querySnapshot.forEach((doc) => {
+      const post = doc.data();
+      const postElement = document.createElement('div');
+      postElement.classList.add('blog-post');
+      postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+      blogSection.appendChild(postElement);
+    });
+}
 
 // Section 0
 // Gtag & FBpixel 
@@ -77,23 +141,8 @@ var translations = {
     // Add more translations here
 };
 
-function switchLanguage(lang) {
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][lang]) {
-            elem.textContent = translations[key][lang];
-        }
-    });
-}
 
-function applyLanguageSettings(language) {
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
-        }
-    });
-}
+
 
 
 // Section 1
@@ -131,47 +180,8 @@ function updateHangmanImage(wrongGuesses) {
     }
 }
 
-function startGame() {
-    wordToGuess = words[Math.floor(Math.random() * words.length)];
-    guessedLetters = [];
-    wrongGuesses = 0;
-    wrongLetters = [];
-    updateHangmanImage(wrongGuesses);
-    displayWord();
 
-    // Reset button styles
-    const letterButtons = document.querySelectorAll('#letter-buttons button');
-    letterButtons.forEach(button => {
-        button.classList.remove('guessed');
-        button.disabled = false;
-    });
-}
 
-function makeGuess(guess) {
-    console.log("Trying to disable button with ID:", "button-" + guess);
-    guess = guess.toLowerCase(); // Convert guess to lowercase
-    let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
-
-    console.log("Guessed letter: ", guess);
-    if (wordToGuessLower.includes(guess)) {
-        console.log("Correct guess");
-        if (!guessedLetters.includes(guess)) {
-            guessedLetters.push(guess);
-            displayWord();
-        }
-    } else {
-        console.log("Incorrect guess");
-        if (!wrongLetters.includes(guess)) {
-            wrongLetters.push(guess);
-            wrongGuesses++; // Increment wrongGuesses
-            updateHangmanImage(wrongGuesses);
-            }
-    }
-    document.getElementById("button-" + guess).classList.add('guessed');
-
-    checkGameOver();
-    document.getElementById("button-" + guess).disabled = true; // Disable guessed letter button
-}
 
 function displayWord() {
     const wordDisplay = document.getElementById("word-display");
@@ -308,118 +318,102 @@ function eraseCookie(name) {
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-function setLanguagePreference(language) {
-    setCookie('userLanguage', language, 30); // Store the language preference
-    applyLanguageSettings(language); // Apply the language immediately
-}
 
-// Section 4 Firebase Blog
-async function loadBlogPosts() {
-    const blogSection = document.getElementById('blog-posts');
-    const querySnapshot = await window.db.collection("blogPosts").get();
-    querySnapshot.forEach((doc) => {
-      const post = doc.data();
-      const postElement = document.createElement('div');
-      postElement.classList.add('blog-post');
-      postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
-      blogSection.appendChild(postElement);
-    });
-  }
-  
-  document.addEventListener('DOMContentLoaded', loadBlogPosts);
-  
+
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Start the hangman game
-    startGame();
-    // Blog load 
-    loadBlogPosts();
-    // Set up the cookie consent modal
-    var modal = document.getElementById('cookie-consent-modal');
-    var acceptBtn = document.getElementById('accept-cookies');
-    var declineBtn = document.getElementById('decline-cookies');
-    var bodyContent = document.querySelector('.main-content');
-    var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-    var userLanguage = getCookie('userLanguage')
-    var languageDropdown = document.getElementById('language-dropdown');
-    var hamburger = document.querySelector('.hamburger-menu');
-    var navUL = document.querySelector('nav ul');
-    var startGameButton = document.getElementById('start-game');
-    // Form submission for adding blog posts
-    var addPostForm = document.getElementById('addBlogPostForm');
-    if (addPostForm) {
-        addPostForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission action
-
-            // Retrieve the title and content from the form
-            var title = document.getElementById('title').value;
-            var content = document.getElementById('content').value;
-
-            // Call the function to add the blog post to Firestore
-            addBlogPost(title, content, "Author Name"); // Replace "Author Name" with your actual name or a dynamic author name if you have one
-
-            // Optional: clear the form fields after submission
-            addPostForm.reset();
-        });
-    }
-
-    // Only show modal if cookie consent hasn't been given
-    console.log("Checking cookie consent status");
-    if (!getCookie('cookieConsent')) {
-        console.log("No cookie consent found, displaying modal");
-        modal.style.display = 'block';
-        bodyContent.classList.add('blur-background');
-    }
-
-    // Event listeners for accept and decline buttons
-    acceptBtn.addEventListener('click', function() {
-        setCookie('cookieConsent', 'accepted', 30);
-        modal.style.display = 'none';
-        bodyContent.classList.remove('blur-background');
-        if (userLanguage) {
-            // Apply the langage settings
-            applyLanguageSettings(userLanguage);
-        }
-    });
-
-    declineBtn.addEventListener('click', function() {
-        setCookie('cookieConsent', 'declined', 30);
-        modal.style.display = 'none';
-        bodyContent.classList.remove('blur-background');
-    });
-   
-    if (languageDropdown) {
-        languageDropdown.addEventListener('change', function() {
-            setLanguagePreference(this.value);
-        });
-    }
-    hamburger.addEventListener('click', function() {
-        navUL.classList.toggle('active');
-    });
-
-    // Start Game button 
-    if (startGameButton) {
-        startGameButton.addEventListener('click', startGame);
-    }
     
-    // Setup event listeners for letter buttons
-    letters.forEach(function(letter) {
-        var button = document.getElementById('button-' + letter);
-        if (button) {
-            button.addEventListener('click', function() {
-                makeGuess(letter);
-            });
-        }
-    });
+// Start the hangman game
+startGame();
+// Blog load 
+loadBlogPosts();
+// Set up the cookie consent modal
+var modal = document.getElementById('cookie-consent-modal');
+var acceptBtn = document.getElementById('accept-cookies');
+var declineBtn = document.getElementById('decline-cookies');
+var bodyContent = document.querySelector('.main-content');
+var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+var userLanguage = getCookie('userLanguage')
+var languageDropdown = document.getElementById('language-dropdown');
+var hamburger = document.querySelector('.hamburger-menu');
+var navUL = document.querySelector('nav ul');
+var startGameButton = document.getElementById('start-game');
+// Form submission for adding blog posts
+var addPostForm = document.getElementById('addBlogPostForm');
+if (addPostForm) {
+    addPostForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission action
 
-    // Set up the random sentence generator form submission
-    document.getElementById('random').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting in the traditional way
-        generateRandomSentence(); // Call the function to generate and display the sentence
-    });
+        // Retrieve the title and content from the form
+        var title = document.getElementById('title').value;
+        var content = document.getElementById('content').value;
 
-    // Additional code if needed
+        // Call the function to add the blog post to Firestore
+        addBlogPost(title, content, "Author Name"); // Replace "Author Name" with your actual name or a dynamic author name if you have one
+
+        // Optional: clear the form fields after submission
+        addPostForm.reset();
+    });
+}
+
+// Only show modal if cookie consent hasn't been given
+console.log("Checking cookie consent status");
+if (!getCookie('cookieConsent')) {
+    console.log("No cookie consent found, displaying modal");
+    modal.style.display = 'block';
+    bodyContent.classList.add('blur-background');
+}
+
+// Event listeners for accept and decline buttons
+acceptBtn.addEventListener('click', function() {
+    setCookie('cookieConsent', 'accepted', 30);
+    modal.style.display = 'none';
+    bodyContent.classList.remove('blur-background');
+    if (userLanguage) {
+        // Apply the langage settings
+        applyLanguageSettings(userLanguage);
+    }
+});
+
+declineBtn.addEventListener('click', function() {
+    setCookie('cookieConsent', 'declined', 30);
+    modal.style.display = 'none';
+    bodyContent.classList.remove('blur-background');
+});
+
+if (languageDropdown) {
+    languageDropdown.addEventListener('change', function() {
+        setLanguagePreference(this.value);
+    });
+}
+hamburger.addEventListener('click', function() {
+    navUL.classList.toggle('active');
+});
+
+// Start Game button 
+if (startGameButton) {
+    startGameButton.addEventListener('click', startGame);
+}
+
+// Setup event listeners for letter buttons
+letters.forEach(function(letter) {
+    var button = document.getElementById('button-' + letter);
+    if (button) {
+        button.addEventListener('click', function() {
+            makeGuess(letter);
+        });
+    }
+});
+
+// Set up the random sentence generator form submission
+document.getElementById('random').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting in the traditional way
+    generateRandomSentence(); // Call the function to generate and display the sentence
+});
+
+// Additional code if needed
 });
 
 $(document).ready(function() {
