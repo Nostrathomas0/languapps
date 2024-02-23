@@ -1,32 +1,4 @@
 // games.js
-import { app } from './assets/js/firebaseInit.js';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-
-// Exporting necessary functions
-export function startGame() { /* implementation */ }
-export function makeGuess(letter) { /* implementation */ }
-export function switchLanguage(lang) { /* implementation */ }
-export function applyLanguageSettings(language) { /* implementation */ }
-export function setLanguagePreference(language) { /* implementation */ }
-export async function loadBlogPosts() { /* implementation */ }
-export function addBlogPost(title, content, author) { /* implementation */ }
-export async function addBlogPost(title, content, author) {
-    const db = getFirestore(app); // Get Firestore instance
-
-    try {
-        const docRef = await addDoc(collection(db, "blogPosts"), {
-            title,
-            content,
-            author,
-            timestamp: serverTimestamp() // Server-side timestamp
-        });
-        console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
-}
-
-
 // Section 0
 // Gtag & FBpixel 
 
@@ -56,6 +28,45 @@ gtag('config', 'UA-171464578-1');
 }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
 fbq('init', '348427750356175'); 
 fbq('track', 'PageView');
+
+// Firebase Initialization 
+function firebaseInit() {
+    // Your Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyA_bq5-hmAlNbK-2ZgHSFl0Iew4uphF_Eo",
+        authDomain: "languapps.firebaseapp.com",
+        projectId: "languapps",
+        storageBucket: "languapps.appspot.com",
+        messagingSenderId: "866735367707",
+        appId: "1:866735367707:web:6154b4ab63fcab0272fabe",
+        measurementId: "G-MCZY61SSMM"
+      // other config
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+  }
+  
+// Call firebaseInit to initialize Firebase
+firebaseInit();
+
+function addBlogPost(title, content, author) {
+    const post = {
+      title: title,
+      content: content,
+      author: author,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp() // Adds a timestamp
+    };
+  
+    db.collection("blogPosts").add(post).then(docRef => {
+      console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(error => {
+      console.error("Error adding document: ", error);
+    });
+  }
+  
 
 // Section 1/2
 // Language Toggle
