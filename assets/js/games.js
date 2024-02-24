@@ -77,7 +77,6 @@ export async function addBlogPost(title, content, author) {
         console.error("Error adding document: ", e);
     }
 }
-document.addEventListener('DOMContentLoaded', loadBlogPosts);
   
 export async function loadBlogPosts() {
 const blogSection = document.getElementById('blog-posts');
@@ -319,16 +318,16 @@ function eraseCookie(name) {
 }
 
 
-
-
-
-
 document.addEventListener('DOMContentLoaded', function() {
     
 // Start the hangman game
 startGame();
-// Blog load 
-loadBlogPosts();
+// Ensure Firebase is initialized before calling `loadBlogPosts`
+if (window.db) {
+    loadBlogPosts();
+} else {
+    console.error('Firebase is not initialized.');
+}
 // Set up the cookie consent modal
 var modal = document.getElementById('cookie-consent-modal');
 var acceptBtn = document.getElementById('accept-cookies');
