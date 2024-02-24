@@ -1,5 +1,6 @@
 // Import the Firebase modules needed
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js'; // Import getFirestore
 
 // Firebase configuration
 const firebaseConfig = {
