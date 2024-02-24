@@ -14,6 +14,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
+const db = getFirestore(app);
+window.db = db; // Assign Firestore instance to window.db
 // Export the app instance for use in other modules
 export { app };
