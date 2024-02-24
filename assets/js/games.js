@@ -1,7 +1,6 @@
 // games.js
-import { app } from './firebaseInit.js';
+import './firebaseInit.js'; // Ensures Firebase is initialized
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import './firebaseInit.js';
 
 // Exporting necessary functions
 export function startGame() { 
