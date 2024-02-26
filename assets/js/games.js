@@ -2,17 +2,6 @@
 import './firebaseInit.js'; // Ensures Firebase is initialized
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-
-function initializeAndLoadPosts() {
-    if (!window.db) {
-        console.error('Firebase is not initialized.');
-        // Initialize Firebase here, or ensure the firebaseInit script has run
-        // For example, you might import and call a function that initializes Firebase
-        // import { initializeFirebase } from './firebaseInit.js';
-        // initializeFirebase().then(() => loadBlogPosts());
-    } else {
-        loadBlogPosts();
-    }
 // Exporting necessary functions
 export function startGame() { 
     wordToGuess = words[Math.floor(Math.random() * words.length)];
@@ -334,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Start the hangman game
 startGame();
 
-initializeAndLoadPosts()
+loadBlogPosts();
 // Set up the cookie consent modal
 var modal = document.getElementById('cookie-consent-modal');
 var acceptBtn = document.getElementById('accept-cookies');
