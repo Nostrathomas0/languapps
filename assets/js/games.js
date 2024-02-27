@@ -2,6 +2,12 @@
 import './firebaseInit.js'; // Ensures Firebase is initialized
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
+// Global Variables
+let wordToGuess = "";
+let guessedLetters = [];
+let wrongGuesses = 0;
+let wrongLetters = [];
+
 // Exporting necessary functions
 export function startGame() { 
     wordToGuess = words[Math.floor(Math.random() * words.length)];
@@ -17,31 +23,32 @@ export function startGame() {
          button.disabled = false;
      });
  }
-export function makeGuess(letter) { 
-    console.log("Trying to disable button with ID:", "button-" + guess);
-    guess = guess.toLowerCase(); // Convert guess to lowercase
+ export function makeGuess(letter) { 
+    console.log("Trying to disable button with ID:", "button-" + letter);
+    letter = letter.toLowerCase(); // Convert letter to lowercase
     let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
 
-    console.log("Guessed letter: ", guess);
-    if (wordToGuessLower.includes(guess)) {
+    console.log("Guessed letter: ", letter);
+    if (wordToGuessLower.includes(letter)) {
         console.log("Correct guess");
-        if (!guessedLetters.includes(guess)) {
-            guessedLetters.push(guess);
+        if (!guessedLetters.includes(letter)) {
+            guessedLetters.push(letter);
             displayWord();
         }
     } else {
         console.log("Incorrect guess");
-        if (!wrongLetters.includes(guess)) {
-            wrongLetters.push(guess);
+        if (!wrongLetters.includes(letter)) {
+            wrongLetters.push(letter);
             wrongGuesses++; // Increment wrongGuesses
             updateHangmanImage(wrongGuesses);
-            }
+        }
     }
-    document.getElementById("button-" + guess).classList.add('guessed');
+    document.getElementById("button-" + letter).classList.add('guessed');
+    document.getElementById("button-" + letter).disabled = true; // Disable guessed letter button
 
     checkGameOver();
-    document.getElementById("button-" + guess).disabled = true; // Disable guessed letter button
 }
+
 export function switchLanguage(lang) { 
     document.querySelectorAll('[data-translate]').forEach(function(elem) {
         var key = elem.getAttribute('data-translate');
@@ -148,10 +155,11 @@ var translations = {
 // Hangman Game
 
 const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
-let wordToGuess = "";
-let guessedLetters = [];
-let wrongGuesses = 0;
-let wrongLetters = [];
+
+wordToGuess = "";
+guessedLetters = [];
+wrongGuesses = 0;
+wrongLetters = [];
 
 const hangmanImages = [
     '/images/hang/h0.png',
