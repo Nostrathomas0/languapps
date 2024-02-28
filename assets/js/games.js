@@ -1,6 +1,6 @@
 // games.js
 import './firebaseInit.js'; // Ensures Firebase is initialized
-import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 import { db } from './firebaseInit.js';
 // Global Variables
 let wordToGuess = "";
@@ -69,11 +69,9 @@ export function setLanguagePreference(language) {
     setCookie('userLanguage', language, 30); // Store the language preference
     applyLanguageSettings(language); // Apply the language immediately
  }
-export async function addBlogPost(title, content, author) {
-    const db = getFirestore(app); // Get Firestore instance
-
+ export async function addBlogPost(title, content, author) {
     try {
-        const docRef = await addDoc(collection(db, "blogPosts"), {
+        const docRef = await addDoc(collection(window.db, "blogPosts"), {
             title,
             content,
             author,
@@ -86,14 +84,14 @@ export async function addBlogPost(title, content, author) {
 }
   
 export async function loadBlogPosts() {
-const blogSection = document.getElementById('blog-posts');
-    const querySnapshot = await window.db.collection("blogPosts").get();
+    const blogSection = document.getElementById('blog-posts');
+    const querySnapshot = await getDocs(collection(window.db, "blogPosts")); // Use the modular syntax here
     querySnapshot.forEach((doc) => {
-      const post = doc.data();
-      const postElement = document.createElement('div');
-      postElement.classList.add('blog-post');
-      postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
-      blogSection.appendChild(postElement);
+        const post = doc.data();
+        const postElement = document.createElement('div');
+        postElement.classList.add('blog-post');
+        postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+        blogSection.appendChild(postElement);
     });
 }
 
