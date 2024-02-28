@@ -1,4 +1,12 @@
 // games.js
+//_         __      __   _     _       _     _      __      ___      ___      __  
+// |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
+// |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
+// |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
+//____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
+
+// Section 0 Initilization and Imports
+
 import './firebaseInit.js'; // Ensures Firebase is initialized
 import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 import { db } from './firebaseInit.js';
@@ -8,7 +16,8 @@ let guessedLetters = [];
 let wrongGuesses = 0;
 let wrongLetters = [];
 
-// Exporting necessary functions
+// Section 1 Exporting Gane functions
+// Hangman Functions
 export function startGame() { 
     wordToGuess = words[Math.floor(Math.random() * words.length)];
     guessedLetters = [];
@@ -48,7 +57,7 @@ export function startGame() {
 
     checkGameOver();
 }
-
+// Language Toggle Functions
 export function switchLanguage(lang) { 
     document.querySelectorAll('[data-translate]').forEach(function(elem) {
         var key = elem.getAttribute('data-translate');
@@ -69,6 +78,7 @@ export function setLanguagePreference(language) {
     setCookie('userLanguage', language, 30); // Store the language preference
     applyLanguageSettings(language); // Apply the language immediately
  }
+// Blog Functions
  export async function addBlogPost(title, content, author) {
     try {
         const docRef = await addDoc(collection(window.db, "blogPosts"), {
@@ -82,7 +92,6 @@ export function setLanguagePreference(language) {
         console.error("Error adding document: ", e);
     }
 }
-  
 export async function loadBlogPosts() {
     if (!window.db) {
         console.error('Firestone is not initialized yet');
@@ -100,17 +109,12 @@ export async function loadBlogPosts() {
     });
 }
 
-// Section 0
-// Gtag & FBpixel 
-
+// Section 2 Analytics and Tracking 
 
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'UA-171464578-1');
-
-
-
 
 !function(f,b,e,v,n,t,s){
     if(f.fbq)return;
@@ -130,8 +134,7 @@ gtag('config', 'UA-171464578-1');
 fbq('init', '348427750356175'); 
 fbq('track', 'PageView');
 
-// Section 1/2
-// Language Toggle
+// Section 3 Translations
 var translations = {
     statement: {
         fr: "Apprenez des langues pour ouvrir des portes, rencontrer des gens, réussir et planifier votre avenir. Jouez à ce jeu en classe pour vous motiver. Astuce : mots anglais pour les fruits et légumes.",
@@ -145,17 +148,10 @@ var translations = {
         fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
         zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
     }
-
-
     // Add more translations here
 };
 
-
-
-
-
-// Section 1
-// Hangman Game
+// Section 4 Hangman 
 
 const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
 
@@ -178,6 +174,9 @@ const hangmanImages = [
     '/images/hang/h10.png'
 ];
 
+// Section 5 Local Functions
+
+//Hangman
 function updateHangmanImage(wrongGuesses) {
     console.log("Updating hangman image, wrong guesses:", wrongGuesses);
     const imageElement = document.getElementById('hangman-image');
@@ -189,9 +188,6 @@ function updateHangmanImage(wrongGuesses) {
         console.log("Hangman image element not found");
     }
 }
-
-
-
 
 function displayWord() {
     const wordDisplay = document.getElementById("word-display");
@@ -219,9 +215,6 @@ function checkGameOver() {
     }
 }
 
-
-
-// Section 2
 // Random sentence generator
 document.getElementById('random').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevents the default form submission
@@ -268,66 +261,8 @@ function generateRandomSentence() {
     }
 
     function getSubject() {
-        // Randomly choose between a pronoun or a noun phrase
-        if (Math.random() < 0.5) {
-            // Use a subject pronoun
-            return getRandomElement(subjectPronouns);
-        } else {
-            // Use a noun phrase
-            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
-        }
-    }
 
-    function getObject() {
-        // Randomly choose between an object pronoun or a noun phrase
-        if (Math.random() < 0.5) {
-            return getRandomElement(objectPronouns);
-        } else {
-            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
-        }
-    }
-
-    // Generate the sentence
-    const subject = getSubject();
-    const verb = isThirdPersonSingular(subject) ? getRandomElement(verbs.thirdPersonSingular) : getRandomElement(verbs.base);
-    const object = getObject();
-
-    return `${subject} ${verb} ${object}.`;
-}
-
-// Example usage
-const randomSentence = generateRandomSentence();
-document.getElementById('random-sentence').innerHTML = randomSentence;
-
-
-
-//Section 3 Cookies
-//Cookie setter
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setDate(date.getDate() + days);
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-
-function eraseCookie(name) {   
-    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
+// DOM Content 
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -427,3 +362,62 @@ $(document).ready(function() {
         $('#navigation').toggleClass('active');
     });
 });
+        // Randomly choose between a pronoun or a noun phrase
+        if (Math.random() < 0.5) {
+            // Use a subject pronoun
+            return getRandomElement(subjectPronouns);
+        } else {
+            // Use a noun phrase
+            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
+        }
+    }
+
+    function getObject() {
+        // Randomly choose between an object pronoun or a noun phrase
+        if (Math.random() < 0.5) {
+            return getRandomElement(objectPronouns);
+        } else {
+            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
+        }
+    }
+
+    // Generate the sentence
+    const subject = getSubject();
+    const verb = isThirdPersonSingular(subject) ? getRandomElement(verbs.thirdPersonSingular) : getRandomElement(verbs.base);
+    const object = getObject();
+
+    return `${subject} ${verb} ${object}.`;
+}
+
+// Example usage
+const randomSentence = generateRandomSentence();
+document.getElementById('random-sentence').innerHTML = randomSentence;
+
+
+
+//Section 3 Cookies
+//Cookie setter
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setDate(date.getDate() + days);
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {   
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
