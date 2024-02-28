@@ -84,6 +84,11 @@ export function setLanguagePreference(language) {
 }
   
 export async function loadBlogPosts() {
+    if (!window.db) {
+        console.error('Firestone is not initialized yet');
+        return;
+    }
+    
     const blogSection = document.getElementById('blog-posts');
     const querySnapshot = await getDocs(collection(window.db, "blogPosts")); // Use the modular syntax here
     querySnapshot.forEach((doc) => {
