@@ -109,6 +109,12 @@ export async function loadBlogPosts() {
     });
 }
 
+export function playSound(soundName) {
+    const soundPath = `assets/sounds/${soundName}`;
+    const sound = new Audio(soundPath);
+    sound.play();
+}
+
 // Section 2 Analytics and Tracking 
 
 window.dataLayer = window.dataLayer || [];
@@ -151,7 +157,7 @@ var translations = {
     // Add more translations here
 };
 
-// Section 4 Hangman 
+// Section 4a Hangman Variables
 
 const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
 
@@ -174,9 +180,8 @@ const hangmanImages = [
     '/images/hang/h10.png'
 ];
 
-// Section 5 Local Functions
+// Section 4b 
 
-//Hangman
 function updateHangmanImage(wrongGuesses) {
     console.log("Updating hangman image, wrong guesses:", wrongGuesses);
     const imageElement = document.getElementById('hangman-image');
@@ -214,18 +219,8 @@ function checkGameOver() {
         startGame();
     }
 }
-   
-const pronouns = {
-    subject: ['I', 'You', 'He', 'She', 'They'],
-    object: ['me', 'you', 'him', 'her', 'them']
-};
 
-const verbs = ['love', 'hate', 'enjoy', 'dislike', 'prefer'];
-
-const nounPhrases = {
-    determiners: ['The', 'A', 'An', 'My', 'Your'],
-    nouns: ['cat', 'dog', 'pizza', 'coding', 'music']
-};
+// Section 5b Random sentence 
 
 function getRandomElement(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
