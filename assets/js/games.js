@@ -214,13 +214,6 @@ function checkGameOver() {
         startGame();
     }
 }
-
-// Random sentence generator
-document.getElementById('random').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevents the default form submission
-    generateRandomSentence(); // Calls your function to generate a sentence
-});
-
    
 const pronouns = {
     subject: ['I', 'You', 'He', 'She', 'They'],
