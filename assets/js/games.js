@@ -5,12 +5,7 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 
-// Section 0 Initilization and Imports
-
-import './firebaseInit.js'; // Ensures Firebase is initialized
-import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import { db } from './firebaseInit.js';
-// Global Variables
+// Section 0 Global Variables
 let wordToGuess = "";
 let guessedLetters = [];
 let wrongGuesses = 0;
@@ -78,36 +73,6 @@ export function setLanguagePreference(language) {
     setCookie('userLanguage', language, 30); // Store the language preference
     applyLanguageSettings(language); // Apply the language immediately
  }
-// Blog Functions
- export async function addBlogPost(title, content, author) {
-    try {
-        const docRef = await addDoc(collection(window.db, "blogPosts"), {
-            title,
-            content,
-            author,
-            timestamp: serverTimestamp() // Server-side timestamp
-        });
-        console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
-}
-export async function loadBlogPosts() {
-    if (!window.db) {
-        console.error('Firestone is not initialized yet');
-        return;
-    }
-    
-    const blogSection = document.getElementById('blog-posts');
-    const querySnapshot = await getDocs(collection(window.db, "blogPosts")); // Use the modular syntax here
-    querySnapshot.forEach((doc) => {
-        const post = doc.data();
-        const postElement = document.createElement('div');
-        postElement.classList.add('blog-post');
-        postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
-        blogSection.appendChild(postElement);
-    });
-}
 
 export function playSound(soundName) {
     const soundPath = `assets/sounds/${soundName}`;
@@ -257,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Start the hangman game
 startGame();
 
-loadBlogPosts();
+
 // Set up the cookie consent modal
 var modal = document.getElementById('cookie-consent-modal');
 var acceptBtn = document.getElementById('accept-cookies');
@@ -269,23 +234,7 @@ var languageDropdown = document.getElementById('language-dropdown');
 var hamburger = document.querySelector('.hamburger-menu');
 var navUL = document.querySelector('nav ul');
 var startGameButton = document.getElementById('start-game');
-// Form submission for adding blog posts
-var addPostForm = document.getElementById('addBlogPostForm');
-if (addPostForm) {
-    addPostForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission action
 
-        // Retrieve the title and content from the form
-        var title = document.getElementById('title').value;
-        var content = document.getElementById('content').value;
-
-        // Call the function to add the blog post to Firestore
-        addBlogPost(title, content, "Author Name"); // Replace "Author Name" with your actual name or a dynamic author name if you have one
-
-        // Optional: clear the form fields after submission
-        addPostForm.reset();
-    });
-}
 
 // Only show modal if cookie consent hasn't been given
 console.log("Checking cookie consent status");
