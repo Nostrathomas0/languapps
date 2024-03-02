@@ -108,17 +108,25 @@ fbq('track', 'PageView');
 // Section 3 Translations
 var translations = {
     statement: {
-        fr: "Apprenez des langues pour ouvrir des portes, rencontrer des gens, réussir et planifier votre avenir. Jouez à ce jeu en classe pour vous motiver. Astuce : mots anglais pour les fruits et légumes.",
-        zh: "学习语言可以打开大门、结识新朋友、找到成功并规划您的未来。 玩这个课堂游戏可以激发动力。 <br>提示：水果和蔬菜的英语单词。"
+        en: "Play hangman <br> Guess a letter to solve the puzzle <br> Hint : Fruits & Vegetables",
+        fr: "Jouez au Pendu en anglais <br> Devinez les lettres à résoudre <br> Indice : fruits et légumes",
+        zh: "用英语玩刽子手<br>猜字母来解决<br>提示：水果和蔬菜。"
     },
     does: {
-        fr: "Édition numérique<br>Logiciel de révision<br>Diffusion en direct<br>Indépendant<br>Concours d'écriture<br>Spectacles de marionnettes<br>Phrases aléatoires !",
-        zh: "数字出版<br>评论软件<br>直播<br>独立<br>写作比赛<br>木偶剧<br>随机英语句子！"
+        en: "Social Connection<br>Publishing<br>Language Learning Streams<br>Contests<br>Puppet Shows<br>Games<br>Chat",
+        fr: "Connexion sociale<br>Édition<br>Flux d'apprentissage des langues<br>Concours<br>Spectacles de marionnettes<br>Jeux<br>Bavarder pour pratique les langues",
+        zh: "社交联系<br>出版<br>语言学习流<br>竞赛<br>木偶戏<br>游戏<br>​聊天练习语言"
     },
     is: {
+        en: "an English teacher, web developer and applied linguist. Language learning is our first habit and I want to help people find their youthful sensitivity to it online with cultural immersion.",
         fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
         zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
-    }
+        },
+    works: {
+        en: "with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses.",
+        fr: "avec des étudiants, des enseignants et des apprenants indépendants. Je prépare et réalise des présentations et des performances pédagogiques dans des salles de classe, des vidéos, des petits théâtres et en plein air. Pour entrer en contact et partager des expériences d'apprentissage des langues en ligne et saisir votre excellente opportunité de suivre des cours de langue. Consultez la liste croissante de cours.",
+        zh: "​与学生、教师和独立学习者一起。 我在教室、视频、小剧院和户外准备并进行教育演示和表演。 在线联系并分享语言学习经验，并抓住获得语言课程的绝佳机会。 查看我们不断扩大的课程列表。"
+    }    
     // Add more translations here
 };
 
