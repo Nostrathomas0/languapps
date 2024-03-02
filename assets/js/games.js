@@ -52,27 +52,6 @@ export function startGame() {
 
     checkGameOver();
 }
-// Language Toggle Functions
-export function switchLanguage(lang) { 
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][lang]) {
-            elem.textContent = translations[key][lang];
-        }
-    });
- }
-export function applyLanguageSettings(language) { 
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
-        }
-    });
- }
-export function setLanguagePreference(language) { 
-    setCookie('userLanguage', language, 30); // Store the language preference
-    applyLanguageSettings(language); // Apply the language immediately
- }
 
 export function playSound(soundName) {
     const soundPath = `assets/sounds/${soundName}`;
@@ -105,30 +84,7 @@ gtag('config', 'UA-171464578-1');
 fbq('init', '348427750356175'); 
 fbq('track', 'PageView');
 
-// Section 3 Translations
-var translations = {
-    statement: {
-        en: "Play hangman <br> Guess a letter to solve the puzzle <br> Hint : Fruits & Vegetables",
-        fr: "Jouez au Pendu en anglais <br> Devinez les lettres à résoudre <br> Indice : fruits et légumes",
-        zh: "用英语玩刽子手<br>猜字母来解决<br>提示：水果和蔬菜。"
-    },
-    does: {
-        en: "Social Connection<br>Publishing<br>Language Learning Streams<br>Contests<br>Puppet Shows<br>Games<br>Chat",
-        fr: "Connexion sociale<br>Édition<br>Flux d'apprentissage des langues<br>Concours<br>Spectacles de marionnettes<br>Jeux<br>Bavarder pour pratique les langues",
-        zh: "社交联系<br>出版<br>语言学习流<br>竞赛<br>木偶戏<br>游戏<br>​聊天练习语言"
-    },
-    is: {
-        en: "an English teacher, web developer and applied linguist. Language learning is our first habit and I want to help people find their youthful sensitivity to it online with cultural immersion.",
-        fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
-        zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
-        },
-    works: {
-        en: "with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses.",
-        fr: "avec des étudiants, des enseignants et des apprenants indépendants. Je prépare et réalise des présentations et des performances pédagogiques dans des salles de classe, des vidéos, des petits théâtres et en plein air. Pour entrer en contact et partager des expériences d'apprentissage des langues en ligne et saisir votre excellente opportunité de suivre des cours de langue. Consultez la liste croissante de cours.",
-        zh: "​与学生、教师和独立学习者一起。 我在教室、视频、小剧院和户外准备并进行教育演示和表演。 在线联系并分享语言学习经验，并抓住获得语言课程的绝佳机会。 查看我们不断扩大的课程列表。"
-    }    
-    // Add more translations here
-};
+
 
 // Section 4a Hangman Variables
 
@@ -237,10 +193,6 @@ var acceptBtn = document.getElementById('accept-cookies');
 var declineBtn = document.getElementById('decline-cookies');
 var bodyContent = document.querySelector('.main-content');
 var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-var userLanguage = getCookie('userLanguage')
-var languageDropdown = document.getElementById('language-dropdown');
-var hamburger = document.querySelector('.hamburger-menu');
-var navUL = document.querySelector('nav ul');
 var startGameButton = document.getElementById('start-game');
 
 
@@ -252,31 +204,7 @@ if (!getCookie('cookieConsent')) {
     bodyContent.classList.add('blur-background');
 }
 
-// Event listeners for accept and decline buttons
-acceptBtn.addEventListener('click', function() {
-    setCookie('cookieConsent', 'accepted', 30);
-    modal.style.display = 'none';
-    bodyContent.classList.remove('blur-background');
-    if (userLanguage) {
-        // Apply the langage settings
-        applyLanguageSettings(userLanguage);
-    }
-});
 
-declineBtn.addEventListener('click', function() {
-    setCookie('cookieConsent', 'declined', 30);
-    modal.style.display = 'none';
-    bodyContent.classList.remove('blur-background');
-});
-
-if (languageDropdown) {
-    languageDropdown.addEventListener('change', function() {
-        setLanguagePreference(this.value);
-    });
-}
-hamburger.addEventListener('click', function() {
-    navUL.classList.toggle('active');
-});
 
 // Start Game button 
 if (startGameButton) {
@@ -302,11 +230,7 @@ document.getElementById('random').addEventListener('submit', function(event) {
 // Additional code if needed
 });
 
-$(document).ready(function() {
-    $('#hamburger-toggle').click(function() {
-        $('#navigation').toggleClass('active');
-    });
-});
+
         // Randomly choose between a pronoun or a noun phrase
         if (Math.random() < 0.5) {
             // Use a subject pronoun
@@ -340,29 +264,3 @@ document.getElementById('random-sentence').innerHTML = randomSentence;
 
 
 
-//Section 3 Cookies
-//Cookie setter
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setDate(date.getDate() + days);
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-
-function eraseCookie(name) {   
-    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}

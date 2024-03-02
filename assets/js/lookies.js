@@ -1,0 +1,122 @@
+// lookies.js
+//_         __      __   _     _       _     _      __      ___      ___      __  
+// |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
+// |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
+// |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
+//____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
+
+
+// Global Variables and Initial set up
+var userLanguage = getCookie('userLanguage') || 'en'; // Default to English if no cookie found
+
+// Language Toggle Functions
+function switchLanguage(lang) {
+    document.querySelectorAll('[data-translate]').forEach(function (elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][lang]) {
+            elem.textContent = translations[key][lang];
+        }
+    });
+}
+
+function applyLanguageSettings(language) {
+    document.querySelectorAll('[data-translate]').forEach(function (elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][language]) {
+            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
+        }
+    });
+}
+
+function setLanguagePreference(language) {
+    setCookie('userLanguage', language, 365); // Store the language preference
+    applyLanguageSettings(language); // Apply the language immediately
+}
+
+// Cookie Consent Modal Handling
+function handleCookieConsent() {
+    var consent = getCookie('userConsent');
+    var modal = document.getElementById('cookie-consent-modal');
+
+    // Show the modal if there's no 'userConsent' cookie
+    if (!consent) {
+        modal.style.display = 'block';
+    }
+    
+    // Event listeners for the modal's accept and decline buttons
+    document.getElementById('accept-cookies').addEventListener('click', function() {
+        setCookie('userConsent', 'accepted', 365); // Set consent cookie
+        modal.style.display = 'none'; // Hide the modal
+    });
+
+    document.getElementById('decline-cookies').addEventListener('click', function() {
+        setCookie('userConsent', 'declined', 365); // Set consent cookie
+        modal.style.display = 'none'; // Hide the modal
+    });
+}
+
+// Cookie Utility Functions
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+
+
+
+
+
+// Translations Object
+var translations = {
+    statement: {
+        en: "Play hangman <br> Guess a letter to solve the puzzle <br> Hint: Fruits & Vegetables",
+        fr: "Jouez au Pendu en anglais <br> Devinez les lettres à résoudre <br> Indice: fruits et légumes",
+        zh: "用英语玩刽子手<br>猜字母来解决<br>提示: 水果和蔬菜。"
+    },
+    does: {
+        en: "Social Connection<br>Publishing<br>Language Learning Streams<br>Contests<br>Puppet Shows<br>Games<br>Chat",
+        fr: "Connexion sociale<br>Édition<br>Flux d'apprentissage des langues<br>Concours<br>Spectacles de marionnettes<br>Jeux<br>Bavarder pour pratique les langues",
+        zh: "社交联系<br>出版<br>语言学习流<br>竞赛<br>木偶戏<br>游戏<br>聊天练习语言"
+    },
+    is: {
+        en: "an English teacher, web developer and applied linguist. Language learning is our first habit and I want to help people find their youthful sensitivity to it online with cultural immersion.",
+        fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
+        zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
+    }
+    // Add more translations as needed
+};
+
+// Initialization and Event Listeners
+document.addEventListener('DOMContentLoaded', function () {
+    
+    setLanguagePreference(userLanguage);
+    var languageDropdown = document.getElementById('language-dropdown');
+
+    if (languageDropdown) {
+        languageDropdown.addEventListener('change', function () {
+            setLanguagePreference(this.value);
+        });
+    }
+});
+
+

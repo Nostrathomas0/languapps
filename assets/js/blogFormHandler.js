@@ -43,27 +43,37 @@ export async function addBlogPost(title, content, author) {
 }
 
 export async function loadBlogPosts() {
-    if (!window.db) {
-        console.error('Firestore is not initialized yet');
-        return;
-    }
-    
     const blogSection = document.getElementById('blog-posts');
-    blogSection.innerHTML = '';  // Clear existing posts before loading new ones
-    const querySnapshot = await getDocs(collection(window.db, "blogPosts"));
-    querySnapshot.forEach((doc) => {
-        const post = doc.data();
-        const postElement = document.createElement('div');
-        postElement.classList.add('blog-post');
-        postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
-        blogSection.appendChild(postElement);
-    });
+
+    // Check if blogSection exists before proceeding
+    if (!blogSection) {
+        console.error("Error loading blog posts: blogSection element not found");
+        return; // Exit the function if blogSection is not found
+    }
+
+    try {
+        const querySnapshot = await getDocs(collection(window.db, "blogPosts"));
+        querySnapshot.forEach((doc) => {
+            const post = doc.data();
+            const postElement = document.createElement('div');
+            postElement.classList.add('blog-post');
+            postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+            blogSection.appendChild(postElement);
+        });
+    } catch (error) {
+        console.error("Error loading blog posts:", error);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        await loadBlogPosts();  // Load blog posts when DOM is fully loaded
-    } catch (error) {
-        console.error("Error loading blog posts:", error);
+    const blogSection = document.getElementById('blog-posts');
+
+    // Only attempt to load blog posts if the blogSection element exists on the page
+    if (blogSection) {
+        try {
+            await loadBlogPosts();  // Load blog posts when DOM is fully loaded
+        } catch (error) {
+            console.error("Error loading blog posts:", error);
+        }
     }
 });
