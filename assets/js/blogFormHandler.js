@@ -42,28 +42,6 @@ export async function addBlogPost(title, content, author) {
     }
 }
 
-export async function loadBlogPosts() {
-    const blogSection = document.getElementById('blog-posts');
-
-    // Check if blogSection exists before proceeding
-    if (!blogSection) {
-        console.error("Error loading blog posts: blogSection element not found");
-        return; // Exit the function if blogSection is not found
-    }
-
-    try {
-        const querySnapshot = await getDocs(collection(window.db, "blogPosts"));
-        querySnapshot.forEach((doc) => {
-            const post = doc.data();
-            const postElement = document.createElement('div');
-            postElement.classList.add('blog-post');
-            postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
-            blogSection.appendChild(postElement);
-        });
-    } catch (error) {
-        console.error("Error loading blog posts:", error);
-    }
-}
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Explicitly check for the existence of 'blog-posts' element before proceeding

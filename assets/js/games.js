@@ -178,6 +178,34 @@ function generateRandomSentence() {
     }
 
     function getSubject() {
+// Load Blog Posts
+
+// Assuming games.js is only included on pages that have the 'blog-posts' section
+
+async function loadBlogPosts() {
+    const blogSection = document.getElementById('blog-posts');
+
+    // Assuming blogSection always exists on the pages where games.js is included
+    try {
+        const querySnapshot = await getDocs(collection(window.db, "blogPosts"));
+        querySnapshot.forEach((doc) => {
+            const post = doc.data();
+            const postElement = document.createElement('div');
+            postElement.classList.add('blog-post');
+            postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+            blogSection.appendChild(postElement);
+        });
+    } catch (error) {
+        console.error("Error loading blog posts:", error);
+    }
+}
+
+// Load blog posts when DOM is fully loaded, if 'blog-posts' element exists
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('blog-posts')) {
+        loadBlogPosts();
+    }
+});
 
 // DOM Content 
 
