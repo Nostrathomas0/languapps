@@ -66,10 +66,8 @@ export async function loadBlogPosts() {
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const blogSection = document.getElementById('blog-posts');
-
-    // Only attempt to load blog posts if the blogSection element exists on the page
-    if (blogSection) {
+    // Explicitly check for the existence of 'blog-posts' element before proceeding
+    if (document.getElementById('blog-posts')) {
         try {
             await loadBlogPosts();  // Load blog posts when DOM is fully loaded
         } catch (error) {
@@ -77,3 +75,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 });
+
