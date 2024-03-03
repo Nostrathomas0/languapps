@@ -43,14 +43,14 @@ export async function addBlogPost(title, content, author) {
 }
 
 
-document.addEventListener('DOMContentLoaded', async function() {
+// document.addEventListener('DOMContentLoaded', async function() {
     // Explicitly check for the existence of 'blog-posts' element before proceeding
-    if (document.getElementById('blog-posts')) {
-        try {
-            await loadBlogPosts();  // Load blog posts when DOM is fully loaded
-        } catch (error) {
-            console.error("Error loading blog posts:", error);
-        }
-    }
-});
+//    if (document.getElementById('blog-posts')) {
+//        try {
+//            await loadBlogPosts();  // Load blog posts when DOM is fully loaded
+ //       } catch (error) {
+ //           console.error("Error loading blog posts:", error);
+//        }
+//    }
+//});
 
