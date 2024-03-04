@@ -216,10 +216,7 @@ startGame();
 
 
 // Set up the cookie consent modal
-var modal = document.getElementById('cookie-consent-modal');
-var acceptBtn = document.getElementById('accept-cookies');
-var declineBtn = document.getElementById('decline-cookies');
-var bodyContent = document.querySelector('.main-content');
+
 var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 var startGameButton = document.getElementById('start-game');
 

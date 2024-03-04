@@ -8,6 +8,10 @@
 
 // Global Variables and Initial set up
 var userLanguage = getCookie('userLanguage') || 'en'; // Default to English if no cookie found
+var modal = document.getElementById('cookie-consent-modal');
+var acceptBtn = document.getElementById('accept-cookies');
+var declineBtn = document.getElementById('decline-cookies');
+var bodyContent = document.querySelector('.main-content');
 
 // Language Toggle Functions
 function switchLanguage(lang) {
@@ -34,6 +38,21 @@ function setLanguagePreference(language) {
 }
 
 // Cookie Consent Modal Handling
+// Function to handle acceptance of cookies
+function acceptCookies() {
+    setCookie('userConsent', 'accepted', 365); // Set consent cookie for 1 year
+    modal.style.display = 'none'; // Hide the modal
+    // Any additional logic needed after consent
+}
+
+// Function to handle decline of cookies
+function declineCookies() {
+    setCookie('userConsent', 'declined', 365); // Set decline cookie for 1 year
+    modal.style.display = 'none'; // Hide the modal
+    // Any additional logic needed after declining
+}
+
+
 function handleCookieConsent() {
     var consent = getCookie('userConsent');
     var modal = document.getElementById('cookie-consent-modal');
@@ -42,18 +61,11 @@ function handleCookieConsent() {
     if (!consent) {
         modal.style.display = 'block';
     }
-    
-    // Event listeners for the modal's accept and decline buttons
-    document.getElementById('accept-cookies').addEventListener('click', function() {
-        setCookie('userConsent', 'accepted', 365); // Set consent cookie
-        modal.style.display = 'none'; // Hide the modal
-    });
-
-    document.getElementById('decline-cookies').addEventListener('click', function() {
-        setCookie('userConsent', 'declined', 365); // Set consent cookie
-        modal.style.display = 'none'; // Hide the modal
-    });
 }
+
+// Invoke the handleCookieConsent function when the DOM content is fully loaded
+document.addEventListener('DOMContentLoaded', handleCookieConsent);
+
 
 // Cookie Utility Functions
 function setCookie(name, value, days) {
@@ -119,4 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+document.getElementById('accept-cookies').addEventListener('click', acceptCookies);
+document.getElementById('decline-cookies').addEventListener('click', declineCookies);
 
