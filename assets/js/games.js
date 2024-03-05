@@ -4,8 +4,9 @@
 // |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
-
-import { getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+// Import getDocs and collection from Firestore SDK
+import { getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import { db } from './firebaseInit.js'; // Adjust the path to where your Firebase initialization happens and db is exported
 
 // Section 0 Global Variables
 let wordToGuess = "";
@@ -180,16 +181,24 @@ function generateRandomSentence() {
     }
 
     function getSubject() {
-// Load Blog Posts
-
-// Assuming games.js is only included on pages that have the 'blog-posts' section
-
 async function loadBlogPosts() {
     const blogSection = document.getElementById('blog-posts');
 
-    // Assuming blogSection always exists on the pages where games.js is included
+    // Ensure the blogSection exists before attempting to load posts
+    if (!blogSection) {
+        console.error("Error loading blog posts: 'blog-posts' element not found");
+        return;
+    }
+
     try {
-        const querySnapshot = await getDocs(collection(window.db, "blogPosts"));
+        // Use the db directly from your import, ensuring it's the initialized instance from your Firebase setup
+        const blogPostsCollectionRef = collection(db, "blogPosts");
+        const querySnapshot = await getDocs(blogPostsCollectionRef);
+        
+        // Clear existing posts to avoid duplicates
+        blogSection.innerHTML = '';
+
+        // Iterate through each document and create a post element
         querySnapshot.forEach((doc) => {
             const post = doc.data();
             const postElement = document.createElement('div');
