@@ -5,7 +5,7 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 
-import { getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // Section 0 Global Variables
 let wordToGuess = "";
