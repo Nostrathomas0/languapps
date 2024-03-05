@@ -5,6 +5,8 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 
+import { getDocs } from "firebase/firestore";
+
 // Section 0 Global Variables
 let wordToGuess = "";
 let guessedLetters = [];
