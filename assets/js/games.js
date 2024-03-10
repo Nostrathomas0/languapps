@@ -232,16 +232,6 @@ var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
 var startGameButton = document.getElementById('start-game');
 
 
-// Only show modal if cookie consent hasn't been given
-console.log("Checking cookie consent status");
-if (!getCookie('cookieConsent')) {
-    console.log("No cookie consent found, displaying modal");
-    modal.style.display = 'block';
-    bodyContent.classList.add('blur-background');
-}
-
-
-
 // Start Game button 
 if (startGameButton) {
     startGameButton.addEventListener('click', startGame);

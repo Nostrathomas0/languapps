@@ -37,6 +37,15 @@ function setLanguagePreference(language) {
     applyLanguageSettings(language); // Apply the language immediately
 }
 
+
+// Only show modal if cookie consent hasn't been given
+console.log("Checking cookie consent status");
+if (!getCookie('cookieConsent')) {
+    console.log("No cookie consent found, displaying modal");
+    modal.style.display = 'block';
+    bodyContent.classList.add('blur-background');
+}
+
 // Cookie Consent Modal Handling
 // Function to handle acceptance of cookies
 function acceptCookies() {
