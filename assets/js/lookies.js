@@ -12,7 +12,56 @@ var modal = document.getElementById('cookie-consent-modal');
 var acceptBtn = document.getElementById('accept-cookies');
 var declineBtn = document.getElementById('decline-cookies');
 var bodyContent = document.querySelector('.main-content');
+var languageDropdown = document.getElementById('language-dropdown');
 
+// Cookie Consent Modal Handling
+function acceptCookies() {
+    setCookie('userConsent', 'accepted', 365); // Set consent cookie for 1 year
+    closeModal(); // Use a function to handle modal close for consistency
+    // Any additional logic needed after consent
+}
+
+function declineCookies() {
+    setCookie('userConsent', 'declined', 365); // Set decline cookie for 1 year
+    closeModal(); // Use the same function to close modal for consistency
+    // Any additional logic needed after declining
+}
+
+function closeModal() {
+    modal.style.display = 'none'; // Hide the modal
+    bodyContent.classList.remove('blur-background'); // Remove blur from main content
+}
+
+function checkUserConsent() {
+    var consentGiven = getCookie('userConsent');
+    if (!consentGiven) {
+        showModal();
+    } else {
+        applyLanguageSettings(userLanguage);
+    }
+}
+
+function showModal() {
+    modal.style.display = 'block';
+    bodyContent.classList.add('blur-background');
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', checkUserConsent);
+
+if (acceptBtn) {
+    acceptBtn.addEventListener('click', acceptCookies);
+}
+
+if (declineBtn) {
+    declineBtn.addEventListener('click', declineCookies);
+}
+
+if (languageDropdown) {
+    languageDropdown.addEventListener('change', function () {
+        setLanguagePreference(this.value);
+    });
+}
 // Language Toggle Functions
 function switchLanguage(lang) {
     document.querySelectorAll('[data-translate]').forEach(function (elem) {
@@ -38,42 +87,6 @@ function setLanguagePreference(language) {
 }
 
 
-// Only show modal if cookie consent hasn't been given
-console.log("Checking cookie consent status");
-if (!getCookie('cookieConsent')) {
-    console.log("No cookie consent found, displaying modal");
-    modal.style.display = 'block';
-    bodyContent.classList.add('blur-background');
-}
-
-// Cookie Consent Modal Handling
-// Function to handle acceptance of cookies
-function acceptCookies() {
-    setCookie('userConsent', 'accepted', 365); // Set consent cookie for 1 year
-    modal.style.display = 'none'; // Hide the modal
-    // Any additional logic needed after consent
-}
-
-// Function to handle decline of cookies
-function declineCookies() {
-    setCookie('userConsent', 'declined', 365); // Set decline cookie for 1 year
-    modal.style.display = 'none'; // Hide the modal
-    // Any additional logic needed after declining
-}
-
-
-function handleCookieConsent() {
-    var consent = getCookie('userConsent');
-    var modal = document.getElementById('cookie-consent-modal');
-
-    // Show the modal if there's no 'userConsent' cookie
-    if (!consent) {
-        modal.style.display = 'block';
-    }
-}
-
-// Invoke the handleCookieConsent function when the DOM content is fully loaded
-document.addEventListener('DOMContentLoaded', handleCookieConsent);
 
 
 // Cookie Utility Functions
@@ -84,7 +97,7 @@ function setCookie(name, value, days) {
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         expires = "; expires=" + date.toUTCString();
     }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
 }
 
 function getCookie(name) {
@@ -126,21 +139,3 @@ var translations = {
     }
     // Add more translations as needed
 };
-
-// Initialization and Event Listeners
-document.addEventListener('DOMContentLoaded', function () {
-    
-    setLanguagePreference(userLanguage);
-    var languageDropdown = document.getElementById('language-dropdown');
-
-    if (languageDropdown) {
-        languageDropdown.addEventListener('change', function () {
-            setLanguagePreference(this.value);
-        });
-    }
-});
-
-
-document.getElementById('accept-cookies').addEventListener('click', acceptCookies);
-document.getElementById('decline-cookies').addEventListener('click', declineCookies);
-
