@@ -232,7 +232,7 @@ async function loadBlogPosts() {
     }
 }
 
-// Load blog posts when DOM is fully loaded, if 'blog-posts' element exists
+// Section 8 DOM Content
 document.addEventListener('DOMContentLoaded', function() {
     // Start the hangman game
     startGame();  
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadBlogPosts(); 
     }
     // Start Game button 
-    const startGameButton = documement.getElementById('start-game');
+    const startGameButton = document.getElementById('start-game');
     if (startGameButton) {
         startGameButton.addEventListener('click', startGame);
     }
