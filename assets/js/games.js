@@ -214,7 +214,9 @@ async function loadBlogPosts() {
     try {
         // Use the db directly from your import, ensuring it's the initialized instance from your Firebase setup
         const blogPostsCollectionRef = collection(db, "blogPosts");
-        const querySnapshot = await getDocs(blogPostsCollectionRef);
+        // Add the orderBy and limit methods to the query
+        const blogPostsQuery = query(blogPostsCollectionRef, orderBy("date", "desc"), limit(4));
+        const querySnapshot = await getDocs(blogPostsQuery);
         
         // Clear existing posts to avoid duplicates
         blogSection.innerHTML = '';
