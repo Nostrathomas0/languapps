@@ -5,7 +5,7 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 // Import getDocs and collection from Firestore SDK
-import { getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import { getDocs, collection, query, orderBy, limit  } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 import { db } from './firebaseInit.js'; // Adjust the path to where your Firebase initialization happens and db is exported
 
 // Section 0 Global Variables
@@ -215,7 +215,7 @@ async function loadBlogPosts() {
         // Use the db directly from your import, ensuring it's the initialized instance from your Firebase setup
         const blogPostsCollectionRef = collection(db, "blogPosts");
         // Add the orderBy and limit methods to the query
-        const blogPostsQuery = query(blogPostsCollectionRef, orderBy("date", "desc"), limit(4));
+        const blogPostsQuery = query(blogPostsCollectionRef, orderBy("timestamp", "desc"), limit(4));
         const querySnapshot = await getDocs(blogPostsQuery);
         
         // Clear existing posts to avoid duplicates
@@ -232,6 +232,14 @@ async function loadBlogPosts() {
     } catch (error) {
         console.error("Error loading blog posts:", error);
     }
+}
+
+
+// Helper function to escape HTML to prevent XSS attacks
+function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[tag] || tag));
 }
 
 // Section 8 DOM Content
