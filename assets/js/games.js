@@ -1,120 +1,74 @@
-// games.js
-// Section 0
-// Gtag & FBpixel 
+// games.js 0) global variables 1) game functions 2) gtag & Pixel 3) game variables 4) Utility Fuctions 
+//_         __      __   _     _       _     _      __      ___      ___      __  
+// |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
+// |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
+// |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
+//____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
+// Import getDocs and collection from Firestore SDK
+import { getDocs, collection, query, orderBy, limit  } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import { db } from './firebaseInit.js'; // Adjust the path to where your Firebase initialization happens and db is exported
 
-
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'UA-171464578-1');
-
-
-
-
-!function(f,b,e,v,n,t,s){
-    if(f.fbq)return;
-    n=f.fbq=function(){
-        n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)
-    };
-    if(!f._fbq)f._fbq=n;n.push=n;
-    n.loaded=!0;
-    n.version='2.0';
-    n.queue=[];
-    t=b.createElement(e);
-    t.async=!0;
-    t.src=v;
-    s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)
-}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
-fbq('init', '348427750356175'); 
-fbq('track', 'PageView');
-
-// Firebase Initialization 
-function firebaseInit() {
-    // Your Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyA_bq5-hmAlNbK-2ZgHSFl0Iew4uphF_Eo",
-        authDomain: "languapps.firebaseapp.com",
-        projectId: "languapps",
-        storageBucket: "languapps.appspot.com",
-        messagingSenderId: "866735367707",
-        appId: "1:866735367707:web:6154b4ab63fcab0272fabe",
-        measurementId: "G-MCZY61SSMM"
-      // other config
-    };
-  
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    window.db = firebase.firestore();
-  }
-  
-// Call firebaseInit to initialize Firebase
-firebaseInit();
-
-function addBlogPost(title, content, author) {
-    const post = {
-      title: title,
-      content: content,
-      author: author,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp() // Adds a timestamp
-    };
-  
-    db.collection("blogPosts").add(post).then(docRef => {
-      console.log("Document written with ID: ", docRef.id);
-    })
-    .catch(error => {
-      console.error("Error adding document: ", error);
-    });
-  }
-  
-
-// Section 1/2
-// Language Toggle
-var translations = {
-    statement: {
-        fr: "Apprenez des langues pour ouvrir des portes, rencontrer des gens, réussir et planifier votre avenir. Jouez à ce jeu en classe pour vous motiver. Astuce : mots anglais pour les fruits et légumes.",
-        zh: "学习语言可以打开大门、结识新朋友、找到成功并规划您的未来。 玩这个课堂游戏可以激发动力。 <br>提示：水果和蔬菜的英语单词。"
-    },
-    does: {
-        fr: "Édition numérique<br>Logiciel de révision<br>Diffusion en direct<br>Indépendant<br>Concours d'écriture<br>Spectacles de marionnettes<br>Phrases aléatoires !",
-        zh: "数字出版<br>评论软件<br>直播<br>独立<br>写作比赛<br>木偶剧<br>随机英语句子！"
-    },
-    is: {
-        fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
-        zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
-    }
-
-
-    // Add more translations here
-};
-
-function switchLanguage(lang) {
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][lang]) {
-            elem.textContent = translations[key][lang];
-        }
-    });
-}
-
-function applyLanguageSettings(language) {
-    document.querySelectorAll('[data-translate]').forEach(function(elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
-        }
-    });
-}
-
-
-// Section 1
-// Hangman Game
-
-const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
+// Section 0 Global Variables
 let wordToGuess = "";
 let guessedLetters = [];
 let wrongGuesses = 0;
 let wrongLetters = [];
+
+// Section 1 Export Functions
+export function startGame() { 
+    wordToGuess = words[Math.floor(Math.random() * words.length)];
+    guessedLetters = [];
+    wrongGuesses = 0;
+    wrongLetters = [];
+    updateHangmanImage(wrongGuesses);
+    displayWord();
+     // Reset button styles
+     const letterButtons = document.querySelectorAll('#letter-buttons button');
+     letterButtons.forEach(button => {
+         button.classList.remove('guessed');
+         button.disabled = false;
+     });
+ }
+ export function makeGuess(letter) { 
+    console.log("Trying to disable button with ID:", "button-" + letter);
+    letter = letter.toLowerCase(); // Convert letter to lowercase
+    let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
+
+    console.log("Guessed letter: ", letter);
+    if (wordToGuessLower.includes(letter)) {
+        console.log("Correct guess");
+        if (!guessedLetters.includes(letter)) {
+            guessedLetters.push(letter);
+            displayWord();
+        }
+    } else {
+        console.log("Incorrect guess");
+        if (!wrongLetters.includes(letter)) {
+            wrongLetters.push(letter);
+            wrongGuesses++; // Increment wrongGuesses
+            updateHangmanImage(wrongGuesses);
+        }
+    }
+    document.getElementById("button-" + letter).classList.add('guessed');
+    document.getElementById("button-" + letter).disabled = true; // Disable guessed letter button
+
+    checkGameOver();
+}
+
+export function playSound(soundName) {
+    const soundPath = `assets/sounds/${soundName}`;
+    const sound = new Audio(soundPath);
+    sound.play();
+}
+
+// Section 3 Hangman Variables
+
+const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
+
+wordToGuess = "";
+guessedLetters = [];
+wrongGuesses = 0;
+wrongLetters = [];
 
 const hangmanImages = [
     '/images/hang/h0.png',
@@ -130,6 +84,8 @@ const hangmanImages = [
     '/images/hang/h10.png'
 ];
 
+// Section 4 Utility Functions
+
 function updateHangmanImage(wrongGuesses) {
     console.log("Updating hangman image, wrong guesses:", wrongGuesses);
     const imageElement = document.getElementById('hangman-image');
@@ -140,48 +96,6 @@ function updateHangmanImage(wrongGuesses) {
     } else {
         console.log("Hangman image element not found");
     }
-}
-
-function startGame() {
-    wordToGuess = words[Math.floor(Math.random() * words.length)];
-    guessedLetters = [];
-    wrongGuesses = 0;
-    wrongLetters = [];
-    updateHangmanImage(wrongGuesses);
-    displayWord();
-
-    // Reset button styles
-    const letterButtons = document.querySelectorAll('#letter-buttons button');
-    letterButtons.forEach(button => {
-        button.classList.remove('guessed');
-        button.disabled = false;
-    });
-}
-
-function makeGuess(guess) {
-    console.log("Trying to disable button with ID:", "button-" + guess);
-    guess = guess.toLowerCase(); // Convert guess to lowercase
-    let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
-
-    console.log("Guessed letter: ", guess);
-    if (wordToGuessLower.includes(guess)) {
-        console.log("Correct guess");
-        if (!guessedLetters.includes(guess)) {
-            guessedLetters.push(guess);
-            displayWord();
-        }
-    } else {
-        console.log("Incorrect guess");
-        if (!wrongLetters.includes(guess)) {
-            wrongLetters.push(guess);
-            wrongGuesses++; // Increment wrongGuesses
-            updateHangmanImage(wrongGuesses);
-            }
-    }
-    document.getElementById("button-" + guess).classList.add('guessed');
-
-    checkGameOver();
-    document.getElementById("button-" + guess).disabled = true; // Disable guessed letter button
 }
 
 function displayWord() {
@@ -211,26 +125,7 @@ function checkGameOver() {
 }
 
 
-
-// Section 2
-// Random sentence generator
-document.getElementById('random').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevents the default form submission
-    generateRandomSentence(); // Calls your function to generate a sentence
-});
-
-   
-const pronouns = {
-    subject: ['I', 'You', 'He', 'She', 'They'],
-    object: ['me', 'you', 'him', 'her', 'them']
-};
-
-const verbs = ['love', 'hate', 'enjoy', 'dislike', 'prefer'];
-
-const nounPhrases = {
-    determiners: ['The', 'A', 'An', 'My', 'Your'],
-    nouns: ['cat', 'dog', 'pizza', 'coding', 'music']
-};
+// Section 5 Random sentence 
 
 function getRandomElement(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -248,17 +143,12 @@ function generateRandomSentence() {
         base: ['love', 'hate', 'enjoy', 'dislike', 'prefer'],
         thirdPersonSingular: ['loves', 'hates', 'enjoys', 'dislikes', 'prefers']
     };
-
-    // Helper functions
-    function getRandomElement(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
     function isThirdPersonSingular(subject) {
         return !['I', 'You', 'They'].includes(subject);
     }
 
     function getSubject() {
+    
         // Randomly choose between a pronoun or a noun phrase
         if (Math.random() < 0.5) {
             // Use a subject pronoun
@@ -286,155 +176,104 @@ function generateRandomSentence() {
     return `${subject} ${verb} ${object}.`;
 }
 
-// Example usage
-const randomSentence = generateRandomSentence();
-document.getElementById('random-sentence').innerHTML = randomSentence;
+// Section 6 Analytics and Tracking 
 
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-171464578-1');
 
+!function(f,b,e,v,n,t,s){
+    if(f.fbq)return;
+    n=f.fbq=function(){
+        n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)
+    };
+    if(!f._fbq)f._fbq=n;n.push=n;
+    n.loaded=!0;
+    n.version='2.0';
+    n.queue=[];
+    t=b.createElement(e);
+    t.async=!0;
+    t.src=v;
+    s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)
+}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
+fbq('init', '348427750356175'); 
+fbq('track', 'PageView');
 
-//Section 3 Cookies
-//Cookie setter
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setDate(date.getDate() + days);
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
+// Section 7 Async Function to Load Blog Posts from Firestore
 
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-
-function eraseCookie(name) {   
-    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
-function setLanguagePreference(language) {
-    setCookie('userLanguage', language, 30); // Store the language preference
-    applyLanguageSettings(language); // Apply the language immediately
-}
-
-// Section 4 Firebase Blog
 async function loadBlogPosts() {
     const blogSection = document.getElementById('blog-posts');
-    const querySnapshot = await window.db.collection("blogPosts").get();
-    querySnapshot.forEach((doc) => {
-      const post = doc.data();
-      const postElement = document.createElement('div');
-      postElement.classList.add('blog-post');
-      postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
-      blogSection.appendChild(postElement);
-    });
-  }
-  
-  document.addEventListener('DOMContentLoaded', loadBlogPosts);
-  
+    // Ensure the blogSection exists before attempting to load posts
+    if (!blogSection) {
+        console.error("Error loading blog posts: 'blog-posts' element not found");
+        return;
+    }
+
+    try {
+        // Use the db directly from your import, ensuring it's the initialized instance from your Firebase setup
+        const blogPostsCollectionRef = collection(db, "blogPosts");
+        // Add the orderBy and limit methods to the query
+        const blogPostsQuery = query(blogPostsCollectionRef, orderBy("timestamp", "desc"), limit(4));
+        const querySnapshot = await getDocs(blogPostsQuery);
+        
+        // Clear existing posts to avoid duplicates
+        blogSection.innerHTML = '';
+
+        // Iterate through each document and create a post element
+        querySnapshot.forEach((doc) => {
+            const post = doc.data();
+            const postElement = document.createElement('div');
+            postElement.classList.add('blog-post');
+            postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+            blogSection.appendChild(postElement);
+        });
+    } catch (error) {
+        console.error("Error loading blog posts:", error);
+    }
+}
 
 
+// Helper function to escape HTML to prevent XSS attacks
+function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[tag] || tag));
+}
+
+// Section 8 DOM Content
 document.addEventListener('DOMContentLoaded', function() {
     // Start the hangman game
-    startGame();
-    // Blog load 
-    loadBlogPosts();
-    // Set up the cookie consent modal
-    var modal = document.getElementById('cookie-consent-modal');
-    var acceptBtn = document.getElementById('accept-cookies');
-    var declineBtn = document.getElementById('decline-cookies');
-    var bodyContent = document.querySelector('.main-content');
-    var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-    var userLanguage = getCookie('userLanguage')
-    var languageDropdown = document.getElementById('language-dropdown');
-    var hamburger = document.querySelector('.hamburger-menu');
-    var navUL = document.querySelector('nav ul');
-    var startGameButton = document.getElementById('start-game');
-    // Form submission for adding blog posts
-    var addPostForm = document.getElementById('addBlogPostForm');
-    if (addPostForm) {
-        addPostForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission action
-
-            // Retrieve the title and content from the form
-            var title = document.getElementById('title').value;
-            var content = document.getElementById('content').value;
-
-            // Call the function to add the blog post to Firestore
-            addBlogPost(title, content, "Author Name"); // Replace "Author Name" with your actual name or a dynamic author name if you have one
-
-            // Optional: clear the form fields after submission
-            addPostForm.reset();
-        });
+    startGame();  
+    // Load Blog Posts if the container is present
+    if (document.getElementById('blog-posts')) {
+        loadBlogPosts(); 
     }
-
-    // Only show modal if cookie consent hasn't been given
-    console.log("Checking cookie consent status");
-    if (!getCookie('cookieConsent')) {
-        console.log("No cookie consent found, displaying modal");
-        modal.style.display = 'block';
-        bodyContent.classList.add('blur-background');
-    }
-
-    // Event listeners for accept and decline buttons
-    acceptBtn.addEventListener('click', function() {
-        setCookie('cookieConsent', 'accepted', 30);
-        modal.style.display = 'none';
-        bodyContent.classList.remove('blur-background');
-        if (userLanguage) {
-            // Apply the langage settings
-            applyLanguageSettings(userLanguage);
-        }
-    });
-
-    declineBtn.addEventListener('click', function() {
-        setCookie('cookieConsent', 'declined', 30);
-        modal.style.display = 'none';
-        bodyContent.classList.remove('blur-background');
-    });
-   
-    if (languageDropdown) {
-        languageDropdown.addEventListener('change', function() {
-            setLanguagePreference(this.value);
-        });
-    }
-    hamburger.addEventListener('click', function() {
-        navUL.classList.toggle('active');
-    });
-
     // Start Game button 
+    const startGameButton = document.getElementById('start-game');
     if (startGameButton) {
         startGameButton.addEventListener('click', startGame);
     }
-    
-    // Setup event listeners for letter buttons
-    letters.forEach(function(letter) {
-        var button = document.getElementById('button-' + letter);
+
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    letters.forEach(letter => {
+        const button = document.getElementById('button-' + letter);
         if (button) {
-            button.addEventListener('click', function() {
-                makeGuess(letter);
-            });
+            button.addEventListener('click', () => makeGuess(letter));
         }
     });
 
+
     // Set up the random sentence generator form submission
-    document.getElementById('random').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting in the traditional way
-        generateRandomSentence(); // Call the function to generate and display the sentence
-    });
-
-    // Additional code if needed
-});
-
-$(document).ready(function() {
-    $('#hamburger-toggle').click(function() {
-        $('#navigation').toggleClass('active');
-    });
+    const randomSentenceForm = document.getElementById('random');
+    if (randomSentenceForm) {
+        randomSentenceForm.addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent traditional form submission
+            generateRandomSentence();  // Generate and display the sentence
+        });
+    }
+    // Example usage for the random sentence generator
+    const randomSentence = generateRandomSentence();
+    document.getElementById('random-sentence').textContent = randomSentence;
 });

@@ -13,13 +13,13 @@
 		<title>LANGUAPPS</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="assets/css/main.css">
-		<link rel="shortcut icon" href="images/yata.ico">
+		<link rel="shortcut icon" href="images/yata.svg">
 		</head>
 	<body class="is-preload">
 		
 		<!-- Header -->
 			<header id="header">
-				<h1>Language learning Apps</h1>
+				<h1>Learn Languages</h1>
 				<!-- Hamburger Menu Button -->
 				<button class="hamburger-menu" id="hamburger-toggle">&#9776;</button>
 				<nav id="navigation">
@@ -46,7 +46,7 @@
 			<section id="intro" class="main style1 dark fullscreen">
 				<div class="content">
 					<h2>Languapps</h2>
-					<p data-translate="statement">Learn languages Open doors<br>Meet people Find success<br>Play Hangman Get Motivated <br>Hint: fruits and vegetables. </p>
+					<p data-translate="statement">Play Hangman in English <br>Guess letters to solve <br> Hint : fruits and vegetables. </p>
 					<header>  <!-- Hangman Game Elements -->
 						<div id="hangman-container">
 							<img id="hangman-image" src="/images/hang/h0.png" alt="hangman">
@@ -102,7 +102,7 @@
 						</form>
 					</header>
 					<p data-translate="does">Digital Publishing<br>Review Software<br>Live stream<br>Independant<br>Writing Contests<br>Puppet Shows<br>Random Sentences!</p>
-				
+					<div class="fb-login-button" data-width="" data-size="" data-button-type="" data-layout="" data-auto-logout-link="true" data-use-continue-as="true"></div>
 				<div id="random-sentence"></div>
 				</div>
 				<a href="#two" class="button style2 down anchored">Next</a>
@@ -129,7 +129,7 @@
 				<div class="content">
 					<header>
 						<h2>I Work</h2>
-						<p>with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses. Check our expanding <a href="/services">list of courses.</a></p>
+						<p data-translate="works">with students, teachers and independent learners. I prepare and perform educational presentations and performance in classrooms, videos, small theatres and the great outdoors. To get in touch and share language learning experiences online and take your excellent chance to get language courses. Check our expanding <a href="/services">list of courses.</a></p>
 						<p><a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL" target="_blank" rel="noopener noreferrer">Book Thomas</a></p>
 					</header>
 
@@ -198,7 +198,7 @@
 
 				<!-- Icons -->
 					<ul class="icons">
-						<li><a href="https://facecbook.com/ESLforInternats" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="https://facebook.com/ESLforInternats" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
 						<li><a href="https://instagram.com/languapps" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
 						<li><a href="https://www.linkedin.com/in/thomas-schwartz-b9899417/" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
 						<li><a href="https://dribbble.com/nostrathomas" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
@@ -216,7 +216,7 @@
 				<div id="cookie-consent-modal" class="cookie-modal">
 					<div class="modal-content">
 						<h2>Cookie Consent</h2>
-						<p>Accept the cookie to tell Languapps what if you used French, English or Chinese. <br> Accept the cookie to indicate your language. <br>接受 cookie 以告诉 Languapps 您的语言</p>
+						<p>Accept the cookie to indicate your language. <br>接受 cookie 以告诉 Languapps 您的语言</p>
 						<button id="accept-cookies">Accept</button>
 						<button id="decline-cookies">Decline</button>
 					</div>
@@ -233,17 +233,22 @@
 		<script src="assets/js/main.js"></script>
 
 		<!-- Firebase SDKs -->
-		<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
 
 		<!-- Firebase Initialization -->
-		<script src="assets/js/firebaseInit.js"></script>
+		<script type="module" src="assets/js/firebaseInit.js"></script>
+
 
 		<!-- Scripts Depending on Firebase -->
-		<script src="assets/js/games.js"></script>
-
+		<script type="module" src="assets/js/games.js"></script>
+		<script src="assets/js/lookies.js"></script>
+		<script src="assets/js/burger.js"></script>			
 		<!-- Asynchronous Scripts -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
-		<!-- or include Firebase initialization directly in games.js -->			
+		<!-- or include Firebase initialization directly in games.js -->
+		<script src="assets/js/facebookSDKSetup.js" defer></script>
+		<div id="fb-root"></div>
+		<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0&appId=776174730748503" nonce="meVadCpW"></script>	
 	</body>
 </html>
