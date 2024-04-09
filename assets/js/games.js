@@ -30,7 +30,7 @@ export function startGame() {
      });
  }
  export function makeGuess(letter) { 
-    console.log("Trying to disable button with ID:", "button-" + letter);
+   
     letter = letter.toLowerCase(); // Convert letter to lowercase
     let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
 
@@ -137,11 +137,17 @@ function generateRandomSentence() {
     const objectPronouns = ['me', 'you', 'him', 'her', 'them'];
     const determiners = ['the', 'a', 'an', 'my', 'your'];
     const nouns = ['cat', 'dog', 'pizza', 'music', 'car'];
+    const nounPhrases = ["a professor of linguistics", "a beacon of hope", "a voice of reason", "an explorer of truths"];
+    const actionVerbsIntransitive = ["walking", "dreaming", "leading", "striving"];
+    const actionVerbsTransitive = ["encouraging", "inspiring", "challenging", "supporting"];
+    const stateVerbsTransitive = ["have", "embody", "cherish", "seek"];
+    const objects = ["bright, powerful eyes", "an unbreakable spirit", "a keen mind", "a warm heart"];
+    const prepositionPhrases = ["in times of challenge", "with grace and courage", "beyond the horizons", "through the storms"];
 
     // Verbs in their base form
     const verbs = {
-        base: ['love', 'hate', 'enjoy', 'dislike', 'prefer'],
-        thirdPersonSingular: ['loves', 'hates', 'enjoys', 'dislikes', 'prefers']
+        base: ['love', 'convince','show', 'enjoy', 'dislike', 'prefer'],
+        thirdPersonSingular: ['loves', 'convinces', 'shows', 'enjoys', 'dislikes', 'prefers']
     };
     function isThirdPersonSingular(subject) {
         return !['I', 'You', 'They'].includes(subject);
@@ -174,6 +180,29 @@ function generateRandomSentence() {
     const object = getObject();
 
     return `${subject} ${verb} ${object}.`;
+    // Fortune templates
+    const templates = [
+        "You are {NP} and you are {AVI} while {AVT} {Obj}.",
+        "You {SVT} {Obj}, {NP} {PP}."
+    ];
+
+    function generateMotivationalFortune() {
+        const template = getRandomElement(templates);
+        const sentence = template
+            .replace("{NP}", getRandomElement(nounPhrases))
+            .replace("{AVI}", getRandomElement(actionVerbsIntransitive))
+            .replace("{AVT}", getRandomElement(actionVerbsTransitive))
+            .replace("{SVT}", getRandomElement(stateVerbsTransitive))
+            .replace("{Obj}", getRandomElement(objects))
+            .replace("{PP}", getRandomElement(prepositionPhrases));
+
+        return sentence.charAt(0).toUpperCase() + sentence.slice(1); // Capitalize the first letter
+    }
+
+    // Example usage
+    const fortune = generateMotivationalFortune();
+    console.log(fortune);
+
 }
 
 // Section 6 Analytics and Tracking 
@@ -262,18 +291,39 @@ document.addEventListener('DOMContentLoaded', function() {
         if (button) {
             button.addEventListener('click', () => makeGuess(letter));
         }
+        
     });
 
+    const fortuneButton = document.getElementById('Fortune');
+    const fortuneDisplay = document.getElementById('fortune-display'); // Make sure you have this element in your HTML
+
+//   // Check if the elements exist
+//    if (fortuneButton && fortuneDisplay) {
+//        // Add a click event listener to the button
+//        fortuneButton.addEventListener('click', function() {
+            // Generate a motivational fortune
+//            const fortune = generateMotivationalFortune();
+            // Display the fortune in the fortune-display element
+ //           fortuneDisplay.textContent = fortune;
+ //       });
+//    }
 
     // Set up the random sentence generator form submission
     const randomSentenceForm = document.getElementById('random');
     if (randomSentenceForm) {
         randomSentenceForm.addEventListener('submit', function(event) {
             event.preventDefault();  // Prevent traditional form submission
-            generateRandomSentence();  // Generate and display the sentence
-        });
+            const randomSentence = generateRandomSentence();
+            document.getElementById('random-sentence').textContent = randomSentence; // Display the generated sentence
+    });
     }
     // Example usage for the random sentence generator
     const randomSentence = generateRandomSentence();
     document.getElementById('random-sentence').textContent = randomSentence;
+    if (fortuneButton) {
+        fortuneButton.addEventListener('click', function() {
+            const fortune = generateMotivationalFortune();
+            fortuneDisplay.textContent = fortune; // Display the generated fortune
+        });
+    }
 });
