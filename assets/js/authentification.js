@@ -1,23 +1,102 @@
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    const auth = getAuth();
+// Import necessary Firebase modules
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, FacebookAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-function signUpAndSendVerification(email, password) {
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        // Signed in
-        const user = userCrential.user;
+const auth = getAuth();
+window.onClick = onClick;
 
-        // Send Verification Email
-        sendEmailVerification(user)
-            .then(() => {
-                // Email verification sent
-                // Redirect user
-            });
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // Handle errors
-        // Display message
+// Function to handle onClick event, initiate reCAPTCHA, and verify it
+async function onClick(e) {
+    e.preventDefault();
+    grecaptcha.enterprise.ready(async () => {
+        const token = await grecaptcha.enterprise.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', {action: 'LOGIN'});
+        verifyRecaptcha(token);
     });
 }
+
+// Function to verify reCAPTCHA token with the backend
+function verifyRecaptcha(token) {
+    fetch('https://us-central1-languapps.cloudfunctions.net/verifyRecaptcha', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('reCAPTCHA verified successfully');
+            // Proceed with sign-in or other logic here
+        } else {
+            console.error('reCAPTCHA verification failed:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error calling the verifyRecaptcha function:', error);
+    });
+}
+
+// Function to handle user sign-up
+function signUp(email, password) {
+    createUserWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+            // Signed in
+            const user = userCredential.user;
+            sendVerificationEmail(user);
+        })
+        .catch(error => {
+            console.error('Error during sign-up:', error);
+        });
+}
+
+// Function to send a verification email
+function sendVerificationEmail(user) {
+    sendEmailVerification(user)
+        .then(() => {
+            console.log('Verification email sent.');
+        })
+        .catch(error => {
+            console.error('Error sending verification email:', error);
+        });
+}
+
+// Function to handle user sign-in
+function signIn(email, password) {
+    signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+            // Signed in
+            const user = userCredential.user;
+            if (user.emailVerified) {
+                console.log('User signed in and email verified.');
+            } else {
+                console.error('Email not verified.');
+            }
+        })
+        .catch(error => {
+            console.error('Error signing in:', error);
+        });
+}
+
+// Function for signing in with Facebook
+function signInWithFacebook() {
+    const provider = new FacebookAuthProvider();
+    signInWithPopup(auth, provider)
+        .then(result => {
+            console.log('Facebook sign-in successful.');
+        })
+        .catch(error => {
+            console.error('Error during Facebook sign-in:', error);
+        });
+}
+
+// Listen for authentication state changes
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log('User is signed in');
+    } else {
+        console.log('User is signed out');
+    }
+});
+
+// Export the functions to use in other modules
+export { signUp, signIn, signInWithFacebook, onClick };

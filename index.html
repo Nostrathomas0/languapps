@@ -14,12 +14,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="assets/css/main.css">
 		<link rel="shortcut icon" href="images/yata.svg">
+		<script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs"></script>
 		</head>
 	<body class="is-preload">
 		
 		<!-- Header -->
 			<header id="header">
 				<h1><a href= "https://labase.languapps.com"> An English Grammar for Learners</a></h1>
+
 				<!-- Hamburger Menu Button -->
 				<button class="hamburger-menu" id="hamburger-toggle">&#9776;</button>
 				<nav id="navigation">
@@ -46,6 +48,7 @@
 			<section id="intro" class="main style1 dark fullscreen">
 				<div class="content">
 					<h2>Languapps</h2>
+					<button onclick="onClick(event)">Login</button>
 					<p data-translate="statement">Play Hangman in English <br>Guess letters to solve <br> Hint : fruits and vegetables. </p>
 					<header>  <!-- Hangman Game Elements -->
 						<div id="hangman-container">
@@ -240,10 +243,11 @@
 		<!-- Firebase SDKs -->
 		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
 		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+		
 
 		<!-- Firebase Initialization -->
 		<script type="module" src="assets/js/firebaseInit.js"></script>
-
+		<script type="module" src="assets/js/authentification.js" ></script>
 
 		<!-- Scripts Depending on Firebase -->
 		<script type="module" src="assets/js/games.js"></script>
