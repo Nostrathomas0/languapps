@@ -1,0 +1,124 @@
+body {
+  background: url(../images/wallpaper.png) #a0d6b4;
+  box-sizing: border-box;
+}
+
+header {
+  background-color: #003153;
+  padding: 4px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.links a {
+  display: inline-block;
+  font-size: 22px;
+  color: #dd9933;
+}
+
+.right {
+  text-align: right;
+  width: 35%;
+}
+
+.left {
+  text-align: left;
+  width: 35%;
+}
+
+div {
+  display: inline-block;
+  background-color: #67074e;
+  float: left;
+  width: 62%;
+  height: auto;
+  padding: 2px;
+  margin: 2px solid;
+  object-fit: contain;
+}
+
+p {
+  color: #dd9933;
+  font-size: 33px;
+}
+
+h1 {
+  color: #67074e;
+  text-align: center;
+}
+ 
+.clout {
+  height: 320px;
+  width: auto;
+}
+
+.clout1 {
+  height: auto;
+  width: 300px;
+}
+
+.clout2 {
+  height: auto;
+  width: 220px;
+}
+
+.clout3 {
+   height: 127px;
+   width: auto;
+}
+
+.clout4 {
+  height: auto;
+  width: 333px;
+}
+  
+.moreclout {
+  height: 50%;
+  max-width: 330px;
+}
+
+/* Style the list inside the menu */
+article ul {
+  list-style-type: none;
+  padding: 4;
+}
+
+.color ul {
+  color: #dd9933;
+}
+
+.icon li {
+  height: 45px;
+  width: auto;
+}
+
+article {
+  background-color: #dd9933;
+  color: #67074e;
+  float: right;
+  padding: 5px;
+  width: 32%;
+  height: 98%;
+}
+
+ /* Clear floats after the columns */
+section::after {
+  content: "main";
+  display: table;
+  clear: both;
+}
+
+/* Style the footer */
+footer {
+  background-color: #003153;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 600px) {
+  div, article {
+    width: 100%;
+    height: auto;
+  }
+}
