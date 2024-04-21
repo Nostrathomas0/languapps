@@ -2372,7 +2372,7 @@ input, select, textarea {
 }
 
 #wrong-guesses {
-	color: black;
+	color: blue;
 	font-size: 40px;
 		}
 
@@ -2528,4 +2528,23 @@ input, select, textarea {
     display: block; /* or 'flex', depending on your layout */
 }
 }
-		
+/* Target the content container within the #work section for background color */
+#work .content {
+    background-color: #ffffff; /* Sets the background color to white */
+    padding: 20px; /* Adds some padding around the text */
+    border-radius: 5px; /* Optional: adds rounded corners for a softer look */
+}
+
+#work header, #work p {
+    background-color: transparent; /* Ensures headers and paragraphs have no additional background */
+}
+
+#work a {
+    color: #0000ff; /* Ensures links remain blue for visibility */
+}
+
+#work header h2, #work p {
+    color: #000000; /* Ensures text is black for contrast against the white background */
+}
+
+	
