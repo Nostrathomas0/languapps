@@ -1,6 +1,13 @@
-// Import necessary Firebase modules
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, FacebookAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+// Authentification.js
 
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, FacebookAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { auth } from './firebaseInit.js';
+
+// Sign-in, sign-up, and other auth functions
+
+
+// Add more auth-related functions as needed
 const auth = getAuth();
 window.onClick = onClick;
 
@@ -11,8 +18,23 @@ async function onClick(e) {
         const token = await grecaptcha.enterprise.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', {action: 'LOGIN'});
         verifyRecaptcha(token);
     });
+    
 }
 
+export function signIn(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+}
+export function checkUserSession() {
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            // User is signed in, might check or set language preference here
+            console.log("User is signed in");
+        } else {
+            // User is signed out
+            console.log("User is signed out");
+        }
+    });
+}
 // Function to verify reCAPTCHA token with the backend
 function verifyRecaptcha(token) {
     fetch('https://us-central1-languapps.cloudfunctions.net/verifyRecaptcha', {
@@ -37,27 +59,30 @@ function verifyRecaptcha(token) {
 }
 
 // Function to handle user sign-up
-function signUp(email, password) {
-    createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-            // Signed in
-            const user = userCredential.user;
-            sendVerificationEmail(user);
-        })
-        .catch(error => {
-            console.error('Error during sign-up:', error);
-        });
+function signUp(email) {
+    return new Promise((resolve, reject) => {
+        createUserWithEmailAndPassword(auth, email)
+            .then(userCredential => {    
+                const user = userCredential.user;
+                sendVerificationEmail(user)
+                    .then(() => {
+                        console.log('Verification email sent.');
+                        resolve();
+                    })
+                    .catch(error => {
+                        console.error('Error during sign-up:', error);
+                        reject(error);
+                    });
+             })
+            .catch(error => {
+              console.error('Error during sign-up:', error);
+             reject(error);
+          });
+    });
 }
-
 // Function to send a verification email
 function sendVerificationEmail(user) {
-    sendEmailVerification(user)
-        .then(() => {
-            console.log('Verification email sent.');
-        })
-        .catch(error => {
-            console.error('Error sending verification email:', error);
-        });
+    return sendEmailVerification(user)
 }
 
 // Function to handle user sign-in
@@ -121,3 +146,4 @@ onAuthStateChanged(auth, (user) => {
 
 // Export the functions to use in other modules
 export { signUp, signIn, signInWithFacebook, onClick };
+

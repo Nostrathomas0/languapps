@@ -5,6 +5,7 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 
+import { auth } from './firebaseInit.js';  // Assuming firebaseInit.js correctly exports an initialized 'auth' object
 
 // Global Variables and Initial set up
 var userLanguage = getCookie('userLanguage') || 'en'; // Default to English if no cookie found
@@ -13,6 +14,23 @@ var acceptBtn = document.getElementById('accept-cookies');
 var declineBtn = document.getElementById('decline-cookies');
 var bodyContent = document.querySelector('.main-content');
 var languageDropdown = document.getElementById('language-dropdown');
+var auth = getAuth();
+
+// Function to open a specific modal by ID
+function openModalById(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// Function to close a specific modal by ID
+function closeModalById(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
 
 // Cookie Consent Modal Handling
 function acceptCookies() {
@@ -27,7 +45,7 @@ function declineCookies() {
     // Any additional logic needed after declining
 }
 
-function closeModal() {
+function closeCookieModal() {
     modal.style.display = 'none'; // Hide the modal
     bodyContent.classList.remove('blur-background'); // Remove blur from main content
 }
@@ -45,6 +63,17 @@ function showModal() {
     modal.style.display = 'block';
     bodyContent.classList.add('blur-background');
 }
+
+function transitionModalStep(currentStepId, nextStepId) {
+    const currentStep = document.getElementById(currentStepId);
+    const nextStep = document.getElementById(nextStepId);
+    if (currentStep && nextStep) {
+        currentStep.style.display = 'none';  // Hide current step
+        nextStep.style.display = 'block';    // Show next step
+    }
+}
+
+
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', checkUserConsent);
@@ -86,7 +115,37 @@ function setLanguagePreference(language) {
     applyLanguageSettings(language); // Apply the language immediately
 }
 
+// Function to handle user sign-up or login from the modal
+function handleAuthFormSubmit(event) {
+    event.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    
+    // Assuming a simple check or a way to differentiate between login and signup
+    const isLogin = document.getElementById("authModal").classList.contains("login");
 
+    if (isLogin) {
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log("User signed in:", userCredential.user);
+            closeModal(); // Assuming closeModal() hides the auth modal
+        })
+        .catch((error) => {
+            console.error("Error signing in:", error);
+            alert("Login failed: " + error.message);  // Show error to the user
+        });
+    } else {
+        createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log("User registered and signed in:", userCredential.user);
+            closeModal(); // Assuming closeModal() hides the auth modal
+        })
+        .catch((error) => {
+            console.error("Error during sign-up:", error);
+            alert("Signup failed: " + error.message);  // Show error to the user
+        });
+    }
+}
 
 
 // Cookie Utility Functions
@@ -136,3 +195,89 @@ var translations = {
     }
     // Add more translations as needed
 };
+
+
+// Function to open the modal
+function openModal() {
+    document.getElementById("authModal").style.display = "block";
+  }
+  
+  // Function to close the modal
+  document.getElementsByClassName("close")[0].onclick = function() {
+    document.getElementById("authModal").style.display = "none";
+  }
+
+document.getElementById("authForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        console.log("User created and signed in:", userCredential.user);
+        // You might want to close the modal here or show a success message
+      })
+      .catch((error) => {
+        console.error("Error signing in:", error);
+        // Handle errors here, such as displaying a message in the modal
+      });
+  });
+  // Add event listeners to open modal buttons
+document.getElementById("loginButton").addEventListener("click", openModal);
+document.getElementById("authForm").addEventListener("submit", handleAuthFormSubmit);
+
+document.getElementById('signupForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const email = document.getElementById('signupEmail').value;
+    // Simulate sending an email
+    console.log("Sending validation email to:", email);
+    transitionModalStep('step1', 'step2'); // Move to user details step
+});
+
+document.getElementById('userDetailsForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const userName = document.getElementById('userName').value;
+    const activationCode = document.getElementById('activationCode').value;
+    console.log("Verifying details for:", userName, "with code:", activationCode);
+    // Simulate code verification
+    transitionModalStep('step2', 'step3'); // Move to blog post step
+});
+
+document.getElementById('blogPostForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const title = document.getElementById('blogTitle').value;
+    const content = document.getElementById('blogContent').value;
+    console.log("Posting blog titled:", title);
+    // Simulate blog post submission
+    closeModalById('authModal'); // Close modal after posting
+});
+
+function transitionModalStep(currentStepId, nextStepId) {
+    document.getElementById(currentStepId).style.display = 'none';
+    document.getElementById(nextStepId).style.display = 'block';
+}
+// Function to handle the initial signup form submission
+document.getElementById('signupForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    // Call the signUp function from authentification.js
+    signUp(email)
+        .then(() => {
+            // On successful email send, transition to the next modal step
+            transitionModalStep('step1', 'step2');
+        })
+        .catch(error => {
+            console.error("Signup error:", error);
+            alert("Failed to send verification email: " + error.message);
+        });
+});
+
+// Transition between modal steps
+function transitionModalStep(currentStepId, nextStepId) {
+    const currentStep = document.getElementById(currentStepId);
+    const nextStep = document.getElementById(nextStepId);
+    if (currentStep && nextStep) {
+        currentStep.style.display = 'none';  // Hide current step
+        nextStep.style.display = 'block';    // Show next step
+    }
+}
