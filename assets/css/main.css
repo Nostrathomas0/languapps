@@ -2584,4 +2584,13 @@ input, select, textarea {
 #addBlogPostForm {
     display: none;
 }
+/* CSS to show the first step and hide others initially */
+#step1 {
+    display: block;  /* Ensure the first step is visible */
+}
+
+#step2, #step3 {
+    display: none;  /* Hide other steps initially */
+}
+
 	

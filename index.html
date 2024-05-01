@@ -48,7 +48,8 @@
 			<section id="intro" class="main style1 dark fullscreen">
 				<div class="content">
 					<h2>Languapps</h2>
-					<button onclick="onClick(event)">Login</button>
+					<button id="loginButton">Login / Register</button>
+
 					<p data-translate="statement">Play Hangman in English <br>Guess letters to solve <br> Hint : fruits and vegetables. </p>
 					<header>  <!-- Hangman Game Elements -->
 						<div id="hangman-container">
@@ -219,17 +220,63 @@
 					</ul>
 				
 			</footer>
+			<div id="cookie-consent-modal" class="cookie-modal">
+				<div class="modal-content">
+					<h2>Cookie Consent</h2>
+					<p>Accept the cookie to indicate your language. <br>接受 cookie 以告诉 Languapps 您的语言</p>
+					<button id="accept-cookies">Accept</button>
+					<button id="decline-cookies">Decline</button>
+				</div>
 			</div>
-		
-				<div id="cookie-consent-modal" class="cookie-modal">
-					<div class="modal-content">
-						<h2>Cookie Consent</h2>
-						<p>Accept the cookie to indicate your language. <br>接受 cookie 以告诉 Languapps 您的语言</p>
-						<button id="accept-cookies">Accept</button>
-						<button id="decline-cookies">Decline</button>
+			
+			<!-- Auth Modal -->
+			<div id="auth-modal" class="modal">
+				<div class="modal-content">
+					<span class="close" onclick="closeModalById('auth-modal')">&times;</span>
+					<div id="step1" class="modal-step">
+						<h2>Sign up / in</h2>
+						<form id="signupForm">
+							<input type="email" id="signupEmail" placeholder="Enter your email" required>
+							<button type="submit">Sign Up</button>
+						</form>
+						<h2>Sign in Already</h2>
+						<form id="signinForm">
+							<input type="email" id="loginEmail" placeholder="Enter your email" required>
+							<input type="password" id="loginPassword" placeholder="Enter your password" required>
+							<button type="submit" id="submitAuth">Submit</button>
+						
+						</form>	
+					</div>
+					<div id="step2" class="modal-step" style="display:none;">
+						<h1>Enter User Details</h1>
+						<form id="userDetailsForm">
+							<input type="text" id="activationCode" placeholder="Enter activation code" required>
+							<input type="text" id="userName" placeholder="Choose a username" required>
+							<input type="text" id="userPassword" placeholder="Choose your password" required>
+							<button type="submit">Verify</button>
+						</form>
+					</div>
+					<div id="step3" class="modal-step" style="display:none;">
+						<h1>Post to the Spinning Wheel</h1>
+						<form id="addBlogPostForm" accept-charset="utf-8">
+							<label for="title">Title:</label><br>
+							<input type="text" id="blogTitle" name="title" required maxlength="100" 
+								pattern="[A-Za-z0-9\s.,'-]+" title="Letters, numbers, spaces, periods, commas, apostrophes, and hyphens allowed."><br>
+							<label for="content">Content:</label><br>
+							<textarea id="blogContent" name="content" required maxlength="5000"></textarea><br>
+							<button type="submit" id="blogSubmit">Add Post</button>
+						</form>
 					</div>
 				</div>
+			</div>
 			
+		
+			
+		
+			
+			
+			
+				
 		<!-- jQuery and Related Plugins -->
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/jquery.poptrox.min.js"></script>
@@ -254,7 +301,7 @@
 
 		<!-- Scripts Depending on Firebase -->
 		<script type="module" src="assets/js/games.js"></script>
-		<script src="assets/js/lookies.js"></script>
+		<script type="module" src="assets/js/lookies.js"></script>
 		<script src="assets/js/burger.js"></script>			
 		<!-- Asynchronous Scripts -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
