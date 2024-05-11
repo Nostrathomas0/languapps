@@ -1,68 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Registration | Blogging</title>
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <title>Write a blog</title>
 </head>
 <body>
-    <h1>Register</h1>
-    <!-- Modal for Sign-up and Blog Posting -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModalById('blogFormModal')">&times;</span>
-                <div id="step1" class="modal-step">
-                   
-                        <h2>Get Validation email</h2>
-                    <form id="signupForm">
-                    <input type="email" id="email" placeholder="Enter your email" required>
-                    <button type="submit">Sign Up</button>
-                    </form>
-                    
-                        <h1>Sign in Already</h1>
-                    <!-- Sign In -->
-                    <div id="authModal" class="modal">
-                        <div class="modal-content">
-                        <span class="close">&times;</span>
-                        
-                            <h2>Login / Sign Up</h2>
-                            <input type="email" id="email" placeholder="Enter your email" required>
-                            <input type="password" id="password" placeholder="Enter your password" required>
-                            <button type="submit" id="submitAuth">Submit</button>
-                        
-                        </div>
-                    </form>
-                </div>
-                <div id="step2" class="modal-step" style="display:none;">
-                    
-                        <h1>Enter User Details</h1>
-                    <form id="userDetailsForm">
-                        <input type="text" id="activationCode" placeholder="Enter activation code" required>
-                        <input type="text" id="userName" placeholder="Choose a username" required>
-                        <input type="text" id="password" placeholder="Choose your password" required>
-                        <button type="submit">Verify</button>
-                    </form>
-                </div>
-                <div id="step3" class="modal-step" style="display:none;">
-                 
-                        <h1>  Post to the Spinning Wheel</h1>
-                    <form id="addBlogPostForm" accept-charset="utf-8">
-                        <label for="title">Title:</label><br>
-                        <input type="text" id="title" name="title" required maxlength="100" 
-                            pattern="[A-Za-z0-9\s.,'-]+" title="Letters, numbers, spaces, periods, commas, apostrophes, and hyphens allowed."><br>
-                        <label for="content">Content:</label><br>
-                        <textarea id="content" name="content" required maxlength="5000"></textarea><br>
-                          <button type="submit" id="blogSubmit">Add Post</button>
-                     </form>
-                </div>
-    
-    </div>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
-    <script type="module" src="assets/js/blogFormHandler.js"></script>
-    <script type="module" src="assets/js/lookies.js"></script>
+    <h1>Write a new blog here</h1>
+    <form id="addBlogPostForm" accept-charset="utf-8">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
 
+        <label for="content">Content:</label><br>
+        <textarea id="content" name="content"></textarea><br>
+
+        <button type="submit">Add Post</button>
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+    <!-- Include your games.js or a specific JavaScript file where your Firebase init and addBlogPost function are defined -->
+    <script src="path/to/your/games.js"></script>
 </body>
 </html>
-
-  
