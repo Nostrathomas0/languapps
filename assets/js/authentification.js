@@ -1,12 +1,8 @@
 // Authentification.js
 
+// Sign-in, sign-up, and other auth functions
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, FacebookAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
-
-// Sign-in, sign-up, and other auth functions
-
-
-// Add more auth-related functions as needed
 
 window.onClick = onClick;
 

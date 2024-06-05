@@ -5,23 +5,23 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 
-import { auth } from './firebaseInit.js';  // Assuming firebaseInit.js correctly exports an initialized 'auth' object
+import { auth } from './firebaseInit.js';  
 import { signUp } from './authentification.js';
-// Global Variables and Initial set up
-var userLanguage = getCookie('userLanguage') || 'en'; // Default to English if no cookie found
+
+var userLanguage = getCookie('userLanguage') || 'en';
 var modal = document.getElementById('cookie-consent-modal');
 var acceptBtn = document.getElementById('accept-cookies');
 var declineBtn = document.getElementById('decline-cookies');
 var bodyContent = document.querySelector('.main-content');
 var languageDropdown = document.getElementById('language-dropdown');
 
-
 // Function to open a specific modal by ID
 function openModalById(modalId) {
     const modal = document.getElementById(modalId);
-    console.log('Modal opened')
     if (modal) modal.style.display = 'block';
 }
+
+// Function to close a specific modal by ID
 function closeModalById(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) modal.style.display = 'none';
@@ -29,20 +29,18 @@ function closeModalById(modalId) {
 
 // Cookie Consent Modal Handling
 function acceptCookies() {
-    setCookie('userConsent', 'accepted', 365); // Set consent cookie for 1 year
-    closeModalById('cookie-consent-modal'); // Use a function to handle modal close for consistency
-    // Any additional logic needed after consent
+    setCookie('userConsent', 'accepted', 365);
+    closeModalById('cookie-consent-modal');
 }
 
 function declineCookies() {
-    setCookie('userConsent', 'declined', 365); // Set decline cookie for 1 year
-    closeModalById(cookie-consent-modal); // Use the same function to close modal for consistency
-    // Any additional logic needed after declining
+    setCookie('userConsent', 'declined', 365);
+    closeModalById('cookie-consent-modal');
 }
 
 function closeCookieModal() {
-    modal.style.display = 'none'; // Hide the modal
-    bodyContent.classList.remove('blur-background'); // Remove blur from main content
+    modal.style.display = 'none';
+    bodyContent.classList.remove('blur-background');
 }
 
 function checkUserConsent() {
@@ -63,32 +61,42 @@ function transitionModalStep(currentStepId, nextStepId) {
     const currentStep = document.getElementById(currentStepId);
     const nextStep = document.getElementById(nextStepId);
     if (currentStep && nextStep) {
-        currentStep.style.display = 'none';  // Hide current step
-        nextStep.style.display = 'block';    // Show next step
+        currentStep.style.display = 'none';
+        nextStep.style.display = 'block';
     } else {
         console.error('Error transitioning steps: Step elements not found.');
     }
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    checkUserConsent();
 
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', checkUserConsent);
-
-if (acceptBtn) {
-    acceptBtn.addEventListener('click', acceptCookies);
-}
-
-if (declineBtn) {
-    declineBtn.addEventListener('click', declineCookies);
-}
-
-if (languageDropdown) {
-    languageDropdown.addEventListener('change', function () {
-        setLanguagePreference(this.value);
+    document.querySelectorAll('.close').forEach(function (element) {
+        element.addEventListener('click', function () {
+            const modalId = element.parentElement.parentElement.id;
+            closeModalById(modalId);
+        });
     });
-}
-// Language Toggle Functions
+
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', acceptCookies);
+    }
+
+    if (declineBtn) {
+        declineBtn.addEventListener('click', declineCookies);
+    }
+
+    if (languageDropdown) {
+        languageDropdown.addEventListener('change', function () {
+            setLanguagePreference(this.value);
+        });
+    }
+
+    // Check if the page should open a modal on load based on URL parameters
+    checkForModalOpening();
+});
+
+// Additional functions like switchLanguage, applyLanguageSettings, setLanguagePreference, etc.
 function switchLanguage(lang) {
     document.querySelectorAll('[data-translate]').forEach(function (elem) {
         var key = elem.getAttribute('data-translate');
@@ -102,67 +110,74 @@ function applyLanguageSettings(language) {
     document.querySelectorAll('[data-translate]').forEach(function (elem) {
         var key = elem.getAttribute('data-translate');
         if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language]; // Use innerHTML if including HTML tags in translations
+            elem.innerHTML = translations[key][language];
         }
     });
 }
 
 function setLanguagePreference(language) {
-    setCookie('userLanguage', language, 365); // Store the language preference
-    applyLanguageSettings(language); // Apply the language immediately
+    setCookie('userLanguage', language, 365);
+    applyLanguageSettings(language);
 }
 
-// Open the auth modal 
 function openBlogFormModal() {
     console.log("Opening blog form modal");
-    window.open('blog-form.html', 'BlogForm', 'width=600,height=400,resizable=no,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no');
-
-    // Optional: Focus on the new window to bring it to the front
-    modalWindow.focus();
+    window.open('blog-form.html', 'BlogForm', 'width=600,height=400,resizable=no,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no').focus();
 }
 
-// Check if the page should open a modal on load based on URL parameters
 function checkForModalOpening() {
     const urlParams = new URLSearchParams(window.location.search);
     const shouldOpenModal = urlParams.get('openModal');
 
     if (shouldOpenModal === 'true') {
-        openModalById('auth-modal'); // Make sure this function targets the correct modal ID
+        openModalById('auth-modal');
     }
 }
 
-// Function to handle user sign-up or login from the modal
-function handleAuthFormSubmit(event) {
+// Authentication handling function
+document.getElementById("signinForm").addEventListener("submit", function(event) {
     event.preventDefault();
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    
-    // Assuming a simple check or a way to differentiate between login and signup
-    const isLogin = document.getElementById("auth-modal").classList.contains("login");
-
-    if (isLogin) {
-        signInWithEmailAndPassword(auth, email, password)
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            console.log("User signed in:", userCredential.user);
-            closeModal(); // Assuming closeModal() hides the auth modal
+            console.log("User created and signed in:", userCredential.user);
+            closeModalById('auth-modal');
         })
         .catch((error) => {
             console.error("Error signing in:", error);
-            alert("Login failed: " + error.message);  // Show error to the user
         });
-    } else {
-        createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            console.log("User registered and signed in:", userCredential.user);
-            closeModal(); // Assuming closeModal() hides the auth modal
-        })
-        .catch((error) => {
-            console.error("Error during sign-up:", error);
-            alert("Signup failed: " + error.message);  // Show error to the user
-        });
-    }
-}
+});
 
+// Event listeners for modal buttons
+document.getElementById("loginButton").addEventListener("click", openModalById.bind(null, 'auth-modal'));
+document.getElementById('signupForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const email = document.getElementById('signupEmail').value;
+    signUp(email).then(() => {
+        console.log("Sending validation email to:", email);
+        transitionModalStep('step1', 'step2');
+    }).catch(error => {
+        console.error("Error during sign-up:", error);
+    });
+});
+
+document.getElementById('userDetailsForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const userName = document.getElementById('userName').value;
+    const activationCode = document.getElementById('activationCode').value;
+    const password = document.getElementById('choosePassword').value;
+    console.log("Verifying details for:", userName, "with code:", activationCode);
+    transitionModalStep('step2', 'step3');
+});
+
+document.getElementById('addBlogPostForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const title = document.getElementById('blogTitle').value;
+    const content = document.getElementById('blogContent').value;
+    console.log("Posting blog titled:", title);
+    closeModalById('auth-modal');
+});
 
 // Cookie Utility Functions
 function setCookie(name, value, days) {
@@ -172,7 +187,6 @@ function setCookie(name, value, days) {
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         expires = "; expires=" + date.toUTCString();
     }
-    // Set SameSite=Lax for general use, add Secure if setting SameSite=None
     document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
 }
 
@@ -190,7 +204,6 @@ function getCookie(name) {
 function eraseCookie(name) {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
-
 
 // Translations Object
 var translations = {
