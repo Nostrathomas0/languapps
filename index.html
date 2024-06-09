@@ -236,7 +236,7 @@
 				</div>
 			</div>
 			
-						<!-- Auth Modal -->
+			<!-- Auth Modal -->
 			<div id="auth-modal" class="modal">
 				<div class="modal-content">
 					<span class="close" onclick="closeModalById('auth-modal')">&times;</span>
@@ -244,6 +244,7 @@
 						<h2>Sign up / in</h2>
 						<form id="signupForm">
 							<input type="email" id="signupEmail" placeholder="Enter your email" required>
+							<input type="password" id="signupPassword" placeholder="Create a password" required>
 							<button type="submit">Sign Up</button>
 						</form>
 						<h2>Sign in Already</h2>
@@ -251,7 +252,10 @@
 							<input type="email" id="loginEmail" placeholder="Enter your email" required>
 							<input type="password" id="loginPassword" placeholder="Enter your password" required>
 							<button type="submit" id="submitAuth">Submit</button>
-						</form>    
+						</form>
+						<p class="forgot-password">
+							<button onclick="openModalById('forgotPasswordModal')">Forgot Password?</button>
+						</p>    
 					</div>
 					<div id="step2" class="modal-step" style="display:none;">
 						<h1>Enter User Details</h1>
@@ -275,6 +279,7 @@
 					</div>
 				</div>
 			</div>
+
 
 			
 		

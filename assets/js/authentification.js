@@ -49,6 +49,30 @@ function verifyRecaptcha(token) {
         console.error('Error calling the verifyRecaptcha function:', error);
     });
 }
+// Function to handle user sign-up
+function signUp(email, password) {
+    return new Promise((resolve, reject) => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+                const user = userCredential.user;
+                console.log('User account created, sending verification email...');
+                sendVerificationEmail(user)
+                    .then(() => {
+                        console.log('Verification email sent.');
+                        resolve(user);  // Pass the user object to resolve for further use
+                    }) 
+                    .catch(error => {
+                        console.error('Failed to send verification email:', error);
+                        reject(error);
+                    });
+            })
+            .catch(error => {
+                console.error('Error during sign up:', error);
+                reject(error);
+            });
+    });
+}
+
 // Function to send a verification email
 function sendVerificationEmail(user) {
     return sendEmailVerification(user)
@@ -60,30 +84,18 @@ function sendVerificationEmail(user) {
         });
 }
 
-// Function to handle user sign-up
-function signUp(email) {
-    const temporaryPassword = "Languapps123";
-    return new Promise((resolve, reject) => {
-        createUserWithEmailAndPassword(auth, email, temporaryPassword)
-            .then(userCredential => {
-                const user = userCredential.user;
-                console.log('User created, attempting to send verification email...');
-                sendVerificationEmail(user)
-                    .then(() => {
-                        console.log('Verification email sent.');
-                        // Inform User to check their email
-                        resolve(user);
-                    }) 
-                    .catch(error => {
-                        console.error('Error during sign-up or email sending:', error);
-                        reject(error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error during sign up', error);
-                reject(error);
-            });
-    });
+// Add this function to your JavaScript file that handles authentication
+function sendPasswordResetEmail() {
+    const email = document.getElementById('resetEmail').value;
+    firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+            console.log('Password reset email sent.');
+            // Inform the user that the email has been sent
+        })
+        .catch((error) => {
+            console.error('Error sending password reset email:', error);
+            // Display an error message to the user
+        });
 }
 
 
@@ -128,7 +140,28 @@ onAuthStateChanged(auth, (user) => {
         console.log('User is signed out');
     }
 });
+// Add event listener for the reset password form
+document.addEventListener('DOMContentLoaded', function() {
 
+    document.getElementById('resetPasswordForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        sendPasswordResetEmail();
+    });
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        signUp(email, password)
+            .then(() => {
+                console.log('Sign-up successful, please check your email to verify.');
+                // You may want to redirect the user or clear the form here
+            })
+            .catch(error => {
+                console.error('Sign-up failed:', error);
+                // Display error messages on the UI
+            });
+    });
+});
 // Export the functions to use in other modules
 export { signUp, signIn, signInWithFacebook, onClick };
 
