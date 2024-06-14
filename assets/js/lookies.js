@@ -1,33 +1,54 @@
-// lookies.js
-//_         __      __   _     _       _     _      __      ___      ___      __  
-// |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
-// |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
-// |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
-//____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
-
+// ookies.js
 import { auth } from './firebaseInit.js';  
-import { signUp } from './authentification.js';
+import { signUp } from './authentication.js';
 
+// Variables for UI elements
 var userLanguage = getCookie('userLanguage') || 'en';
 var modal = document.getElementById('cookie-consent-modal');
-var acceptBtn = document.getElementById('accept-cookies');
-var declineBtn = document.getElementById('decline-cookies');
 var bodyContent = document.querySelector('.main-content');
 var languageDropdown = document.getElementById('language-dropdown');
 
-// Function to open a specific modal by ID
-function openModalById(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.style.display = 'block';
+// Utility functions for cookies and language settings
+
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
 }
 
-// Function to close a specific modal by ID
-function closeModalById(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.style.display = 'none';
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
 }
 
-// Cookie Consent Modal Handling
+function eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function applyLanguageSettings(language) {
+    document.querySelectorAll('[data-translate]').forEach(function (elem) {
+        var key = elem.getAttribute('data-translate');
+        if (translations[key] && translations[key][language]) {
+            elem.innerHTML = translations[key][language];
+        }
+    });
+}
+
+function setLanguagePreference(language) {
+    setCookie('userLanguage', language, 365);
+    applyLanguageSettings(language);
+}
+
 function acceptCookies() {
     setCookie('userConsent', 'accepted', 365);
     closeModalById('cookie-consent-modal');
@@ -43,14 +64,6 @@ function closeCookieModal() {
     bodyContent.classList.remove('blur-background');
 }
 
-function checkUserConsent() {
-    var consentGiven = getCookie('userConsent');
-    if (!consentGiven) {
-        showModal();
-    } else {
-        applyLanguageSettings(userLanguage);
-    }
-}
 
 function showModal() {
     modal.style.display = 'block';
@@ -68,35 +81,6 @@ function transitionModalStep(currentStepId, nextStepId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    checkUserConsent();
-
-    document.querySelectorAll('.close').forEach(function (element) {
-        element.addEventListener('click', function () {
-            const modalId = element.parentElement.parentElement.id;
-            closeModalById(modalId);
-        });
-    });
-
-    if (acceptBtn) {
-        acceptBtn.addEventListener('click', acceptCookies);
-    }
-
-    if (declineBtn) {
-        declineBtn.addEventListener('click', declineCookies);
-    }
-
-    if (languageDropdown) {
-        languageDropdown.addEventListener('change', function () {
-            setLanguagePreference(this.value);
-        });
-    }
-
-    // Check if the page should open a modal on load based on URL parameters
-    checkForModalOpening();
-});
-
-// Additional functions like switchLanguage, applyLanguageSettings, setLanguagePreference, etc.
 function switchLanguage(lang) {
     document.querySelectorAll('[data-translate]').forEach(function (elem) {
         var key = elem.getAttribute('data-translate');
@@ -106,19 +90,7 @@ function switchLanguage(lang) {
     });
 }
 
-function applyLanguageSettings(language) {
-    document.querySelectorAll('[data-translate]').forEach(function (elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language];
-        }
-    });
-}
 
-function setLanguagePreference(language) {
-    setCookie('userLanguage', language, 365);
-    applyLanguageSettings(language);
-}
 
 function openBlogFormModal() {
     console.log("Opening blog form modal");
@@ -134,23 +106,68 @@ function checkForModalOpening() {
     }
 }
 
-// Authentication handling function
-document.getElementById("signinForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            console.log("User created and signed in:", userCredential.user);
-            closeModalById('auth-modal');
-        })
-        .catch((error) => {
-            console.error("Error signing in:", error);
+
+
+function checkUserConsent() {
+    var consentGiven = getCookie('userConsent');
+    if (!consentGiven) {
+        showModal();  // Trigger modal that asks for consent
+    } else {
+        applyLanguageSettings(userLanguage);  // Apply settings immediately if consented
+    }
+}
+
+// Function to set up all event listeners, including consent and modal interactions
+function setupEventListeners() {
+    checkUserConsent();  // Check for user consent on load
+
+    document.querySelectorAll('.close').forEach(element => {
+        element.addEventListener('click', function() {
+            const modalId = this.closest('.modal').id;
+            closeModalById(modalId);
         });
+    });
+
+    // Setup for cookie consent buttons
+    const acceptBtn = document.getElementById('accept-cookies');
+    const declineBtn = document.getElementById('decline-cookies');
+
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', function() {
+            setCookie('userConsent', 'accepted', 365);
+            closeModalById('cookie-consent-modal');
+            applyLanguageSettings(userLanguage);  // Apply language settings on consent
+        });
+    }
+
+    if (declineBtn) {
+        declineBtn.addEventListener('click', function() {
+            setCookie('userConsent', 'declined', 365);
+            closeModalById('cookie-consent-modal');
+        });
+    }
+
+if (languageDropdown) {
+    languageDropdown.addEventListener('change', function () {
+        setLanguagePreference(this.value);
+    });
+}
+
+
+
+
+
+
+
+
+document.getElementById("loginButton").addEventListener("click", function() {
+    if (userIsAuthenticated()) {
+        openModalById('alreadyLoggedInModal');
+    } else {
+        openModalById('auth-modal');
+    }
 });
 
-// Event listeners for modal buttons
-document.getElementById("loginButton").addEventListener("click", openModalById.bind(null, 'auth-modal'));
 document.getElementById('signupForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const email = document.getElementById('signupEmail').value;
@@ -179,117 +196,58 @@ document.getElementById('addBlogPostForm').addEventListener('submit', function(e
     closeModalById('auth-modal');
 });
 
-// Cookie Utility Functions
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
-}
-
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
-
-function eraseCookie(name) {
-    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
-// Translations Object
-var translations = {
-    statement: {
-        en: "Play hangman <br> Guess a letter to solve the puzzle <br> Hint: Fruits & Vegetables",
-        fr: "Jouez au Pendu en anglais <br> Devinez les lettres à résoudre <br> Indice: fruits et légumes",
-        zh: "用英语玩刽子手<br>猜字母来解决<br>提示: 水果和蔬菜。"
-    },
-    does: {
-        en: "Social Connection<br>Publishing<br>Language Learning Streams<br>Contests<br>Puppet Shows<br>Games<br>Chat",
-        fr: "Connexion sociale<br>Édition<br>Flux d'apprentissage des langues<br>Concours<br>Spectacles de marionnettes<br>Jeux<br>Bavarder pour pratique les langues",
-        zh: "社交联系<br>出版<br>语言学习流<br>竞赛<br>木偶戏<br>游戏<br>聊天练习语言"
-    },
-    is: {
-        en: "an English teacher, web developer and applied linguist. Language learning is our first habit and I want to help people find their youthful sensitivity to it online with cultural immersion.",
-        fr: "professeur d'anglais, développeur web et linguiste appliqué. L'apprentissage des langues est notre première habitude et je veux aider les gens à retrouver leur sensibilité de jeunesse en ligne grâce à une immersion culturelle.",
-        zh: "英语教师、网络开发人员和应用语言学家。 语言学习是我们的第一个习惯，我想通过文化沉浸帮助人们在网上找到他们年轻时对语言的敏感度。"
-    }
-    // Add more translations as needed
-};
-
-
-// Function to open the modal
-function openModal() {
-    document.getElementById("auth-modal").style.display = "block";
-  }
-  
-  // Function to close the modal
-  document.getElementsByClassName("close")[0].onclick = function() {
-    document.getElementById("auth-modal").style.display = "none";
-  }
-
-document.getElementById("signinForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in 
-        console.log("User created and signed in:", userCredential.user);
-        // You might want to close the modal here or show a success message
-      })
-      .catch((error) => {
-        console.error("Error signing in:", error);
-        // Handle errors here, such as displaying a message in the modal
-      });
-  });
-
-  
-  // Event listeners to open modal buttons
-document.getElementById("loginButton").addEventListener("click", openModal);
-document.getElementById('signupForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const email = document.getElementById('signupEmail').value;
-    
-    signUp(email).then(() => {
-        console.log("Sending validation email to:", email);
-        transitionModalStep('step1', 'step2');
-    }).catch(error => {
-        console.error("Error during sign-up:", error)
+document.querySelectorAll('.close').forEach(element => {
+    element.addEventListener('click', function() {
+        const modalId = this.closest('.modal').id;
+        closeModalById(modalId);
     });
-    
 });
 
-document.getElementById('userDetailsForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const userName = document.getElementById('userName').value;
-    const activationCode = document.getElementById('activationCode').value;
-    const password = document.getElementById('choosePassword').value;
-    console.log("Verifying details for:", userName, "with code:", activationCode);
-    // Assume function to verify code and handle success
-    transitionModalStep('step2', 'step3'); // Transition to blog post step
-});
+if (acceptBtn) {
+    acceptBtn.addEventListener('click', acceptCookies);
+}
 
-document.getElementById('addBlogPostForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const title = document.getElementById('blogTitle').value;
-    const content = document.getElementById('blogContent').value;
-    console.log("Posting blog titled:", title);
-    // Assume function to submit blog post and handle success
-    closeModalById('auth-modal'); // Close the modal after posting
-});
-document.addEventListener('DOMContentLoaded', function () {
-    checkForModalOpening();
-});
-document.getElementById('loginButton').addEventListener('click', function() {
-    openModalById('auth-modal'); // Opens the modal with the ID 'auth-modal'
-});
+if (declineBtn) {
+    declineBtn.addEventListener('click', declineCookies);
+}
 
+if (languageDropdown) {
+    languageDropdown.addEventListener('change', function() {
+        setLanguagePreference(this.value);
+    });
+}
+}
+
+// Initialize all scripts after the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', setupEventListeners);
+
+// Additional helper functions
+function openModalById(modalId, stepId) {
+const modal = document.getElementById(modalId);
+if (modal) { 
+    modal.style.display = 'block';
+    if (stepId) {
+        modal.querySelectorAll('.modal-step').forEach(step => {
+            step.style.display = 'none';
+        });
+        const step = document.getElementById(stepId);
+        if (step) {
+            step.style.display = 'block';
+        } else{
+            console.error('Spec step not found:', stepId);
+        }
+    } 
+} else {
+    console.error('Modal not found:', modalID);
+}}
+
+function closeModalById(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'none';
+
+
+function userIsAuthenticated() {
+    // Implementation depends on how authentication status is determined
+    // Dummy implementation:
+    return !!auth.currentUser;
+}}

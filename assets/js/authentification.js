@@ -16,16 +16,16 @@ async function onClick(e) {
     
 }
 
-function signIn(email, password) {
-    return signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-            const user = userCredential.user;
-            if (!user.emailVerified) {
-                throw new Error('Email not verified.');
-            }
-            return user;  // Return user for further processing
-        });
-}
+// function signIn(email, password) {
+//     return signInWithEmailAndPassword(auth, email, password)
+//         .then(userCredential => {
+//             const user = userCredential.user;
+//             if (!user.emailVerified) {
+//                 throw new Error('Email not verified.');
+//             }
+//             return user;  // Return user for further processing
+//         });
+// }
 
 // Function to verify reCAPTCHA token with the backend
 function verifyRecaptcha(token) {
@@ -49,7 +49,36 @@ function verifyRecaptcha(token) {
         console.error('Error calling the verifyRecaptcha function:', error);
     });
 }
-// Function to handle user sign-up
+
+// Authentication handling function
+document.getElementById("signinForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log("User created and signed in:", userCredential.user);
+            closeModalById('auth-modal');
+        })
+        .catch((error) => {
+            console.error("Error signing in:", error);
+        });
+});
+// Function to handle the token client-side
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      // User is signed in.
+      user.getIdToken().then(function(idToken) {
+        // Send token to your backend via HTTPS
+        sessionStorage.setItem("userToken", idToken); // Store token in sessionStorage
+      });
+    } else {
+      // No user is signed in.
+      sessionStorage.removeItem("userToken"); // Remove token when user logs out
+    }
+  });
+  
+// // Function to handle user sign-up
 function signUp(email, password) {
     return new Promise((resolve, reject) => {
         createUserWithEmailAndPassword(auth, email, password)
@@ -74,63 +103,63 @@ function signUp(email, password) {
 }
 
 // Function to send a verification email
-function sendVerificationEmail(user) {
-    return sendEmailVerification(user)
-        .then(() => {
-            console.log('Verification email sent.');
-        })
-        .catch(error => {
-            console.error('Failed to send verification email:', error);
-        });
-}
+// function sendVerificationEmail(user) {
+//     return sendEmailVerification(user)
+//         .then(() => {
+//             console.log('Verification email sent.');
+//         })
+//         .catch(error => {
+//             console.error('Failed to send verification email:', error);
+//         });
+// }
 
 // Add this function to your JavaScript file that handles authentication
-function sendPasswordResetEmail() {
-    const email = document.getElementById('resetEmail').value;
-    firebase.auth().sendPasswordResetEmail(email)
-        .then(() => {
-            console.log('Password reset email sent.');
-            // Inform the user that the email has been sent
-        })
-        .catch((error) => {
-            console.error('Error sending password reset email:', error);
-            // Display an error message to the user
-        });
-}
+// function sendPasswordResetEmail() {
+//     const email = document.getElementById('resetEmail').value;
+//     firebase.auth().sendPasswordResetEmail(email)
+//         .then(() => {
+//             console.log('Password reset email sent.');
+//             // Inform the user that the email has been sent
+//         })
+//         .catch((error) => {
+//             console.error('Error sending password reset email:', error);
+//             // Display an error message to the user
+//         });
+// }
 
 
 // Function for signing in with Facebook
-function signInWithFacebook() {
-    const provider = new FacebookAuthProvider();
-    signInWithPopup(auth, provider)
-        .then(result => {
-            console.log('Facebook sign-in successful.');
-        })
-        .catch(error => {
-            console.error('Error during Facebook sign-in:', error);
-        });
-}
+// function signInWithFacebook() {
+//     const provider = new FacebookAuthProvider();
+//     signInWithPopup(auth, provider)
+//         .then(result => {
+//             console.log('Facebook sign-in successful.');
+//         })
+//         .catch(error => {
+//             console.error('Error during Facebook sign-in:', error);
+//         });
+// }// 
+// 
 
+//   window.fbAsyncInit = function() {
+//     FB.init({
+//       appId      : '{your-app-id}',
+//       cookie     : true,
+//       xfbml      : true,
+//       version    : '{api-version}'
+//     });
+//       
+//     FB.AppEvents.logPageView();   
+//       
+//   };// 
 
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '{your-app-id}',
-      cookie     : true,
-      xfbml      : true,
-      version    : '{api-version}'
-    });
-      
-    FB.AppEvents.logPageView();   
-      
-  };
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
+//   (function(d, s, id){
+//      var js, fjs = d.getElementsByTagName(s)[0];
+//      if (d.getElementById(id)) {return;}
+//      js = d.createElement(s); js.id = id;
+//      js.src = "https://connect.facebook.net/en_US/sdk.js";
+//      fjs.parentNode.insertBefore(js, fjs);
+//    }(document, 'script', 'facebook-jssdk'));
 
 // Listen for authentication state changes
 onAuthStateChanged(auth, (user) => {
@@ -139,28 +168,6 @@ onAuthStateChanged(auth, (user) => {
     } else {
         console.log('User is signed out');
     }
-});
-// Add event listener for the reset password form
-document.addEventListener('DOMContentLoaded', function() {
-
-    document.getElementById('resetPasswordForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        sendPasswordResetEmail();
-    });
-    document.getElementById('signupForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        signUp(email, password)
-            .then(() => {
-                console.log('Sign-up successful, please check your email to verify.');
-                // You may want to redirect the user or clear the form here
-            })
-            .catch(error => {
-                console.error('Sign-up failed:', error);
-                // Display error messages on the UI
-            });
-    });
 });
 // Export the functions to use in other modules
 export { signUp, signIn, signInWithFacebook, onClick };

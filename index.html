@@ -221,7 +221,7 @@
 					</ul>
 				
 			</footer>
-			<div id="cookie-consent-modal" class="cookie-modal">
+			<div id="cookie-consent-modal" class="modal">
 				<div class="modal-content">
 					<h2>Cookie Consent</h2>
 					<p>Accept the cookie to indicate your language. <br>接受 cookie 以告诉 Languapps 您的语言</p>
@@ -246,7 +246,7 @@
 							<input type="email" id="loginEmail" placeholder="Enter your email" required>
 							<input type="password" id="loginPassword" placeholder="Enter your password" required>
 							<button type="submit" id="submitAuth">Submit</button>
-							<button type="button" onclick="sendPasswordResetEmail()">Forgot Password?</button>
+							<button type="button" id="forgotPasswordButton">Forgot Password?</button>
 						</form>
 						
 					</div>
@@ -272,7 +272,12 @@
 					</div>
 				</div>
 			</div>
-
+			<div id="alreadyLoggedInModal" class="modal">
+				<div class="modal-content">
+					<span class="close" onclick="closeModalById('alreadyLoggedInModal')">&times;</span>
+					<p>You are already logged in!</p>
+				</div>
+			</div>
 
 			
 		
@@ -302,7 +307,7 @@
 
 		<!-- Firebase Initialization -->
 		<script type="module" src="assets/js/firebaseInit.js"></script>
-		<script type="module" src="assets/js/authentification.js" ></script>
+		<script type="module" src="assets/js/authentication.js" ></script>
 
 		<!-- Scripts Depending on Firebase -->
 		<script type="module" src="assets/js/games.js"></script>
