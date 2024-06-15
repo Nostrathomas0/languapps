@@ -2,103 +2,150 @@
 import { auth } from './firebaseInit.js';  
 import { signUp } from './authentication.js';
 
-
-
-function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
+document.addEventListener('DOMContentLoaded', function() {
+    function openModalById(modalId, stepId) {
+        console.log("Attempting to open modal", modalId);
+        const modal = document.getElementById(modalId);
+        if (modal) { 
+            console.log("Modal Found:", modalId);
+            modal.style.display = 'block';
+            if (stepId) {
+                modal.querySelectorAll('.modal-step').forEach(step => {
+                    step.style.display = 'none';
+                });
+                const step = document.getElementById(stepId);
+                if (step) {
+                    step.style.display = 'block';
+                } else {
+                    console.error('Specified step not found:', stepId);
+                }
+            } 
+        } else {
+            console.error('Modal not found:', modalId);
+        }
     }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
-}
 
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    function closeModalById(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'none';
     }
-    return null;
-}
 
-function eraseCookie(name) {
-    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
+    // Check if the button exists before adding the event listener
+    const openModalButton = document.getElementById('openModalButton');
+    if (openModalButton) {
+        openModalButton.addEventListener('click', function() {
+            openModalById('auth-modal', 'step1');
+        });
+    } else {
+        console.error('openModalButton not found');
+    }
 
-// Utility function to apply language settings asynchronously
-async function applyLanguageSettings(language) {
-    try {
-        // Fetch the translation file for the selected language
-        const response = await fetch(`assets/trans/${language}.json`);
-        const translations = await response.json();
+    // Check if the elements with class 'close' exist before adding the event listeners
+    document.querySelectorAll('.close').forEach(function(element) {
+        element.addEventListener('click', function() {
+            const modalId = element.closest('.modal').id;
+            closeModalById(modalId);
+        });
+    });
 
-        // Apply translations to all elements with the 'data-translate' attribute
+    // Additional initialization if necessary
+    checkForModalOpening();
+
+    // Cookie Utility Functions
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function eraseCookie(name) {
+        document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+
+    // Utility function to apply language settings asynchronously
+    async function applyLanguageSettings(language) {
+        try {
+            // Fetch the translation file for the selected language
+            const response = await fetch(`assets/trans/${language}.json`);
+            const translations = await response.json();
+
+            // Apply translations to all elements with the 'data-translate' attribute
+            document.querySelectorAll('[data-translate]').forEach(function (elem) {
+                const key = elem.getAttribute('data-translate');
+                if (translations[key]) {
+                    elem.textContent = translations[key];  // Using textContent for security
+                }
+            });
+        } catch (error) {
+            console.error('Error loading or applying translations:', error);
+        }
+    }
+
+    function setLanguagePreference(language) {
+        setCookie('userLanguage', language, 365);
+        applyLanguageSettings(language);
+    }
+
+    function acceptCookies() {
+        setCookie('userConsent', 'accepted', 365);
+        closeModalById('cookie-consent-modal');
+    }
+
+    function declineCookies() {
+        setCookie('userConsent', 'declined', 365);
+        closeModalById('cookie-consent-modal');
+    }
+
+    function closeCookieModal() {
+        modal.style.display = 'none';
+        bodyContent.classList.remove('blur-background');
+    }
+
+    function showModal() {
+        modal.style.display = 'block';
+        bodyContent.classList.add('blur-background');
+    }
+
+    function transitionModalStep(currentStepId, nextStepId) {
+        const currentStep = document.getElementById(currentStepId);
+        const nextStep = document.getElementById(nextStepId);
+        if (currentStep && nextStep) {
+            currentStep.style.display = 'none';
+            nextStep.style.display = 'block';
+        } else {
+            console.error('Error transitioning steps: Step elements not found.');
+        }
+    }
+
+    function switchLanguage(lang) {
         document.querySelectorAll('[data-translate]').forEach(function (elem) {
-            const key = elem.getAttribute('data-translate');
-            if (translations[key]) {
-                elem.textContent = translations[key];  // Using textContent for security
+            var key = elem.getAttribute('data-translate');
+            if (translations[key] && translations[key][lang]) {
+                elem.textContent = translations[key][lang];
             }
         });
-    } catch (error) {
-        console.error('Error loading or applying translations:', error);
     }
-}
 
-
-function setLanguagePreference(language) {
-    setCookie('userLanguage', language, 365);
-    applyLanguageSettings(language);
-}
-
-function acceptCookies() {
-    setCookie('userConsent', 'accepted', 365);
-    closeModalById('cookie-consent-modal');
-}
-
-function declineCookies() {
-    setCookie('userConsent', 'declined', 365);
-    closeModalById('cookie-consent-modal');
-}
-
-function closeCookieModal() {
-    modal.style.display = 'none';
-    bodyContent.classList.remove('blur-background');
-}
-
-
-function showModal() {
-    modal.style.display = 'block';
-    bodyContent.classList.add('blur-background');
-}
-
-function transitionModalStep(currentStepId, nextStepId) {
-    const currentStep = document.getElementById(currentStepId);
-    const nextStep = document.getElementById(nextStepId);
-    if (currentStep && nextStep) {
-        currentStep.style.display = 'none';
-        nextStep.style.display = 'block';
-    } else {
-        console.error('Error transitioning steps: Step elements not found.');
-    }
-}
-
-function switchLanguage(lang) {
-    document.querySelectorAll('[data-translate]').forEach(function (elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][lang]) {
-            elem.textContent = translations[key][lang];
-        }
-    });
-}
-
-// Variables for UI elements
-var userLanguage = getCookie('userLanguage') || 'en';
-var modal = document.getElementById('cookie-consent-modal');
-var bodyContent = document.querySelector('.main-content');
-var languageDropdown = document.getElementById('language-dropdown');
+    // Variables for UI elements
+    var userLanguage = getCookie('userLanguage') || 'en';
+    var modal = document.getElementById('cookie-consent-modal');
+    var bodyContent = document.querySelector('.main-content');
+    var languageDropdown = document.getElementById('language-dropdown');
+});
 
 // Utility functions for cookies and language settings
 
@@ -284,27 +331,5 @@ function setupEventListeners() {
 document.addEventListener('DOMContentLoaded', setupEventListeners);
 
 // Additional helper functions
-function openModalById(modalId, stepId) {
-const modal = document.getElementById(modalId);
-if (modal) { 
-    modal.style.display = 'block';
-    if (stepId) {
-        modal.querySelectorAll('.modal-step').forEach(step => {
-            step.style.display = 'none';
-        });
-        const step = document.getElementById(stepId);
-        if (step) {
-            step.style.display = 'block';
-        } else{
-            console.error('Spec step not found:', stepId);
-        }
-    } 
-} else {
-    console.error('Modal not found:', modalID);
-}}
 
-function closeModalById(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.style.display = 'none';
-
-}}
+}
