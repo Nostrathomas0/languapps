@@ -9,6 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
 
+
 // Function to handle the token client-side
 onAuthStateChanged(auth, user => {
     if (user) {
@@ -70,7 +71,7 @@ async function sendVerificationEmail(user) {
 
 async function sendPasswordResetEmail(email) {
     try {
-        await firebase.auth().sendPasswordResetEmail(email);
+        await firebaseSendPasswordResetEmail(auth, email);
         console.log('Password reset email sent.');
     } catch (error) {
         console.error('Error sending password reset email:', error);

@@ -2,13 +2,6 @@
 import { auth } from './firebaseInit.js';  
 import { signUp } from './authentication.js';
 
-// Variables for UI elements
-var userLanguage = getCookie('userLanguage') || 'en';
-var modal = document.getElementById('cookie-consent-modal');
-var bodyContent = document.querySelector('.main-content');
-var languageDropdown = document.getElementById('language-dropdown');
-
-// Utility functions for cookies and language settings
 
 
 function setCookie(name, value, days) {
@@ -35,14 +28,25 @@ function eraseCookie(name) {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-function applyLanguageSettings(language) {
-    document.querySelectorAll('[data-translate]').forEach(function (elem) {
-        var key = elem.getAttribute('data-translate');
-        if (translations[key] && translations[key][language]) {
-            elem.innerHTML = translations[key][language];
-        }
-    });
+// Utility function to apply language settings asynchronously
+async function applyLanguageSettings(language) {
+    try {
+        // Fetch the translation file for the selected language
+        const response = await fetch(`assets/trans/${language}.json`);
+        const translations = await response.json();
+
+        // Apply translations to all elements with the 'data-translate' attribute
+        document.querySelectorAll('[data-translate]').forEach(function (elem) {
+            const key = elem.getAttribute('data-translate');
+            if (translations[key]) {
+                elem.textContent = translations[key];  // Using textContent for security
+            }
+        });
+    } catch (error) {
+        console.error('Error loading or applying translations:', error);
+    }
 }
+
 
 function setLanguagePreference(language) {
     setCookie('userLanguage', language, 365);
@@ -90,6 +94,13 @@ function switchLanguage(lang) {
     });
 }
 
+// Variables for UI elements
+var userLanguage = getCookie('userLanguage') || 'en';
+var modal = document.getElementById('cookie-consent-modal');
+var bodyContent = document.querySelector('.main-content');
+var languageDropdown = document.getElementById('language-dropdown');
+
+// Utility functions for cookies and language settings
 
 
 function openBlogFormModal() {
@@ -127,96 +138,147 @@ function setupEventListeners() {
             closeModalById(modalId);
         });
     });
-
-    // Setup for cookie consent buttons
-    const acceptBtn = document.getElementById('accept-cookies');
-    const declineBtn = document.getElementById('decline-cookies');
-
-    if (acceptBtn) {
-        acceptBtn.addEventListener('click', function() {
-            setCookie('userConsent', 'accepted', 365);
-            closeModalById('cookie-consent-modal');
-            applyLanguageSettings(userLanguage);  // Apply language settings on consent
+    document.addEventListener('DOMContentLoaded', function() {
+        setupEventListeners();
+        applyLanguageSettings('en'); // Default language set to English on page load
+    });
+    
+    function setupEventListeners() {
+        const acceptBtn = document.getElementById('accept-cookies');
+        const declineBtn = document.getElementById('decline-cookies');
+        const languageDropdown = document.getElementById('language-dropdown');
+    
+        // Event listener for accepting cookies
+        if (acceptBtn) {
+            acceptBtn.addEventListener('click', function() {
+                setCookie('userConsent', 'accepted', 365);
+                closeModalById('cookie-consent-modal');
+                applyLanguageSettings(getCookie('userLanguage') || 'en');  // Apply language settings based on user preference or default
+            });
+        } else {
+            console.error('Accept button not found');
+        }
+    
+        // Event listener for declining cookies
+        if (declineBtn) {
+            declineBtn.addEventListener('click', function() {
+                setCookie('userConsent', 'declined', 365);
+                closeModalById('cookie-consent-modal');
+            });
+        }
+    
+        // Event listener for language selection
+        if (languageDropdown) {
+            languageDropdown.addEventListener('change', function() {
+                setLanguagePreference(this.value);
+                applyLanguageSettings(this.value); // Apply language settings as soon as the user changes the language
+            });
+        }
+    
+        document.querySelectorAll('.close').forEach(element => {
+            element.addEventListener('click', function() {
+                const modalId = this.closest('.modal').id;
+                closeModalById(modalId);
+            });
         });
     }
+    
 
-    if (declineBtn) {
-        declineBtn.addEventListener('click', function() {
-            setCookie('userConsent', 'declined', 365);
-            closeModalById('cookie-consent-modal');
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupEventListeners();
+    });
+    
+    function setupEventListeners() {
+        const loginButton = document.getElementById("loginButton");
+        const signUpForm = document.getElementById('signupForm');
+        const userDetailsForm = document.getElementById('userDetailsForm');
+        const addBlogPostForm = document.getElementById('addBlogPostForm');
+        const acceptBtn = document.getElementById('accept-cookies');
+        const declineBtn = document.getElementById('decline-cookies');
+        const languageDropdown = document.getElementById('language-dropdown');
+    
+        if (loginButton) {
+            loginButton.addEventListener("click", function() {
+                if (userIsAuthenticated()) {
+                    openModalById('alreadyLoggedInModal');
+                } else {
+                    openModalById('auth-modal');
+                }
+            });
+        }
+    
+        if (signUpForm) {
+            signUpForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const email = this.querySelector('#signupEmail').value;
+                const password = this.querySelector('#signupPassword').value; // Assuming password field exists
+                signUp(email, password).then(() => {
+                    console.log("Sending validation email to:", email);
+                    transitionModalStep('step1', 'step2');
+                }).catch(error => {
+                    console.error("Error during sign-up:", error);
+                });
+            });
+        }
+    
+        if (userDetailsForm) {
+            userDetailsForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const userName = this.querySelector('#userName').value;
+                const activationCode = this.querySelector('#activationCode').value;
+                const password = this.querySelector('#choosePassword').value;
+                console.log("Verifying details for:", userName, "with code:", activationCode);
+                transitionModalStep('step2', 'step3');
+            });
+        }
+    
+        if (addBlogPostForm) {
+            addBlogPostForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = this.querySelector('#blogTitle').value;
+                const content = this.querySelector('#blogContent').value;
+                console.log("Posting blog titled:", title);
+                closeModalById('auth-modal');
+            });
+        }
+    
+        if (acceptBtn) {
+            acceptBtn.addEventListener('click', function() {
+                setCookie('userConsent', 'accepted', 365);
+                closeModalById('cookie-consent-modal');
+                applyLanguageSettings(userLanguage);  // Apply language settings on consent
+            });
+        }
+    
+        if (declineBtn) {
+            declineBtn.addEventListener('click', function() {
+                setCookie('userConsent', 'declined', 365);
+                closeModalById('cookie-consent-modal');
+            });
+        }
+    
+        if (languageDropdown) {
+            languageDropdown.addEventListener('change', function () {
+                setLanguagePreference(this.value);
+            });
+        }
+        document.querySelectorAll('.close').forEach(element => {
+            element.addEventListener('click', function() {
+                const modalId = this.closest('.modal').id;
+                closeModalById(modalId);
+            });
         });
+    
+        
     }
-
-if (languageDropdown) {
-    languageDropdown.addEventListener('change', function () {
-        setLanguagePreference(this.value);
-    });
-}
-
-
-
-
-
-
-
-
-document.getElementById("loginButton").addEventListener("click", function() {
-    if (userIsAuthenticated()) {
-        openModalById('alreadyLoggedInModal');
-    } else {
-        openModalById('auth-modal');
+    
+    function userIsAuthenticated() {
+        // Updated to use Firebase auth check
+        return !!auth.currentUser;
     }
-});
-
-document.getElementById('signupForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const email = document.getElementById('signupEmail').value;
-    signUp(email).then(() => {
-        console.log("Sending validation email to:", email);
-        transitionModalStep('step1', 'step2');
-    }).catch(error => {
-        console.error("Error during sign-up:", error);
-    });
-});
-
-document.getElementById('userDetailsForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const userName = document.getElementById('userName').value;
-    const activationCode = document.getElementById('activationCode').value;
-    const password = document.getElementById('choosePassword').value;
-    console.log("Verifying details for:", userName, "with code:", activationCode);
-    transitionModalStep('step2', 'step3');
-});
-
-document.getElementById('addBlogPostForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const title = document.getElementById('blogTitle').value;
-    const content = document.getElementById('blogContent').value;
-    console.log("Posting blog titled:", title);
-    closeModalById('auth-modal');
-});
-
-document.querySelectorAll('.close').forEach(element => {
-    element.addEventListener('click', function() {
-        const modalId = this.closest('.modal').id;
-        closeModalById(modalId);
-    });
-});
-
-if (acceptBtn) {
-    acceptBtn.addEventListener('click', acceptCookies);
-}
-
-if (declineBtn) {
-    declineBtn.addEventListener('click', declineCookies);
-}
-
-if (languageDropdown) {
-    languageDropdown.addEventListener('change', function() {
-        setLanguagePreference(this.value);
-    });
-}
-}
+    
 
 // Initialize all scripts after the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', setupEventListeners);
@@ -245,9 +307,4 @@ function closeModalById(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) modal.style.display = 'none';
 
-
-function userIsAuthenticated() {
-    // Implementation depends on how authentication status is determined
-    // Dummy implementation:
-    return !!auth.currentUser;
 }}
