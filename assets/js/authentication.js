@@ -10,20 +10,22 @@ import {
 import { auth } from './firebaseInit.js';
 
 
-// Function to handle the token client-side
+// Unified function to handle authentication state changes
 onAuthStateChanged(auth, user => {
     if (user) {
-        // User is signed in.
-        user.getIdToken().then(function(idToken) {
-            // Send token to your backend via HTTPS
-            sessionStorage.setItem("userToken", idToken); // Store token in sessionStorage
+        user.getIdToken().then(token => {
+            // Set token in cookie with HttpOnly and Secure flags
+            document.cookie = `authToken=${token};max-age=3600;path=/;domain=.languapps.com;Secure;HttpOnly`;
+            // Optionally redirect to subdomain if needed
+            window.location.href = 'https://labase.languapps.com';
         });
     } else {
-        // No user is signed in.
-        sessionStorage.removeItem("userToken"); // Remove token when user logs out
+        // No user is signed in. Clear the cookie.
+        document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; Secure; HttpOnly";
+        // Optionally handle logout redirect
+        window.location.href = "https://maindomain.com/login";
     }
 });
-  
 // // Function to handle user sign-up
 function signUp(email, password) {
     return new Promise((resolve, reject) => {
