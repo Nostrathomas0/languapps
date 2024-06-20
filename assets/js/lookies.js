@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Modal not found:', modalId);
         }
     }
-
+    
     function closeModalById(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'none';

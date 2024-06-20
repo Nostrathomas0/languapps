@@ -6,16 +6,15 @@ import { auth } from './firebaseInit.js';
 
 window.onClick = onClick;
 
-// Function to handle onClick event, initiate reCAPTCHA, and verify it
-async function onClick(e) {
-    e.preventDefault();
-    grecaptcha.enterprise.ready(async () => {
-        const token = await grecaptcha.enterprise.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', {action: 'LOGIN'});
-        verifyRecaptcha(token);
-    });
-    
-}
-
+// Moved to reCaptcha.js
+// async function onClick(e) {
+//     e.preventDefault();
+//     grecaptcha.enterprise.ready(async () => {
+//         const token = await grecaptcha.enterprise.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', {action: 'LOGIN'});
+//         verifyRecaptcha(token);
+//     });
+//     
+// }
 // function signIn(email, password) {
 //     return signInWithEmailAndPassword(auth, email, password)
 //         .then(userCredential => {

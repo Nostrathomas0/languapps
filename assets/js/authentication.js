@@ -14,40 +14,64 @@ import { auth } from './firebaseInit.js';
 onAuthStateChanged(auth, user => {
     if (user) {
         user.getIdToken().then(token => {
+            console.log('User token:', token); // Debug log
             // Set token in cookie with HttpOnly and Secure flags
             document.cookie = `authToken=${token};max-age=3600;path=/;domain=.languapps.com;Secure;HttpOnly`;
-            // Optionally redirect to subdomain if needed
-            window.location.href = 'https://labase.languapps.com';
+            console.log('Cookie set:', document.cookie); // Debug log
+            // Redirect to the subdomain with the authToken
+            window.location.href = `https://languapps.com/?authToken=${token}`;
+        }).catch(error => {
+            console.error('Error getting token:', error);
         });
     } else {
+        console.log('No user signed in. Clearing cookies and redirecting to login.'); // Debug log
+
         // No user is signed in. Clear the cookie.
         document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; Secure; HttpOnly";
-        // Optionally handle logout redirect
-        window.location.href = "https://maindomain.com/login";
+        
+        // Redirect to the main domain login page
+        window.location.href = "https://languapps.com";
     }
 });
-// // Function to handle user sign-up
-function signUp(email, password) {
-    return new Promise((resolve, reject) => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(userCredential => {
-                const user = userCredential.user;
-                console.log('User account created, sending verification email...');
-                sendVerificationEmail(user)
-                    .then(() => {
-                        console.log('Verification email sent.');
-                        resolve(user);  // Pass the user object to resolve for further use
-                    }) 
-                    .catch(error => {
-                        console.error('Failed to send verification email:', error);
-                        reject(error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error during sign up:', error);
-                reject(error);
-            });
-    });
+// Function to verify reCAPTCHA token with the backend
+async function verifyRecaptcha(token) {
+    try {
+        const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptcha', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token })
+        });
+        const data = await response.json();
+        if (data.success) {
+            console.log('reCAPTCHA verified successfully');
+            return true;
+        } else {
+            console.error('reCAPTCHA verification failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error verifying reCAPTCHA:', error);
+        return false;
+    }
+}
+
+// Function to handle user sign-up
+async function signUp(email, password, recaptchaToken) {
+    try {
+        const recaptchaVerified = await verifyRecaptcha(recaptchaToken);
+        if (!recaptchaVerified) {
+            throw new Error('reCAPTCHA verification failed.');
+        }
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('User account created, sending verification email...');
+        await sendVerificationEmail(user);
+        console.log('Verification email sent.');
+        return user; // Return the user object for further use
+    } catch (error) {
+        console.error('Error during sign up:', error);
+        throw error;
+    }
 }
 
 async function signIn(email, password) {
