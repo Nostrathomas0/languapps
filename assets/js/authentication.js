@@ -14,25 +14,18 @@ import { auth } from './firebaseInit.js';
 onAuthStateChanged(auth, user => {
     if (user) {
         user.getIdToken().then(token => {
-            console.log('User token:', token); // Debug log
-            // Set token in cookie with HttpOnly and Secure flags
-            document.cookie = `authToken=${token};max-age=3600;path=/;domain=.languapps.com;Secure;HttpOnly`;
-            console.log('Cookie set:', document.cookie); // Debug log
-            // Redirect to the subdomain with the authToken
-            window.location.href = `https://languapps.com/?authToken=${token}`;
-        }).catch(error => {
-            console.error('Error getting token:', error);
+            setAuthTokenCookie(token);
+            if (window.location.hostname === 'labase.languapps.com') {
+                window.location.href = `https://labase.languapps.com/?authToken=${token}`;
+            }
         });
     } else {
-        console.log('No user signed in. Clearing cookies and redirecting to login.'); // Debug log
-
-        // No user is signed in. Clear the cookie.
-        document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; Secure; HttpOnly";
-        
-        // Redirect to the main domain login page
-        window.location.href = "https://languapps.com";
+        // No user is signed in. Clear the cookie and redirect to the main domain
+        document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none; httponly";
+        if (window.location.hostname === 'labase.languapps.com') {
+            window.location.href = "https://languapps.com/?auth-modal";
+        }
     }
-});
 // Function to verify reCAPTCHA token with the backend
 async function verifyRecaptcha(token) {
     try {
