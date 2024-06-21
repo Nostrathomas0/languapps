@@ -1,3 +1,14 @@
+import { 
+    createUserWithEmailAndPassword, 
+    sendEmailVerification, 
+    signInWithEmailAndPassword, 
+    FacebookAuthProvider, 
+    signInWithPopup, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { auth } from './firebaseInit.js';
+
+// Function to set the auth token cookie
 function setAuthTokenCookie(token) {
     document.cookie = `authToken=${token}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none; httponly`;
 }
@@ -7,41 +18,65 @@ onAuthStateChanged(auth, user => {
     if (user) {
         user.getIdToken().then(token => {
             setAuthTokenCookie(token);
-            if (window.location.hostname === 'labase.languapps.com') {
-                window.location.href = `https://labase.languapps.com/?authToken=${token}`;
-            }
+            // Uncomment the following lines for redirection logic if needed
+            // if (window.location.hostname === 'labase.languapps.com') {
+            //     window.location.href = `https://labase.languapps.com/?authToken=${token}`;
+            // }
+        }).catch(error => {
+            console.error('Error getting token:', error);
         });
     } else {
         // No user is signed in. Clear the cookie and redirect to the main domain
         document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none; httponly";
-        if (window.location.hostname === 'labase.languapps.com') {
-            window.location.href = "https://languapps.com/?auth-modal";
-        }
+        // Uncomment the following lines for redirection logic if needed
+        // if (window.location.hostname === 'labase.languapps.com') {
+        //     window.location.href = "https://languapps.com/?auth-modal";
+        // }
     }
 });
 
+// Function to verify reCAPTCHA token with the backend
+async function verifyRecaptcha(token) {
+    try {
+        const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptcha', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token })
+        });
+        const data = await response.json();
+        if (data.success) {
+            console.log('reCAPTCHA verified successfully');
+            return true;
+        } else {
+            console.error('reCAPTCHA verification failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error verifying reCAPTCHA:', error);
+        return false;
+    }
+}
+
+// Additional functions for handling sign-up, sign-in, password reset, etc. can be added here
+
+
 // Function to handle user sign-up
-function signUp(email, password) {
-    return new Promise((resolve, reject) => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(userCredential => {
-                const user = userCredential.user;
-                console.log('User account created, sending verification email...');
-                sendVerificationEmail(user)
-                    .then(() => {
-                        console.log('Verification email sent.');
-                        resolve(user);  // Pass the user object to resolve for further use
-                    }) 
-                    .catch(error => {
-                        console.error('Failed to send verification email:', error);
-                        reject(error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error during sign up:', error);
-                reject(error);
-            });
-    });
+async function signUp(email, password, recaptchaToken) {
+    try {
+        const recaptchaVerified = await verifyRecaptcha(recaptchaToken);
+        if (!recaptchaVerified) {
+            throw new Error('reCAPTCHA verification failed.');
+        }
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('User account created, sending verification email...');
+        await sendVerificationEmail(user);
+        console.log('Verification email sent.');
+        return user; // Return the user object for further use
+    } catch (error) {
+        console.error('Error during sign up:', error);
+        throw error;
+    }
 }
 
 async function signIn(email, password) {
@@ -145,4 +180,4 @@ onAuthStateChanged(auth, (user) => {
 document.addEventListener('DOMContentLoaded', setupEventListeners);
 
 // Export functions if needed elsewhere
-export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook };
+export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook};
