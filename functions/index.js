@@ -27,7 +27,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     const recaptchaResponse = await axios.post(apiUrl, null, {params});
     const recaptchaData = recaptchaResponse.data;
 
-    if (!recaptchaData.success) {
+    if (!recaptchaData.success || recaptchaData.score < 0.5) {
       return res.json({
         success: false,
         message: "reCAPTCHA verification failed",
@@ -42,9 +42,8 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     });
     // Log user information
     console.log("User created:", userRecord);
-    // Send email verifcation link
-    const verificationLink = await admin.auth()
-        .generateEmailVerificationLink(email);
+    const verificationLink = await
+    admin.auth().generateEmailVerificationLink(email);
     // You can send this link to the user's email using a custom email service
 
     res.json({

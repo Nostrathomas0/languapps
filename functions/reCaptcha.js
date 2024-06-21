@@ -8,7 +8,7 @@ router.use(cors({origin: true}));
 router.use(express.json()); // For parsing application/json
 
 // reCAPTCHA verification endpoint
-router.post("/verifyRecaptcha", async (req, res) => {
+router.post("/", async (req, res) => {
   const token = req.body.token;
   const secretKey = process.env.RECAPTCHA_SECRET_KEY ||
                     "6Ld47LUpAAAAAFbzW3dQTUybi3-2FrxuLOiv-zVl";
@@ -20,12 +20,14 @@ router.post("/verifyRecaptcha", async (req, res) => {
         response: token,
       },
     });
+    const data = response.data;
+    console.log("reCaptcha API Response:", data);
 
-    console.log("reCaptcha API Response:", response.data);
-    if (response.data.success) {
+    if (data.success && data.score >= 0.5) {
       res.json({success: true});
     } else {
-      res.json({success: false, message: "Verification failed"});
+      res.json({success: false, message:
+        "Verification failed", errorCodes: data["error-codes"]});
     }
   } catch (error) {
     console.error("Error verifying reCAPTCHA:", error);

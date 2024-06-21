@@ -11,10 +11,12 @@ import { auth } from './firebaseInit.js';
 // Function to set the auth token cookie
 function setAuthTokenCookie(token) {
     document.cookie = `authToken=${token}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none; httponly`;
+    console.log('Auth token set:', token);
 }
 
 // Unified function to handle authentication state changes
 onAuthStateChanged(auth, user => {
+    console.log('Auth state changed:', user);
     if (user) {
         user.getIdToken().then(token => {
             setAuthTokenCookie(token);
@@ -120,20 +122,25 @@ async function signInWithFacebook() {
     }
 }
 
-// Event Listeners
 function setupEventListeners() {
     // Set up event listener for sign-up form
     document.getElementById('signupForm').addEventListener('submit', async (event) => {
         event.preventDefault();
-        const email = event.target.elements['email'].value;
-        const password = event.target.elements['password'].value;
-        try {
-            await signUp(email, password);
-            console.log('Sign-up successful, please check your email to verify.');
-        } catch (error) {
-            console.error('Sign-up failed:', error);
-        }
+        const email = event.target.elements['signupEmail'].value; // Fixed the element name
+        const password = event.target.elements['signupPassword'].value; // Fixed the element name
+        grecaptcha.ready(async () => {
+            const recaptchaToken = await grecaptcha.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', {action: 'submit'});
+            try {
+                await signUp(email, password, recaptchaToken);
+                console.log('Sign-up successful, please check your email to verify.');
+                alert('Your password has been securely set. Please check your email to verify your account.');
+            } catch (error) {
+                console.error('Sign-up failed:', error);
+                alert('Sign-up failed: ' + error.message);
+            }
+        });
     });
+}
 
     // Set up event listener for sign-in form
     document.getElementById('signinForm').addEventListener('submit', async (event) => {
@@ -165,7 +172,7 @@ function setupEventListeners() {
             }
         });
     }
-}
+
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, (user) => {
