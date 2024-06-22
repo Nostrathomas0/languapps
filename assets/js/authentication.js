@@ -63,19 +63,25 @@ async function verifyRecaptcha(token) {
 // Function to handle user sign-up
 async function signUp(email, password, recaptchaToken) {
     try {
-        const recaptchaVerified = await verifyRecaptcha(recaptchaToken);
-        if (!recaptchaVerified) {
-            throw new Error('reCAPTCHA verification failed.');
+        console.log("Received Recaptcha Token", recaptchaToken); // Log token
+        const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: recaptchaToken, email, password })
+        });
+        const data = await response.json();
+        console.log("Signup Response:", data); // Log response
+
+        if (data.success) {
+            console.log('Sign-up successful.');
+            alert('Your password has been securely set. Please check your email to verify your account.');
+        } else {
+            console.error('Sign-up failed:', data.message);
+            alert('Sign-up failed: ' + data.message);
         }
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log('User account created, sending verification email...');
-        await sendVerificationEmail(user);
-        console.log('Verification email sent.');
-        return user; // Return the user object for further use
     } catch (error) {
         console.error('Error during sign up:', error);
-        throw error;
+        alert('Sign-up failed: ' + error.message);
     }
 }
 
@@ -119,8 +125,6 @@ async function signInWithFacebook() {
         console.error('Error during Facebook sign-in:', error);
     }
 }
-
-// Function to set up event listeners
 function setupEventListeners() {
     // Set up event listener for sign-up form
     document.getElementById('signupForm').addEventListener('submit', async (event) => {
@@ -128,11 +132,9 @@ function setupEventListeners() {
         const email = event.target.elements['signupEmail'].value; // Fixed the element name
         const password = event.target.elements['signupPassword'].value; // Fixed the element name
         grecaptcha.ready(async () => {
-            const recaptchaToken = await grecaptcha.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', {action: 'submit'});
+            const recaptchaToken = await grecaptcha.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', { action: 'submit' });
             try {
                 await signUp(email, password, recaptchaToken);
-                console.log('Sign-up successful, please check your email to verify.');
-                alert('Your password has been securely set. Please check your email to verify your account.');
             } catch (error) {
                 console.error('Sign-up failed:', error);
                 alert('Sign-up failed: ' + error.message);
