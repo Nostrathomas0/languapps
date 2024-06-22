@@ -1,11 +1,20 @@
 // reCaptcha.js
-const functions = require("firebase-functions");
+
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const corsOptions = {
+  origin: "*", // Adjust this as necessary for your security needs
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"],
+};
+
+app.use(cors(corsOptions));
+
 const app = express();
 app.use(cors({origin: true}));
 app.use(express.json()); // For parsing application/json
+
 
 // reCAPTCHA verification endpoint
 app.post("/verifyRecaptcha", async (req, res) => {
@@ -21,6 +30,7 @@ app.post("/verifyRecaptcha", async (req, res) => {
         response: token,
       },
     });
+
     console.log("reCAPTCHA API Response:", response.data);
     const data = response.data;
     console.log("reCaptcha API Response:", data);
@@ -37,6 +47,5 @@ app.post("/verifyRecaptcha", async (req, res) => {
     res.status(500).json({success: false, message: "Server error"});
   }
 });
-
-exports.app = functions.https.onRequest(app);
+module.exports = app; // Export the app directly as a module
 
