@@ -51,10 +51,20 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
    "6Ld47LUpAAAAAFbzW3dQTUybi3-2FrxuLOiv-zVl";
 
   try {
+    console.log("Starting reCAPTCHA verification for signup");
+    console.log("Received token:", token);
+    console.log("Received email:", email);
+    console.log("Received password:", password);
+
     const apiUrl = "https://www.google.com/recaptcha/api/siteverify";
     const params = {secret: secretKey, response: token};
+
+    console.log("Sending request to reCAPTCHA API with params:", params);
+
     const recaptchaResponse = await axios.post(apiUrl, null, {params});
     const recaptchaData = recaptchaResponse.data;
+
+    console.log("Received response from reCAPTCHA API:", recaptchaData);
 
     if (!recaptchaData.success || recaptchaData.score < 0.5) {
       return res.json({
