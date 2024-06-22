@@ -21,9 +21,9 @@ onAuthStateChanged(auth, user => {
         user.getIdToken().then(token => {
             setAuthTokenCookie(token);
             // Uncomment the following lines for redirection logic if needed
-            // if (window.location.hostname === 'labase.languapps.com') {
-            //     window.location.href = `https://labase.languapps.com/?authToken=${token}`;
-            // }
+            if (window.location.hostname === 'labase.languapps.com') {
+                window.location.href = `https://labase.languapps.com/?authToken=${token}`;
+            }
         }).catch(error => {
             console.error('Error getting token:', error);
         });
@@ -40,6 +40,7 @@ onAuthStateChanged(auth, user => {
 // Function to verify reCAPTCHA token with the backend
 async function verifyRecaptcha(token) {
     try {
+        console.log("reCAPTCHA token:", token);
         const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptcha', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -58,9 +59,6 @@ async function verifyRecaptcha(token) {
         return false;
     }
 }
-
-// Additional functions for handling sign-up, sign-in, password reset, etc. can be added here
-
 
 // Function to handle user sign-up
 async function signUp(email, password, recaptchaToken) {
@@ -122,6 +120,7 @@ async function signInWithFacebook() {
     }
 }
 
+// Function to set up event listeners
 function setupEventListeners() {
     // Set up event listener for sign-up form
     document.getElementById('signupForm').addEventListener('submit', async (event) => {
@@ -140,7 +139,6 @@ function setupEventListeners() {
             }
         });
     });
-}
 
     // Set up event listener for sign-in form
     document.getElementById('signinForm').addEventListener('submit', async (event) => {
@@ -172,7 +170,7 @@ function setupEventListeners() {
             }
         });
     }
-
+}
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, (user) => {
@@ -187,4 +185,4 @@ onAuthStateChanged(auth, (user) => {
 document.addEventListener('DOMContentLoaded', setupEventListeners);
 
 // Export functions if needed elsewhere
-export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook};
+export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook };

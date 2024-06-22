@@ -1,28 +1,31 @@
 // reCaptcha.js
+const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-// eslint-disable-next-line new-cap
-const router = express.Router();
-router.use(cors({origin: true}));
-router.use(express.json()); // For parsing application/json
+const app = express();
+app.use(cors({origin: true}));
+app.use(express.json()); // For parsing application/json
 
 // reCAPTCHA verification endpoint
-router.post("/", async (req, res) => {
+app.post("/verifyRecaptcha", async (req, res) => {
   const token = req.body.token;
   const secretKey = process.env.RECAPTCHA_SECRET_KEY ||
                     "6Ld47LUpAAAAAFbzW3dQTUybi3-2FrxuLOiv-zVl";
 
   try {
+    console.log("Token received:", token);
     const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
       params: {
         secret: secretKey,
         response: token,
       },
     });
+    console.log("reCAPTCHA API Response:", response.data);
     const data = response.data;
     console.log("reCaptcha API Response:", data);
-
+    console.log("Token received:", token);
+    console.log("reCAPTCHA API response:", data);
     if (data.success && data.score >= 0.5) {
       res.json({success: true});
     } else {
@@ -35,4 +38,5 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+exports.app = functions.https.onRequest(app);
+
