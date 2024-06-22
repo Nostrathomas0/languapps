@@ -74,6 +74,8 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       });
     }
 
+    console.log("reCAPTCHA verification passed Authentication");
+
     const userRecord = await admin.auth().createUser({
       email: email,
       password: password,
