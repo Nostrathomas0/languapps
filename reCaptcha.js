@@ -9,12 +9,9 @@ const corsOptions = {
   allowedHeaders: ["Content-Type"],
 };
 
-app.use(cors(corsOptions));
-
 const app = express();
-app.use(cors({origin: true}));
 app.use(express.json()); // For parsing application/json
-
+app.use(cors(corsOptions));
 
 // reCAPTCHA verification endpoint
 app.post("/verifyRecaptcha", async (req, res) => {

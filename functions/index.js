@@ -1,4 +1,3 @@
-// index.js
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
@@ -7,13 +6,13 @@ const axios = require("axios");
 
 admin.initializeApp();
 
+const app = express();
 const corsOptions = {
   origin: "*", // Adjust this as necessary for your security needs
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
 };
 
-const app = express();
 app.use(cors(corsOptions)); // Apply CORS options here
 app.use(express.json()); // For parsing application/json
 
@@ -21,8 +20,9 @@ app.use(express.json()); // For parsing application/json
 app.post("/verifyRecaptcha", async (req, res) => {
   const token = req.body.token;
   const secretKey = process.env.RECAPTCHA_SECRET_KEY ||
-     "6Ld47LUpAAAAAFbzW3dQTUybi3-2FrxuLOiv-zVl";
+  "6LdOYQAqAAAAAJZGjw7EhFKB6ls-RiIr5NKuI7D-";
 
+  console.log("Received token:", token); // Log the request body
   try {
     console.log("Token received:", token);
     const response = await axios.post("https://www.google.com/recaptcha/api/siteverify", null, {
@@ -35,8 +35,11 @@ app.post("/verifyRecaptcha", async (req, res) => {
       res.json({success: true});
     } else {
       console.error("Verification failed:", data);
-      res.json({success: false, message:
-        "Verification failed", errorCodes: data["error-codes"]});
+      res.status(400).json({
+        success: false,
+        message: "Verification failed",
+        errorCodes: data["error-codes"],
+      });
     }
   } catch (error) {
     console.error("Error verifying reCAPTCHA:", error);
@@ -48,8 +51,9 @@ app.post("/verifyRecaptcha", async (req, res) => {
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
   const {token, email, password} = req.body;
   const secretKey = process.env.RECAPTCHA_SECRET_KEY ||
-   "6Ld47LUpAAAAAFbzW3dQTUybi3-2FrxuLOiv-zVl";
+  "6Lfe_f8pAAAAAFKjotZ3Jki46EH1Q0ixQzP0J6pc";
 
+  console.log("Received token:", token); // Log the request body
   try {
     console.log("Starting reCAPTCHA verification for signup");
     console.log("Received token:", token);
@@ -67,10 +71,13 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     console.log("Received response from reCAPTCHA API:", recaptchaData);
 
     if (!recaptchaData.success || recaptchaData.score < 0.5) {
-      return res.json({
+      const errorMessage = "reCAPTCHA verification failed";
+      const errorCodes = recaptchaData["error-codes"];
+      console.error("Verification failed:", errorMessage, errorCodes);
+      return res.status(400).json({
         success: false,
-        message: "reCAPTCHA verification failed",
-        errorCodes: recaptchaData["error-codes"],
+        message: errorMessage,
+        errorCodes: errorCodes,
       });
     }
 
@@ -83,8 +90,11 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     });
 
     console.log("User created:", userRecord);
+
+    // Send verification email to the user using the Firebase Admin SDK
     const verificationLink =
-      await admin.auth().generateEmailVerificationLink(email);
+    await admin.auth().generateEmailVerificationLink(email);
+    console.log("Verification email sent to:", email);
 
     res.json({
       success: true,

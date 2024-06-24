@@ -60,30 +60,53 @@ async function verifyRecaptcha(token) {
     }
 }
 
-// Function to handle user sign-up
-async function signUp(email, password, recaptchaToken) {
+// Function to verify reCAPTCHA and sign up a user
+async function verifyRecaptchaAndSignup(email, password, recaptchaToken) {
     try {
-        console.log("Received Recaptcha Token", recaptchaToken); // Log token
         const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: recaptchaToken, email, password })
+            body: JSON.stringify({ token: recaptchaToken, email: email, password: password })
         });
         const data = await response.json();
-        console.log("Signup Response:", data); // Log response
-
         if (data.success) {
-            console.log('Sign-up successful.');
-            alert('Your password has been securely set. Please check your email to verify your account.');
+            console.log('reCAPTCHA verified successfully');
+            // Create the user account with email and password
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            console.log('User created:', userCredential.user);
+            // Send verification email to the user
+            await sendVerificationEmail(userCredential.user);
         } else {
-            console.error('Sign-up failed:', data.message);
-            alert('Sign-up failed: ' + data.message);
+            console.error('reCAPTCHA verification failed:', data.message, data.errorCodes);
+            throw new Error('reCAPTCHA verification failed');
         }
     } catch (error) {
         console.error('Error during sign up:', error);
         alert('Sign-up failed: ' + error.message);
     }
 }
+
+// Function to handle user sign-up
+async function signUp(email, password, recaptchaToken) {
+    try {
+        const recaptchaVerified = await verifyRecaptchaAndSignup(recaptchaToken);
+        if (!recaptchaVerified) {
+            throw new Error('reCAPTCHA verification failed.');
+        }
+
+        // Create the user account with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('User created:', userCredential.user);
+
+        // Send verification email to the user
+        await sendVerificationEmail(userCredential.user);
+    } catch (error) {
+        console.error('Error during sign up:', error);
+        alert('Sign-up failed: ' + error.message);
+    }
+}
+
+
 
 async function signIn(email, password) {
     try {
@@ -129,10 +152,10 @@ function setupEventListeners() {
     // Set up event listener for sign-up form
     document.getElementById('signupForm').addEventListener('submit', async (event) => {
         event.preventDefault();
-        const email = event.target.elements['signupEmail'].value; // Fixed the element name
-        const password = event.target.elements['signupPassword'].value; // Fixed the element name
+        const email = event.target.elements['signupEmail'].value;
+        const password = event.target.elements['signupPassword'].value;
         grecaptcha.ready(async () => {
-            const recaptchaToken = await grecaptcha.execute('6Ld47LUpAAAAAAMmTEQDe3QTuq_nb-EdtMIPwINs', { action: 'submit' });
+            const recaptchaToken = await grecaptcha.execute('6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk', { action: 'signup' });
             try {
                 await signUp(email, password, recaptchaToken);
             } catch (error) {
@@ -141,6 +164,7 @@ function setupEventListeners() {
             }
         });
     });
+    
 
     // Set up event listener for sign-in form
     document.getElementById('signinForm').addEventListener('submit', async (event) => {
@@ -174,6 +198,7 @@ function setupEventListeners() {
     }
 }
 
+
 // Monitor authentication state changes
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -187,4 +212,4 @@ onAuthStateChanged(auth, (user) => {
 document.addEventListener('DOMContentLoaded', setupEventListeners);
 
 // Export functions if needed elsewhere
-export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook };
+export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook, };
