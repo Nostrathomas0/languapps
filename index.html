@@ -238,7 +238,7 @@
 						<form id="signupForm">
 							<input type="email" id="signupEmail" placeholder="Enter your email" required>
 							<input type="password" id="signupPassword" placeholder="Create a password" required>
-							<div class="g-recaptcha" data-sitekey="6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk"></div>
+							
 							<button type="submit">Sign Up</button>
 						</form>
 						<h2>Sign in Already</h2>
@@ -301,24 +301,29 @@
 		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
 		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
 		<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-		<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-		<script src="https://www.gstatic.com/recaptcha/api.js"></script>	
+
+		<!-- reCAPTCHA script -->
+		<script src="https://www.google.com/recaptcha/api.js?render=6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk"></script>
 
 		<!-- Firebase Initialization -->
 		<script type="module" src="assets/js/firebaseInit.js"></script>
-		<script type="module" src="assets/js/authentication.js" ></script>
-		<script src="https://www.gstatic.com/recaptcha/releases/v3/recaptcha__en.js" async defer></script>
-		<script src="https://www.google.com/recaptcha/api.js?render=6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk"></script>
 
-		<!-- Scripts Depending on Firebase -->
+		<!-- Authentication script -->
+		<script type="module" src="assets/js/authentication.js"></script>
+
+		<!-- Other scripts -->
 		<script type="module" src="assets/js/games.js"></script>
 		<script type="module" src="assets/js/lookies.js"></script>
-		<script src="assets/js/burger.js"></script>			
-		<!-- Asynchronous Scripts -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
-		<!-- or include Firebase initialization directly in games.js -->
+		<script src="assets/js/burger.js"></script>
 		<script src="assets/js/facebookSDKSetup.js" defer></script>
-		
+
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
+
+		<!-- Facebook SDK -->
+		<div id="fb-root"></div>
+		<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0&appId=776174730748503" nonce="meVadCpW"></script>
+
 		<div id="fb-root"></div>
 		<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0&appId=776174730748503" nonce="meVadCpW"></script>	
 	</body>

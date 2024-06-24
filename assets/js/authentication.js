@@ -156,6 +156,7 @@ function setupEventListeners() {
         const password = event.target.elements['signupPassword'].value;
         grecaptcha.ready(async () => {
             const recaptchaToken = await grecaptcha.execute('6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk', { action: 'signup' });
+            console.log('reCAPTCHA token:', recaptchaToken);
             try {
                 await signUp(email, password, recaptchaToken);
             } catch (error) {
