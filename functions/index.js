@@ -51,7 +51,7 @@ app.post("/verifyRecaptcha", async (req, res) => {
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
   const {token, email, password} = req.body;
   const secretKey = process.env.RECAPTCHA_SECRET_KEY ||
-  "6Lfe_f8pAAAAAFKjotZ3Jki46EH1Q0ixQzP0J6pc";
+  "6LdOYQAqAAAAAJZGjw7EhFKB6ls-RiIr5NKuI7D-";
 
   console.log("Received token:", token); // Log the request body
   try {
