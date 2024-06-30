@@ -151,21 +151,24 @@ async function signInWithFacebook() {
 function setupEventListeners() {
     // Set up event listener for sign-up form
     document.getElementById('signupForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const email = event.target.elements['signupEmail'].value;
-        const password = event.target.elements['signupPassword'].value;
-        grecaptcha.ready(async () => {
-            const recaptchaToken = await grecaptcha.execute('6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk', { action: 'signup' });
-            console.log('reCAPTCHA token:', recaptchaToken);
-            try {
-                await signUp(email, password, recaptchaToken);
-            } catch (error) {
-                console.error('Sign-up failed:', error);
-                alert('Sign-up failed: ' + error.message);
-            }
-        });
+      event.preventDefault();
+      const email = event.target.elements['signupEmail'].value;
+      const password = event.target.elements['signupPassword'].value;
+      grecaptcha.ready(async () => {
+        const recaptchaToken = await grecaptcha.execute('6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk', { action: 'signup' });
+        const recaptchaScore = grecaptcha.getResponse(recaptchaToken).score;
+        console.log('reCAPTCHA token:', recaptchaToken);
+        console.log('reCAPTCHA score:', recaptchaScore);
+        try {
+          await signUp(email, password, recaptchaToken, recaptchaScore);
+        } catch (error) {
+          console.error('Sign-up failed:', error);
+          alert('Sign-up failed: ' + error.message);
+        }
+      });
     });
-    
+  }
+  
 
     // Set up event listener for sign-in form
     document.getElementById('signinForm').addEventListener('submit', async (event) => {
@@ -214,7 +217,7 @@ function setupEventListeners() {
             }
         });
     }
-}
+
 
 
 // Monitor authentication state changes

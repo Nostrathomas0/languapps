@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
-const {verifyRecaptcha} = require("./recaptchaUtils");
+const {verifyRecaptcha, getSecretKey} = require("./recaptchaUtils");
 
 admin.initializeApp();
 
@@ -16,13 +16,23 @@ const corsOptions = {
 app.use(cors(corsOptions)); // Apply CORS options here
 app.use(express.json()); // For parsing application/json
 
+
+// Test endpoint to check the secret key
+app.get("/checkRecaptchaSecret", (req, res) => {
+  try {
+    const secretKey = getSecretKey();
+    res.send(`reCAPTCHA Secret Key: ${secretKey}`);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 // reCAPTCHA verification endpoint
 app.post("/verifyRecaptcha", async (req, res) => {
   const token = req.body.token;
 
   console.log("Received token:", token); // Log the request body
   try {
-    console.log("Token received:", token);
     const data = await verifyRecaptcha(token);
     console.log("reCAPTCHA API Response:", data);
 
@@ -98,3 +108,11 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
 });
 
 exports.app = functions.https.onRequest(app);
+exports.checkRecaptchaSecret = functions.https.onRequest((req, res) => {
+  try {
+    const secretKey = getSecretKey();
+    res.send(`reCAPTCHA Secret Key: ${secretKey}`);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});

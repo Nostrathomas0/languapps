@@ -4,7 +4,11 @@ const axios = require("axios");
 const functions = require("firebase-functions");
 
 const getSecretKey = () => {
-  return functions.config().recaptcha.secret_key || "YOUR_FALLBACK_SECRET_KEY";
+  const secretKey = functions.config().recaptcha.secret_key;
+  if (!secretKey) {
+    throw new Error("reCAPTCHA secret key is not set in environment variables");
+  }
+  return secretKey;
 };
 
 const verifyRecaptcha = async (token) => {
