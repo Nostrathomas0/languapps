@@ -180,6 +180,23 @@ function setupEventListeners() {
         }
     });
 
+    // Add event listener for "Show Password" button
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('signupPassword');
+        const showPasswordButton = document.getElementById('showPassword');
+      
+        showPasswordButton.addEventListener('click', function() {
+          if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordButton.textContent = 'Hide Password';
+          } else {
+            passwordInput.type = 'password';
+            showPasswordButton.textContent = 'Show Password';
+          }
+        });
+      });
+      
+
     // Set up event listener for "Forgot Password?" button
     const forgotPasswordButton = document.getElementById('forgotPasswordButton');
     if (forgotPasswordButton) {
