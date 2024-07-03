@@ -54,7 +54,7 @@ app.post("/verifyRecaptcha", async (req, res) => {
 
 // Endpoint to verify reCAPTCHA and sign up a user
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
-  const {token, email, password} = req.body;
+  const {token, email, password, score} = req.body;
 
   console.log("Received token:", token); // Log the request body
   try {
@@ -62,13 +62,11 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     console.log("Received token:", token);
     console.log("Received email:", email);
     console.log("Received password:", password);
+    console.log("Received score:", score);
 
-    const recaptchaData = await verifyRecaptcha(token);
-    console.log("Received response from reCAPTCHA API:", recaptchaData);
-
-    if (!recaptchaData.success || recaptchaData.score < 0.5) {
+    if (score < 0.5) {
       const errorMessage = "reCAPTCHA verification failed";
-      const errorCodes = recaptchaData["error-codes"];
+      const errorCodes = ["low-score"];
       console.error("Verification failed:", errorMessage, errorCodes);
       return res.status(400).json({
         success: false,
@@ -86,6 +84,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     });
 
     console.log("User created:", userRecord);
+
 
     // Send verification email to the user using the Firebase Admin SDK
     const verificationLink = await

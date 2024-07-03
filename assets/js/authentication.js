@@ -4,7 +4,8 @@ import {
     signInWithEmailAndPassword, 
     FacebookAuthProvider, 
     signInWithPopup, 
-    onAuthStateChanged 
+    onAuthStateChanged,
+    signOut as firebaseSignOut // Correct import
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
 
@@ -89,25 +90,17 @@ async function verifyRecaptchaAndSignup(email, password, recaptchaToken) {
 // Function to handle user sign-up
 async function signUp(email, password, recaptchaToken) {
     try {
-        const recaptchaVerified = await verifyRecaptchaAndSignup(recaptchaToken);
+        const recaptchaVerified = await verifyRecaptchaAndSignup(email, password, recaptchaToken);
         if (!recaptchaVerified) {
             throw new Error('reCAPTCHA verification failed.');
         }
-
-        // Create the user account with email and password
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log('User created:', userCredential.user);
-
-        // Send verification email to the user
-        await sendVerificationEmail(userCredential.user);
     } catch (error) {
         console.error('Error during sign up:', error);
         alert('Sign-up failed: ' + error.message);
     }
 }
 
-
-
+// Function to handle user sign-in
 async function signIn(email, password) {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -117,9 +110,11 @@ async function signIn(email, password) {
         console.log("User signed in:", userCredential.user);
     } catch (error) {
         console.error("Error signing in:", error);
+        alert('Sign-in failed: ' + error.message);
     }
 }
 
+// Function to send verification email
 async function sendVerificationEmail(user) {
     try {
         await sendEmailVerification(user);
@@ -129,6 +124,7 @@ async function sendVerificationEmail(user) {
     }
 }
 
+// Function to send password reset email
 async function sendPasswordResetEmail(email) {
     try {
         await firebaseSendPasswordResetEmail(auth, email);
@@ -138,7 +134,7 @@ async function sendPasswordResetEmail(email) {
     }
 }
 
-// Facebook Authentication
+// Function to handle Facebook sign-in
 async function signInWithFacebook() {
     try {
         const provider = new FacebookAuthProvider();
@@ -148,29 +144,39 @@ async function signInWithFacebook() {
         console.error('Error during Facebook sign-in:', error);
     }
 }
-function setupEventListeners() {
-    // Set up event listener for sign-up form
-    document.getElementById('signupForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const email = event.target.elements['signupEmail'].value;
-      const password = event.target.elements['signupPassword'].value;
-      grecaptcha.ready(async () => {
-        const recaptchaToken = await grecaptcha.execute('6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk', { action: 'signup' });
-        const recaptchaScore = grecaptcha.getResponse(recaptchaToken).score;
-        console.log('reCAPTCHA token:', recaptchaToken);
-        console.log('reCAPTCHA score:', recaptchaScore);
-        try {
-          await signUp(email, password, recaptchaToken, recaptchaScore);
-        } catch (error) {
-          console.error('Sign-up failed:', error);
-          alert('Sign-up failed: ' + error.message);
-        }
-      });
-    });
-  }
-  
 
-    // Set up event listener for sign-in form
+// Function to handle user sign-out
+async function handleSignOut() {
+    try {
+        await firebaseSignOut(auth);
+        console.log('User signed out.');
+        alert('Signed out successfully.');
+    } catch (error) {
+        console.error('Error during sign out:', error);
+        alert('Sign-out failed: ' + error.message);
+    }
+}
+
+// Function to set up event listeners
+function setupEventListeners() {
+    // Event listener for sign-up form
+    document.getElementById('signupForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const email = event.target.elements['signupEmail'].value;
+        const password = event.target.elements['signupPassword'].value;
+        grecaptcha.ready(async () => {
+            const recaptchaToken = await grecaptcha.execute('6LdOYQAqAAAAAMBrtTJaJs-3_80gT9UWHG9E3-tk', { action: 'signup' });
+            console.log('reCAPTCHA token:', recaptchaToken);
+            try {
+                await signUp(email, password, recaptchaToken);
+            } catch (error) {
+                console.error('Sign-up failed:', error);
+                alert('Sign-up failed: ' + error.message);
+            }
+        });
+    });
+
+    // Event listener for sign-in form
     document.getElementById('signinForm').addEventListener('submit', async (event) => {
         event.preventDefault();
         const email = document.getElementById('loginEmail').value;
@@ -180,27 +186,26 @@ function setupEventListeners() {
             console.log('Sign-in successful.');
         } catch (error) {
             console.error('Sign-in failed:', error);
+            alert('Sign-in failed: ' + error.message);
         }
     });
 
-    // Add event listener for "Show Password" button
-    document.addEventListener('DOMContentLoaded', function() {
-        const passwordInput = document.getElementById('signupPassword');
-        const showPasswordButton = document.getElementById('showPassword');
-      
-        showPasswordButton.addEventListener('click', function() {
-          if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            showPasswordButton.textContent = 'Hide Password';
-          } else {
-            passwordInput.type = 'password';
-            showPasswordButton.textContent = 'Show Password';
-          }
+    // Event listener for "Show Password" button
+    const showPasswordButton = document.getElementById('showPassword');
+    if (showPasswordButton) {
+        showPasswordButton.addEventListener('click', () => {
+            const passwordInput = document.getElementById('signupPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                showPasswordButton.textContent = 'Hide Password';
+            } else {
+                passwordInput.type = 'password';
+                showPasswordButton.textContent = 'Show Password';
+            }
         });
-      });
-      
+    }
 
-    // Set up event listener for "Forgot Password?" button
+    // Event listener for "Forgot Password?" button
     const forgotPasswordButton = document.getElementById('forgotPasswordButton');
     if (forgotPasswordButton) {
         forgotPasswordButton.addEventListener('click', async () => {
@@ -218,7 +223,12 @@ function setupEventListeners() {
         });
     }
 
-
+    // Event listener for sign-out button
+    const signOutButton = document.getElementById('signOut');
+    if (signOutButton) {
+        signOutButton.addEventListener('click', handleSignOut);
+    }
+}
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, (user) => {
@@ -233,4 +243,4 @@ onAuthStateChanged(auth, (user) => {
 document.addEventListener('DOMContentLoaded', setupEventListeners);
 
 // Export functions if needed elsewhere
-export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook, };
+export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook, handleSignOut };
