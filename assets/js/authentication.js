@@ -9,13 +9,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
 
-// Function to set the auth token cookie
 function setAuthTokenCookie(token) {
     document.cookie = `authToken=${token}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none; httponly`;
     console.log('Auth token set:', token);
 }
 
-// Unified function to handle authentication state changes
+// Unified function
 onAuthStateChanged(auth, user => {
     console.log('Auth state changed:', user);
     if (user) {
@@ -31,10 +30,10 @@ onAuthStateChanged(auth, user => {
     } else {
         // No user is signed in. Clear the cookie and redirect to the main domain
         document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none; httponly";
-        // Uncomment the following lines for redirection logic if needed
-        // if (window.location.hostname === 'labase.languapps.com') {
-        //     window.location.href = "https://languapps.com/?auth-modal";
-        // }
+        
+        if (window.location.hostname === 'labase.languapps.com') {
+            window.location.href = "https://languapps.com/?auth-modal";
+        }
     }
 });
 
@@ -105,6 +104,8 @@ async function signUp(email, password, recaptchaToken) {
 
         console.log('Sign-up successful:', data);
         alert('Sign-up successful! Verification email sent.');
+        // Redirect to step 2 of the modal
+        transitionModalStep('step1', 'step2');
     } catch (error) {
         console.error('Sign-up error:', error);
         throw error;
@@ -121,7 +122,6 @@ async function signIn(email, password) {
         }
         console.log("User signed in:", userCredential.user);
     } catch (error) {
-        console.error("Error signing in:", error);
         alert('Sign-in failed: ' + error.message);
     }
 }
@@ -255,4 +255,9 @@ onAuthStateChanged(auth, (user) => {
 document.addEventListener('DOMContentLoaded', setupEventListeners);
 
 // Export functions if needed elsewhere
-export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook, handleSignOut };
+export { signUp, signIn, sendPasswordResetEmail, signInWithFacebook, handleSignOut, verifyRecaptcha };
+
+function transitionModalStep(currentStep, nextStep) {
+    document.getElementById(currentStep).style.display = 'none';
+    document.getElementById(nextStep).style.display = 'block';
+}
