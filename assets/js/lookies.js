@@ -233,10 +233,8 @@ function setupEventListeners() {
 
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-        setupEventListeners();
-    });
-    
+    document.addEventListener('DOMContentLoaded', setupEventListeners);
+        
     function setupEventListeners() {
         const loginButton = document.getElementById("loginButton");
         const signUpForm = document.getElementById('signupForm');
@@ -310,21 +308,13 @@ function setupEventListeners() {
             languageDropdown.addEventListener('change', function () {
                 setLanguagePreference(this.value);
             });
-        }
-        document.querySelectorAll('.close').forEach(element => {
-            element.addEventListener('click', function() {
-                const modalId = this.closest('.modal').id;
-                closeModalById(modalId);
-            });
-        });
-    
-        
+        }        
     }
     
-    function userIsAuthenticated() {
-        // Updated to use Firebase auth check
-        return !!auth.currentUser;
-    }
+function userIsAuthenticated() {
+    // Updated to use Firebase auth check
+    return !!auth.currentUser;
+}
     
 
 // Initialize all scripts after the DOM is fully loaded

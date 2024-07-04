@@ -2562,7 +2562,7 @@ input, select, textarea {
 .modal .close {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 36px;
     font-weight: bold;
     position: absolute; /* Position absolutely within the modal-content */
     top: 10px; /* Adjust top position */

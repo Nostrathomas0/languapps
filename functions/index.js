@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
-const {verifyRecaptcha, getSecretKey} = require("./recaptchaUtils");
+const {getSecretKey} = require("./recaptchaUtils");
 
 admin.initializeApp();
 
@@ -28,29 +28,29 @@ app.get("/checkRecaptchaSecret", (req, res) => {
 });
 
 // reCAPTCHA verification endpoint
-app.post("/verifyRecaptcha", async (req, res) => {
-  const token = req.body.token;
-
-  console.log("Received token:", token); // Log the request body
-  try {
-    const data = await verifyRecaptcha(token);
-    console.log("reCAPTCHA API Response:", data);
-
-    if (data.success && data.score >= 0.5) {
-      res.json({success: true});
-    } else {
-      console.error("Verification failed:", data);
-      res.status(400).json({
-        success: false,
-        message: "Verification failed",
-        errorCodes: data["error-codes"],
-      });
-    }
-  } catch (error) {
-    console.error("Error verifying reCAPTCHA:", error);
-    res.status(500).json({success: false, message: "Server error"});
-  }
-});
+// app.post("/verifyRecaptcha", async (req, res) => {
+//   const token = req.body.token;
+//
+//   console.log("Received token:", token); // Log the request body
+//   try {
+//     const data = await verifyRecaptcha(token);
+//     console.log("reCAPTCHA API Response:", data);
+//
+//     if (data.success && data.score >= 0.5) {
+//       res.json({success: true});
+//     } else {
+//       console.error("Verification failed:", data);
+//       res.status(400).json({
+//         success: false,
+//         message: "Verification failed",
+//         errorCodes: data["error-codes"],
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Error verifying reCAPTCHA:", error);
+//     res.status(500).json({success: false, message: "Server error"});
+//   }
+// });
 
 // Endpoint to verify reCAPTCHA and sign up a user
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
@@ -107,11 +107,11 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
 });
 
 exports.app = functions.https.onRequest(app);
-exports.checkRecaptchaSecret = functions.https.onRequest((req, res) => {
-  try {
-    const secretKey = getSecretKey();
-    res.send(`reCAPTCHA Secret Key: ${secretKey}`);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
+// exports.checkRecaptchaSecret = functions.https.onRequest((req, res) => {
+//   try {
+//     const secretKey = getSecretKey();
+//     res.send(`reCAPTCHA Secret Key: ${secretKey}`);
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// });

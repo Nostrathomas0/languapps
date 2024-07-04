@@ -87,18 +87,30 @@ async function verifyRecaptchaAndSignup(email, password, recaptchaToken) {
     }
 }
 
-// Function to handle user sign-up
 async function signUp(email, password, recaptchaToken) {
     try {
-        const recaptchaVerified = await verifyRecaptchaAndSignup(email, password, recaptchaToken);
-        if (!recaptchaVerified) {
-            throw new Error('reCAPTCHA verification failed.');
+        const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password, token: recaptchaToken })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Sign-up failed');
         }
+
+        console.log('Sign-up successful:', data);
+        alert('Sign-up successful! Verification email sent.');
     } catch (error) {
-        console.error('Error during sign up:', error);
-        alert('Sign-up failed: ' + error.message);
+        console.error('Sign-up error:', error);
+        throw error;
     }
 }
+
 
 // Function to handle user sign-in
 async function signIn(email, password) {
