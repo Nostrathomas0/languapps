@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@google-cloud/recaptcha-enterprise": "^5.9.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
   }
 }
