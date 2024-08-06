@@ -1,14 +1,22 @@
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import jwt from "jsonwebtoken";
 
-// Initialize the Secrets Manager client
-const secretsClient = new SecretsManagerClient({ region: "us-east-1" });
+const client = new SecretsManagerClient({ region: "us-east-1" });
 
-async function getSecretValue(secretName) {
+const getSecretValue = async (secretName) => {
     const command = new GetSecretValueCommand({ SecretId: secretName });
-    const response = await secretsClient.send(command);
-    return response.SecretString;
-}
+    try {
+        const data = await client.send(command);
+        if ("SecretString" in data) {
+            return data.SecretString;
+        }
+        const buff = Buffer.from(data.SecretBinary, "base64");
+        return buff.toString("ascii");
+    } catch (err) {
+        console.error("Error retrieving secret:", err);
+        throw err;
+    }
+};
 
 export const handler = async (event) => {
     const request = event.Records[0].cf.request;
@@ -24,16 +32,37 @@ export const handler = async (event) => {
         };
     }
 
-    const authToken = headers['cookie'][0].value.split(';').find(cookie => cookie.trim().startsWith('authToken=')).split('=')[1];
+    const authToken = headers['cookie'][0].value
+        .split(';')
+        .find(cookie => cookie.trim().startsWith('authToken='))
+        .split('=')[1];
+    
+    const secretName = "languFunct/secret/jwt";
+
+    let jwtSecret;
+    try {
+        jwtSecret = await getSecretValue(secretName);
+        console.log("Retrieved JWT Secret:", jwtSecret);
+    } catch (err) {
+        console.error("Error retrieving secret:", err);
+        return {
+            status: '500',
+            statusDescription: 'Internal Server Error',
+            body: 'Error retrieving secret'
+        };
+    }
 
     try {
-        // Fetch the JWT secret from AWS Secrets Manager
-        const jwtSecret = await getSecretValue('languFunct/secret/jwt'); 
-        console.log("Retrieved JWT secret:", jwtSecret);
+        const decoded = jwt.verify(authToken, jwtSecret);
+        console.log("JWT verified successfully:", decoded);
 
-        // Verify the JWT token
-        jwt.verify(authToken, jwtSecret);
-        console.log("JWT verified successfully.");
+        const userProgress = decoded.progress;
+
+        return {
+            status: '200',
+            statusDescription: 'OK',
+            body: JSON.stringify({ userProgress })
+        };
     } catch (err) {
         console.error("JWT verification failed:", err);
         return {

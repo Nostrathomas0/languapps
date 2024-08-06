@@ -1,19 +1,12 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
-const cors = require("cors");
 const {verifyRecaptcha, getSecretKey} = require("./recaptchaUtils");
 
 admin.initializeApp();
 
 const app = express();
-const corsOptions = {
-  origin: "*", // Adjust this as necessary for your security needs
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-};
 
-app.use(cors(corsOptions)); // Apply CORS options here
 app.use(express.json()); // For parsing application/json
 
 // Test endpoint to check the secret key

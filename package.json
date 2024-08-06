@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.620.0",
     "@google-cloud/recaptcha-enterprise": "^5.9.0",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2"

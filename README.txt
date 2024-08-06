@@ -1,5 +1,5 @@
 Big Picture | HTML5 UP
-Languapps is Internet for Internats
+Languapps creates a JWT token for users when they sign up and updatates that token when they sign in and out.
 Nostrathomas@ | thomas@languapps.com
 Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 

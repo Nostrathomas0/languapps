@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     onAuthStateChanged(auth, user => {
         if (!user) {
-      https://www.aliyun.com/activity/Mid-promotion/qiyong      // User is not signed in, redirect to login page
+       // User is not signed in, redirect to login page
             window.location.href = 'https://languapps.com/login';
         }
     });
