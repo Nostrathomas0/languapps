@@ -1,6 +1,24 @@
 // lookies.js
+import { signUp } from './firebaseAuth.js';
+import { auth } from './firebaseInit.js';
+
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event fired");
+
+    // Function to handle the transition between steps in modals
+    function transitionModalStep(currentStepId, nextStepId) {
+        const currentStep = document.getElementById(currentStepId);
+        const nextStep = document.getElementById(nextStepId);
+
+        if (currentStep && nextStep) {
+            console.log(`Transitioning from ${currentStepId} to ${nextStepId}`);
+            currentStep.style.display = 'none';
+            nextStep.style.display = 'block';
+        } else {
+            console.error('Error transitioning steps: Step elements not found.');
+        }
+    }
 
     function openModalById(modalId, stepId) {
         console.log("Attempting to open modal", modalId);

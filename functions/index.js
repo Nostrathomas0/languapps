@@ -1,12 +1,14 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
+const fetch = require("node-fetch"); // Ensure you have node-fetch installed
+const cors = require("cors");
 const {verifyRecaptcha, getSecretKey} = require("./recaptchaUtils");
 
 admin.initializeApp();
 
 const app = express();
-
+app.use(cors({origin: true})); // Allow all origins
 app.use(express.json()); // For parsing application/json
 
 // Test endpoint to check the secret key
@@ -78,8 +80,8 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     console.log("User created:", userRecord);
 
     // Generate email verification link
-    const verificationLink = await
-    admin.auth().generateEmailVerificationLink(email);
+    const verificationLink = await admin.auth()
+        .generateEmailVerificationLink(email);
 
     // Send email verification link to the user
     await admin.auth().sendSignInLinkToEmail(email, {
@@ -88,6 +90,19 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     });
 
     console.log("Verification email sent to:", email);
+
+    const jwtCreationResponse = await fetch(
+        "https://jjvdfnsx2ii5qf4nblmpyzysju0kfobg.lambda-url.us-east-1.on.aws/",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({uid: userRecord.uid, email: email}),
+        },
+    );
+
+    if (!jwtCreationResponse.ok) {
+      throw new Error("Error creating JWT token");
+    }
 
     res.json({
       success: true,
@@ -103,6 +118,5 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     });
   }
 });
-
 
 exports.app = functions.https.onRequest(app);
