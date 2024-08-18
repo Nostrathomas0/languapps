@@ -1,5 +1,4 @@
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
-import fetch from 'node-fetch';
 import jwt from "jsonwebtoken";
 
 const client = new SecretsManagerClient({ region: "us-east-1" });

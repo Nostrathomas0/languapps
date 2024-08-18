@@ -1,27 +1,28 @@
-// /functions/recaptchaUtils.js
-
+// recaptchaUtils
 const axios = require("axios");
 const functions = require("firebase-functions");
 
-const getSecretKey = () => {
-  const secretKey = functions.config().recaptcha.secret_key;
-  if (!secretKey) {
-    throw new Error("reCAPTCHA secret key is not set in environment variables");
-  }
-  return secretKey;
-};
+const apiKey = functions.config().recaptcha.api_key;
+const siteKey = functions.config().recaptcha.site_key;
+const projectId = functions.config().recaptcha.project_id;
 
 const verifyRecaptcha = async (token) => {
-  const secretKey = getSecretKey();
-  const apiUrl = "https://www.google.com/recaptcha/api/siteverify";
-  const params = {secret: secretKey, response: token};
+  const apiUrl = `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId}/assessments?key=${apiKey}`;
+  const requestBody = {
+    event: {
+      token: token,
+      siteKey: siteKey,
+      expectedAction: "signup",
+    }};
 
   try {
-    const recaptchaResponse = await axios.post(apiUrl, null, {params});
+    const recaptchaResponse = await axios.post(apiUrl, requestBody);
+    console.log("reCAPTCHA API Response:", recaptchaResponse.data);
     return recaptchaResponse.data;
   } catch (error) {
+    console.error("Error verifying reCAPTCHA:", error.message);
     throw new Error("Error verifying reCAPTCHA");
   }
 };
 
-module.exports = {verifyRecaptcha, getSecretKey};
+module.exports = {verifyRecaptcha};

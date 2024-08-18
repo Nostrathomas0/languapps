@@ -3,48 +3,53 @@ const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const {verifyRecaptcha, getSecretKey} = require("./recaptchaUtils");
+const {verifyRecaptcha} = require("./recaptchaUtils");
 
 admin.initializeApp();
 
 const app = express();
-app.use(cors({origin: true})); // Allow all origins
+app.use(cors({
+  origin: ["http://127.0.0.1:2000", "https://languapps.com", "https://www.labase.languapps.com"], // Allow your specific domains
+  credentials: true,
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+// Handle preflight requests
+app.options("/*", (req, res) => {
+  res.set("Access-Control-Allow-Origin", req.headers.origin);
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.set("Access-Control-Allow-Credentials", "true");
+  res.status(204).send(""); // Send no content for preflight
+});
 app.use(express.json()); // For parsing application/json
 
-// Test endpoint to check the secret key
-app.get("/checkRecaptchaSecret", (req, res) => {
-  try {
-    const secretKey = getSecretKey();
-    res.send(`reCAPTCHA Secret Key: ${secretKey}`);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-// reCAPTCHA verification endpoint
 app.post("/verifyRecaptcha", async (req, res) => {
   const token = req.body.token;
 
   console.log("Received token:", token); // Log the request body
   try {
     const data = await verifyRecaptcha(token);
-    console.log("reCAPTCHA API Response:", data);
+    console.log("reCAPTCHA API Response:", data); // Log the entire response
 
-    if (data.success && data.score >= 0.5) {
+    if (data && data.success && data.score >= 0.5 && data.action === "signup") {
       res.json({success: true, score: data.score});
     } else {
       console.error("Verification failed:", data);
       res.status(400).json({
         success: false,
         message: "Verification failed",
-        errorCodes: data["error-codes"],
+        errorCodes: data ? data["error-codes"] : "No response from reCAPTCHA",
       });
     }
   } catch (error) {
     console.error("Error verifying reCAPTCHA:", error);
-    res.status(500).json({success: false, message: "Server error"});
+    res.status(500).json({success: false,
+      message: "Server error", error: error.message});
   }
 });
+
 
 // Endpoint to verify reCAPTCHA and sign up a user
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
@@ -97,7 +102,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       email: email,
     };
 
-    const jwtToken = jwt.sign(tokenPayload, getSecretKey(),
+    const jwtToken = jwt.sign(tokenPayload(),
         {expiresIn: "24h"});
 
     // Respond with the JWT token
