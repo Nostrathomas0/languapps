@@ -100,20 +100,6 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       emailVerified: false,
     });
 
-    console.log("User created:", userRecord);
-
-    // Generate email verification link
-    const verificationLink = await admin.auth().
-        generateEmailVerificationLink(email);
-
-    // Send email verification link to the user
-    await admin.auth().sendSignInLinkToEmail(email, {
-      url: verificationLink,
-      handleCodeInApp: true,
-    });
-
-    console.log("Verification email sent to:", email);
-
     // Create JWT Token
     const tokenPayload = {
       uid: userRecord.uid,
@@ -128,7 +114,6 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     res.json({
       success: true,
       message: "User registered and verification email sent.",
-      verificationLink: verificationLink,
       jwtToken: jwtToken, // Include the JWT token in the response
     });
   } catch (error) {
