@@ -1,9 +1,9 @@
 import { 
+  createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   onAuthStateChanged, 
   sendEmailVerification, 
-  signOut as firebaseSignOut,
-  createUserWithEmailAndPassword
+  signOut as firebaseSignOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
 import { verifyRecaptchaAndSignup } from './recapAuth.js';
@@ -34,54 +34,18 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-async function signUp(email, password, recaptchaToken) {
+async function signUp(email, password) {
   try {
-    const signupResponse = await verifyRecaptchaAndSignup(email, password, recaptchaToken);
-    
-    if (signupResponse && signupResponse.success) {
-      console.log('Sign-up and reCAPTCHA verification successful');
+    // Create the user in Firebase
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    console.log('User created:', userCredential.user);
 
-      // Create the user in Firebase
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User created:', userCredential.user);
-
-      // Send the email verification
-      await sendVerificationEmail(userCredential.user);
-      console.log('Verification email sent. Please verify your email before continuing.');
-      
-      // Handle JWT Token if necessary
-      if (signupResponse.jwtToken) {
-        await sendJWTToLambda(signupResponse.jwtToken);
-      } else {
-        console.error('No JWT token received in signup response');
-      }
-      
-    } else {
-      console.error('Sign-up failed: reCAPTCHA verification or sign-up failed');
-      throw new Error(signupResponse ? signupResponse.message : 'Unknown error during sign-up');
-    }
+    // Send the email verification
+    await sendVerificationEmail(userCredential.user);
+    console.log('Verification email sent. Please verify your email before continuing.');
   } catch (error) {
     console.error('Sign-up error:', error);
     alert('Sign-up failed: ' + error.message);
-  }
-}
-
-async function sendJWTToLambda(jwtToken) {
-  try {
-    const lambdaResponse = await fetch("https://jjvdfnsx2ii5qf4nblmpyzysju0kfobg.lambda-url.us-east-1.on.aws/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: jwtToken }),
-    });
-
-    if (!lambdaResponse.ok) {
-      throw new Error("Error sending JWT token to Lambda function");
-    }
-
-    const data = await lambdaResponse.json();
-    console.log('Lambda function response:', data);
-  } catch (error) {
-    console.error('Error sending JWT token to Lambda function:', error);
   }
 }
 
