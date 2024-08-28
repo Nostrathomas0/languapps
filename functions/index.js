@@ -75,8 +75,8 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       req.headers["x-forwarded-for"] || req.connection.remoteAddress || "";
 
     // Call verifyRecaptcha with "signup" as the expected action
-    const data = await
-    verifyRecaptcha(token, userAgent, userIpAddress, "signup");
+    const data = await verifyRecaptcha(token, userAgent, userIpAddress,
+        "signup");
     console.log("reCAPTCHA API Response:", data);
 
     if (!data.tokenProperties.valid) {
@@ -100,6 +100,8 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       emailVerified: false,
     });
 
+    console.log("JWT Secret:", functions.config().jwt.secret);
+
     // Create JWT Token
     const tokenPayload = {
       uid: userRecord.uid,
@@ -110,6 +112,9 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       expiresIn: "24h",
     });
 
+    // Log the generated JWT token
+    console.log("Generated JWT Token:", jwtToken);
+
     // Respond with the JWT token
     res.json({
       success: true,
@@ -117,12 +122,19 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       jwtToken: jwtToken, // Include the JWT token in the response
     });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
+    if (error.code === "auth/email-already-exists") {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists",
+      });
+    } else {
+      console.error("Error:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
   }
 });
 
