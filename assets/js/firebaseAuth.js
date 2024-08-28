@@ -1,4 +1,4 @@
-//assets/js/firebaseAuth.js
+// assets/js/firebaseAuth.js
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -10,40 +10,12 @@ import { auth } from './firebaseInit.js';
 import { verifyRecaptchaAndSignup } from './recapAuth.js';
 
 function setAuthTokenCookie(token) {
-  //UNDO const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;
+  const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;
   document.cookie = `authToken=${token}; max-age=3600; path=/; domain=${domain}; secure; samesite=none; httponly`;
   console.log('Auth token set:', token);
 }
 
 // Monitor authentication state changes
-onAuthStateChanged(auth, user => {
-  console.log('Auth state changed:', user);
-  
-  if (user) {
-    user.getIdToken().then(token => {
-      setAuthTokenCookie(token);
-      if (window.location.hostname === 'labase.languapps.com') {
-        window.location.href = `https://labase.languapps.com/?authToken=${token}`;
-      }
-    }).catch(error => {
-      console.error('Error getting token:', error);
-    });
-  } else {
-    // Clear the authToken cookie without specifying a domain for local development
-    let cookieSettings = "authToken=; max-age=0; path=/; secure; samesite=none;";
-    
-    // Add domain only in production environment
-    if (window.location.hostname === 'labase.languapps.com') {
-      cookieSettings += " domain=.languapps.com; httponly;";
-      window.location.href = "https://languapps.com/?auth-modal";
-    }
-    
-    document.cookie = cookieSettings;
-  }
-});
-
-
-// LIVE Monitor authentication state changes
 onAuthStateChanged(auth, user => {
   console.log('Auth state changed:', user);
   if (user) {
@@ -74,14 +46,9 @@ async function signUp(email, password, recaptchaToken) {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('User created:', userCredential.user);
       await sendVerificationEmail(userCredential.user);
-      
-      // Retrieve and send JWT token if it's part of the response
-      if (signupResponse.jwtToken) {
-        await sendJWTToLambda(signupResponse.jwtToken);
-      } else {
-        console.error('No JWT token received in signup response');
-      }
-      
+      console.log("Verification email sent. Please verify your email before continuing");
+      // Transition to the next step in the UI
+      transitionModalStep('step1', 'step2');
     } else {
       console.error('Sign-up failed: reCAPTCHA verification or sign-up failed');
       throw new Error(signupResponse ? signupResponse.message : 'Unknown error during sign-up');
