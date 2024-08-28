@@ -40,18 +40,12 @@ async function signUp(email, password, recaptchaToken) {
   try {
     const signupResponse = await verifyRecaptchaAndSignup(email, password, recaptchaToken);
     
+    // Check if signupResponse is defined and successful
     if (signupResponse && signupResponse.success) {
       console.log('Sign-up and reCAPTCHA verification successful');
-
-      // Create the user in Firebase
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User created:', userCredential.user);
-
-      // Send the email verification
       await sendVerificationEmail(userCredential.user);
-      console.log('Verification email sent. Please verify your email before continuing.');
       
-      // Handle JWT Token if necessary
+      // Retrieve and send JWT token if it's part of the response
       if (signupResponse.jwtToken) {
         await sendJWTToLambda(signupResponse.jwtToken);
       } else {
