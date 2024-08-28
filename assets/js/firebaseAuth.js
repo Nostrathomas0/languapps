@@ -1,23 +1,22 @@
-// assets/js/firebaseAuth.js
 import { 
   signInWithEmailAndPassword, 
   onAuthStateChanged, 
   sendEmailVerification, 
-  signOut as firebaseSignOut 
+  signOut as firebaseSignOut,
+  createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
 import { verifyRecaptchaAndSignup } from './recapAuth.js';
 
 function setAuthTokenCookie(token) {
-  //UNDO const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;
+  const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;
   document.cookie = `authToken=${token}; max-age=3600; path=/; domain=${domain}; secure; samesite=none; httponly`;
   console.log('Auth token set:', token);
 }
 
-// LIVE Monitor authentication state changes
+// Monitor authentication state changes
 onAuthStateChanged(auth, user => {
   console.log('Auth state changed:', user);
-  
   if (user) {
     user.getIdToken().then(token => {
       setAuthTokenCookie(token);
@@ -35,17 +34,22 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-
 async function signUp(email, password, recaptchaToken) {
   try {
     const signupResponse = await verifyRecaptchaAndSignup(email, password, recaptchaToken);
     
-    // Check if signupResponse is defined and successful
     if (signupResponse && signupResponse.success) {
       console.log('Sign-up and reCAPTCHA verification successful');
+
+      // Create the user in Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('User created:', userCredential.user);
+
+      // Send the email verification
       await sendVerificationEmail(userCredential.user);
+      console.log('Verification email sent. Please verify your email before continuing.');
       
-      // Retrieve and send JWT token if it's part of the response
+      // Handle JWT Token if necessary
       if (signupResponse.jwtToken) {
         await sendJWTToLambda(signupResponse.jwtToken);
       } else {
@@ -62,8 +66,6 @@ async function signUp(email, password, recaptchaToken) {
   }
 }
 
-
-// Function to send the JWT token to the Lambda function
 async function sendJWTToLambda(jwtToken) {
   try {
     const lambdaResponse = await fetch("https://jjvdfnsx2ii5qf4nblmpyzysju0kfobg.lambda-url.us-east-1.on.aws/", {
