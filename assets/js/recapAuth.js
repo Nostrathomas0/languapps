@@ -34,22 +34,26 @@ export async function verifyRecaptchaAndSignup(email, password) {
         if (!recaptchaToken) {
             throw new Error('Failed to generate reCAPTCHA token');
         }
-         // Log the expected action and full JSON packet
+        
+        // Create request body
         const requestBody = { token: recaptchaToken, email: email, password: password };
+        
+        // Log the request body
+        console.log("Request Body Object:", requestBody);
         console.log("Sending the following data to the server:", JSON.stringify(requestBody, null, 2));
-        // Log the expected action
-        console.log("Sending reCAPTCHA token to server:", recaptchaToken);
-
         
         // Send the token to the server for verification
         const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: recaptchaToken, email: email, password: password })
+            body: JSON.stringify(requestBody)
         });
+        
+        console.log("Response status:", response.status);  // Log the response status
 
         const data = await response.json();
-
+        console.log("Response data from server:", data);  // Log the response data
+        
         if (data.success) {
             console.log('Sign-up and reCAPTCHA verification successful');
 
