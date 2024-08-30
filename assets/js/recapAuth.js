@@ -17,7 +17,7 @@ export async function generateRecaptchaToken(action) {
             });
         });
 
-        const token = await grecaptcha.enterprise.execute('6LcURSsqAAAAAIZic0fDErjGH0tF9s7MYpZ17uC0', { action });
+        const token = await grecaptcha.enterprise.execute('6LcURSsqAAAAAIZic0fDErjGH0tF9s7MYpZ17uC0', { action: 'signup' });
         console.log("Generated reCAPTCHA token:", token);
         return token;
     } catch (error) {
@@ -34,10 +34,13 @@ export async function verifyRecaptchaAndSignup(email, password) {
         if (!recaptchaToken) {
             throw new Error('Failed to generate reCAPTCHA token');
         }
-
+         // Log the expected action and full JSON packet
+        const requestBody = { token: recaptchaToken, email: email, password: password };
+        console.log("Sending the following data to the server:", JSON.stringify(requestBody, null, 2));
         // Log the expected action
         console.log("Sending reCAPTCHA token to server:", recaptchaToken);
 
+        
         // Send the token to the server for verification
         const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
             method: 'POST',

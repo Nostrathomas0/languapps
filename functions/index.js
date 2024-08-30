@@ -38,7 +38,8 @@ app.post("/verifyRecaptcha", async (req, res) => {
 
   console.log("Received token:", token); // Log the request body
   try {
-    const data = await verifyRecaptcha(token, "", "");
+    const data = await verifyRecaptcha(token,
+        "userAgent", "userIpAddress", "signup");
     console.log("reCAPTCHA API Response:", data); // Log the entire response
 
     if (data.tokenProperties.valid && data.riskAnalysis.score >= 0.5) {
@@ -65,34 +66,36 @@ app.post("/verifyRecaptcha", async (req, res) => {
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
   const {token, email, password} = req.body;
 
-  console.log("Received token:", token); // Log the request body
+  console.log("Received token for verification:", token);
+  console.log("Received email:", email);
+  console.log("Received password: [Hidden for security]");
+
   try {
     console.log("Starting reCAPTCHA verification for signup");
 
-    // Extract user agent and IP address from the request headers
     const userAgent = req.headers["user-agent"] || "";
-    const userIpAddress =
-      req.headers["x-forwarded-for"] || req.connection.remoteAddress || "";
+    const userIpAddress = req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress || "";
 
-    // Call verifyRecaptcha with "signup" as the expected action
-    const data = await verifyRecaptcha(token, userAgent, userIpAddress,
-        "signup");
-    console.log("reCAPTCHA API Response:", data);
+    console.log("User Agent:", userAgent);
+    console.log("User IP Address:", userIpAddress);
+
+    const data = await
+    verifyRecaptcha(token, userAgent, userIpAddress, "signup");
+
+    console.log("Verification Result:", JSON.stringify(data, null, 2));
 
     if (!data.tokenProperties.valid) {
-      const errorMessage = "reCAPTCHA verification failed";
-      const errorCodes = data.tokenProperties.invalidReason;
-      console.error("Verification failed:", errorMessage, errorCodes);
+      console.error("Verification failed. Invalid reason:",
+          data.tokenProperties.invalidReason);
       return res.status(400).json({
         success: false,
-        message: errorMessage,
-        errorCodes: errorCodes,
+        message: "reCAPTCHA verification failed",
+        errorCodes: data.tokenProperties.invalidReason,
       });
     }
 
     console.log("reCAPTCHA verification passed");
-    console.log("Received email:", email);
-    console.log("Received password:", password);
 
     const userRecord = await admin.auth().createUser({
       email: email,
@@ -100,26 +103,21 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       emailVerified: false,
     });
 
-    console.log("JWT Secret:", functions.config().jwt.secret);
+    console.log("User creation successful. UID:", userRecord.uid);
 
-    // Create JWT Token
     const tokenPayload = {
       uid: userRecord.uid,
       email: email,
     };
 
-    const jwtToken = jwt.sign(tokenPayload, functions.config().jwt.secret, {
-      expiresIn: "24h",
-    });
-
-    // Log the generated JWT token
+    const jwtToken = jwt.sign(tokenPayload,
+        functions.config().jwt.secret, {expiresIn: "24h"});
     console.log("Generated JWT Token:", jwtToken);
 
-    // Respond with the JWT token
     res.json({
       success: true,
       message: "User registered and verification email sent.",
-      jwtToken: jwtToken, // Include the JWT token in the response
+      jwtToken: jwtToken,
     });
   } catch (error) {
     if (error.code === "auth/email-already-exists") {
@@ -128,7 +126,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
         message: "Email already exists",
       });
     } else {
-      console.error("Error:", error);
+      console.error("Error during signup:", error);
       return res.status(500).json({
         success: false,
         message: "Server error",
@@ -137,5 +135,6 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     }
   }
 });
+
 
 exports.app = functions.https.onRequest(app);
