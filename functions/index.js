@@ -9,18 +9,14 @@ const {verifyRecaptcha} = require("./recaptchaUtils");
 admin.initializeApp();
 
 const app = express();
-app.use(
-    cors({
-      origin: [
-        "http://127.0.0.1:2000",
-        "https://languapps.com",
-        "https://www.labase.languapps.com",
-      ], // Allow your specific domains
-      credentials: true,
-      methods: ["GET", "POST", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    }),
-);
+app.use(cors({
+  origin: [
+    "http://127.0.0.1:2000", "https://languapps.com", "https://www.labase.languapps.com",
+  ], // Allow your specific domains
+  credentials: true,
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 // Handle preflight requests
 app.options("/*", (req, res) => {
@@ -31,36 +27,6 @@ app.options("/*", (req, res) => {
   res.status(204).send(""); // Send no content for preflight
 });
 app.use(express.json()); // For parsing application/json
-
-// Endpoint to verify reCAPTCHA
-app.post("/verifyRecaptcha", async (req, res) => {
-  const token = req.body.token;
-
-  console.log("Received token:", token); // Log the request body
-  try {
-    const data = await verifyRecaptcha(token,
-        "userAgent", "userIpAddress", "signup");
-    console.log("reCAPTCHA API Response:", data); // Log the entire response
-
-    if (data.tokenProperties.valid && data.riskAnalysis.score >= 0.5) {
-      res.json({success: true, score: data.riskAnalysis.score});
-    } else {
-      console.error("Verification failed:", data);
-      res.status(400).json({
-        success: false,
-        message: "Verification failed",
-        errorCodes: data.tokenProperties.invalidReason,
-      });
-    }
-  } catch (error) {
-    console.error("Error verifying reCAPTCHA:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
-});
 
 // Endpoint to verify reCAPTCHA and sign up a user
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
@@ -80,18 +46,18 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     console.log("User Agent:", userAgent);
     console.log("User IP Address:", userIpAddress);
 
-    const data = await
+    const recaptchaResponse = await
     verifyRecaptcha(token, userAgent, userIpAddress, "signup");
 
-    console.log("Verification Result:", JSON.stringify(data, null, 2));
+    console.log("Verification Result:",
+        JSON.stringify(recaptchaResponse, null, 2));
 
-    if (!data.tokenProperties.valid) {
-      console.error("Verification failed. Invalid reason:",
-          data.tokenProperties.invalidReason);
+    if (!recaptchaResponse.tokenProperties.valid) {
+      console.error("Invalid", recaptchaResponse.tokenProperties.invalidReason);
       return res.status(400).json({
         success: false,
         message: "reCAPTCHA verification failed",
-        errorCodes: data.tokenProperties.invalidReason,
+        errorCodes: recaptchaResponse.tokenProperties.invalidReason,
       });
     }
 
@@ -135,6 +101,5 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     }
   }
 });
-
 
 exports.app = functions.https.onRequest(app);

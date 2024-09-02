@@ -1,13 +1,13 @@
-/**
- * functions/recaptchaUtils.js Utility functions for reCAPTCHA verification.
- */
-
+// functions/recaptchaUtils.js
 const {RecaptchaEnterpriseServiceClient} =
-    require("@google-cloud/recaptcha-enterprise");
+require("@google-cloud/recaptcha-enterprise");
 const functions = require("firebase-functions");
 
 const projectId = functions.config().languapps.project_id;
 const recaptchaKey = functions.config().recaptcha.site_key;
+
+// Initialize the RecaptchaEnterpriseServiceClient
+const client = new RecaptchaEnterpriseServiceClient();
 
 /**
  * Verifies reCAPTCHA token using Google reCAPTCHA Enterprise.
@@ -18,19 +18,14 @@ const recaptchaKey = functions.config().recaptcha.site_key;
  * @return {Object} - The reCAPTCHA verification response.
  * @throws {Error} - If the reCAPTCHA verification fails.
  */
-const verifyRecaptcha = async (
-    token,
-    userAgent,
-    userIpAddress,
-    expectedAction = "default",
-) => {
+const verifyRecaptcha = async (token,
+    userAgent, userIpAddress, expectedAction = "default") => {
   console.log("Starting reCAPTCHA verification...");
   console.log("Token:", token);
   console.log("User Agent:", userAgent);
   console.log("User IP Address:", userIpAddress);
   console.log("Expected Action:", expectedAction);
 
-  const client = new RecaptchaEnterpriseServiceClient();
   const projectPath = client.projectPath(projectId);
 
   const request = {
@@ -51,29 +46,17 @@ const verifyRecaptcha = async (
   try {
     const [response] = await client.createAssessment(request);
 
-    console.log("Full reCAPTCHA API Response:",
-        JSON.stringify(response, null, 2));
+    console.log("Full reCAPAPI Response:", JSON.stringify(response, null, 2));
 
     if (!response.tokenProperties.valid) {
-      console.error(`Invalid reCAPTCHA token: 
-        ${response.tokenProperties.invalidReason}`);
-      throw new Error(`Invalid token:
-        ${response.tokenProperties.invalidReason}`);
+      console.error(`Invalid token: ${response.tokenProperties.invalidReason}`);
+      throw new Error(`Inval token: ${response.tokenProperties.invalidReason}`);
     }
 
-    if (response.tokenProperties.valid) {
-      console.log("Token is valid");
-    } else {
-      console.log("Token is invalid");
-    }
-
-    console.log("Risk Analysis Score:", response.riskAnalysis.score);
     return response;
   } catch (error) {
     console.error("Error verifying reCAPTCHA:", error.message);
-    console.error("Detailed Error Information:",
-        JSON.stringify(error, null, 2));
-    throw new Error("Error verifying reCAPTCHA");
+    throw new Error(`Error verifying reCAPTCHA: ${error.message}`);
   }
 };
 
