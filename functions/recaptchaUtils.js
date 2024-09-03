@@ -18,6 +18,8 @@ const client = new RecaptchaEnterpriseServiceClient();
  * @return {Object} - The reCAPTCHA verification response.
  * @throws {Error} - If the reCAPTCHA verification fails.
  */
+
+
 const verifyRecaptcha = async (token,
     userAgent, userIpAddress, expectedAction = "default") => {
   console.log("Starting reCAPTCHA verification...");
