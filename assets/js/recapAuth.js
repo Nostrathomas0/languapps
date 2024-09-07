@@ -17,7 +17,7 @@ export async function generateRecaptchaToken(action) {
             });
         });
 
-        const token = await grecaptcha.enterprise.execute('6LdRITQqAAAAAOWj5b9p27PBM7Gzyxg2DO5CfEaQ', { action: 'signup' });
+        const token = await grecaptcha.enterprise.execute('6LcewCcqAAAAAJvJ_Oti9lFKy_MaxcUHTmt8rDFE', { action: 'signup' });
         console.log("Generated reCAPTCHA token:", token);
         return token;
     } catch (error) {
