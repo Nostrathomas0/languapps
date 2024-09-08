@@ -1,5 +1,5 @@
 // assets/js/recapAuth.js
-from
+
 // Function to generate reCAPTCHA token
 export async function generateRecaptchaToken(action) {
     try {
