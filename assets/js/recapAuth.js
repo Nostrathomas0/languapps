@@ -1,4 +1,5 @@
 // assets/js/recapAuth.js
+import { auth, createUserWithEmailAndPassword, sendEmailVerification } from './firebaseInit.js';
 
 // Function to generate reCAPTCHA token
 export async function generateRecaptchaToken(action) {
