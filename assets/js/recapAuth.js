@@ -58,11 +58,12 @@ export async function verifyRecaptchaAndSignup(email, password) {
             console.log('Sign-up and reCAPTCHA verification successful');
 
             // After successful server-side verification, sign up the user with Firebase
-            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
             const user = userCredential.user;
 
             // Send the email verification
-            await user.sendEmailVerification();
+            await sendEmailVerification(user);
             console.log('Verification email sent to:', email);
 
             // Optional: Additional client-side logic, like redirecting the user or showing a confirmation message
