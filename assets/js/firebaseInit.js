@@ -37,4 +37,4 @@ const auth = getAuth(app);
 console.log('Firestore initialized:', db);
 
 // Exporting necessary variables and functions for use in other modules
-export { app, db, auth, resetPassword, signInUser, sendEmailVerification, createUserWithEmailAndPassword  };
+export { app, db, auth, resetPassword, sendEmailVerification, createUserWithEmailAndPassword  };
