@@ -63,6 +63,16 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
 
     console.log("reCAPTCHA verification passed");
 
+    const userExists = await
+    admin.auth().getUserByEmail(email).catch(() => null);
+
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
+
     const userRecord = await admin.auth().createUser({
       email: email,
       password: password,
