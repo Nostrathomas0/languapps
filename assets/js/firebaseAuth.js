@@ -1,6 +1,6 @@
 // assets/js/firebaseAuth.js
 import { generateRecaptchaToken } from './recapAuth.js';
-import { auth, sendEmailVerification, onAuthStateChanged, signOut as fireshaseSignOut } from './firebaseInit.js';
+import { auth, sendEmailVerification, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
 
 
 function setAuthTokenCookie(token) {
