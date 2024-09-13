@@ -1,4 +1,4 @@
-// lookies.js
+//assets/js/lookies.js
 import { signUp } from './firebaseAuth.js';
 import { auth } from './firebaseInit.js';
 
