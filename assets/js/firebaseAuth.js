@@ -2,6 +2,7 @@
 import { generateRecaptchaToken } from './recapAuth.js';
 import { auth, sendEmailVerification, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
 
+console.log('sendEmailVerification imported correctly:', sendEmailVerification);
 
 function setAuthTokenCookie(token) {
   const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;

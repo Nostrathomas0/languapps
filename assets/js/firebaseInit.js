@@ -35,6 +35,7 @@ const auth = getAuth(app);
 
 // Logging to check Firestore is initialized correctly
 console.log('Firestore initialized:', db);
+console.log('sendEmailVerification from Firebase initialized:', sendEmailVerification);
 
 // Exporting necessary variables and functions for use in other modules
 export { app, db, auth, onAuthStateChanged, resetPassword, sendEmailVerification, signInWithEmailAndPassword, signOut  };
