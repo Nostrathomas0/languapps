@@ -1,7 +1,7 @@
 // Import the Firebase modules needed
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js'; // Import getFirestore
-import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword  } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import { getAuth, sendPasswordResetEmail, sendEmailVerification, signInWithEmailAndPassword  } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 // Firebase configuration
 const firebaseConfig = {
