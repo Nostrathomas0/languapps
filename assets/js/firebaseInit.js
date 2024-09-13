@@ -1,7 +1,7 @@
 // Import the Firebase modules needed
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js'; // Import getFirestore
-import { getAuth, sendPasswordResetEmail, sendEmailVerification, signInWithEmailAndPassword  } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification, signOut, resetPassword } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -37,4 +37,4 @@ const auth = getAuth(app);
 console.log('Firestore initialized:', db);
 
 // Exporting necessary variables and functions for use in other modules
-export { app, db, auth, resetPassword, sendEmailVerification, signInWithEmailAndPassword  };
+export { app, db, auth, onAuthStateChanged, resetPassword, sendEmailVerification, signInWithEmailAndPassword, signOut  };
