@@ -207,16 +207,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (signUpForm) {
             signUpForm.addEventListener('submit', function(event) {
                 event.preventDefault();
+                
+                const submitButton = this.querySelector('button[type="submit"]');
+                submitButton.disabled = true; // Disable the button
+                
                 const email = this.querySelector('#signupEmail').value;
                 const password = this.querySelector('#signupPassword').value; // Assuming password field exists
+                
                 signUp(email, password).then(() => {
                     console.log("Sending validation email to:", email);
                     transitionModalStep('step1', 'step2');
                 }).catch(error => {
                     console.error("Error during sign-up:", error);
+                    submitButton.disabled = false; // Re-enable the button if an error occurs
                 });
             });
         }
+        
 
         if (userDetailsForm) {
             userDetailsForm.addEventListener('submit', function(event) {
