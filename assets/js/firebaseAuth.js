@@ -1,13 +1,13 @@
 // assets/js/firebaseAuth.js
+import { generateRecaptchaToken } from './recapAuth.js';
 import { 
-  createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   onAuthStateChanged, 
   sendEmailVerification, 
   signOut as firebaseSignOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { auth } from './firebaseInit.js';
-import { generateRecaptchaToken } from './recapAuth.js';
+
 
 function setAuthTokenCookie(token) {
   const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;
@@ -38,28 +38,28 @@ onAuthStateChanged(auth, user => {
 
 async function signUp(email, password) {
   try {
-    // Step 2: Generate the reCAPTCHA token inside the function (cut from arguments)
+    // Step 1: Generate the reCAPTCHA token inside the function (cut from arguments)
     const recaptchaToken = await generateRecaptchaToken('signup');
     console.log('Generated reCAPTCHA token:', recaptchaToken);
 
-    // Step 3: Prepare data to send to the backend Cloud Function
+    // Step 2: Prepare data to send to the backend Cloud Function
     const requestBody = { token: recaptchaToken, email, password };
 
-    // Step 4: Call the backend Cloud Function to verify reCAPTCHA and sign up the user
+    // Step 3: Call the backend Cloud Function to verify reCAPTCHA and sign up the user
     const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody),
     });
 
-    // Step 5: Parse the response from the backend
+    // Step 4: Parse the response from the backend
     const data = await response.json();
     console.log("Response data from server:", data);
 
-    // Step 6: Check if the backend verification was successful
+    // Step 5: Check if the backend verification was successful
     if (data.success) {
       console.log('Sign-up and reCAPTCHA verification successful');
-      // Optional: UI logic for transitioning after success
+      //UI logic for transitioning after success
       transitionModalStep('step1', 'step2');  // This might need to be handled in lookies.js
     } else {
       // If the response is unsuccessful, handle the error
