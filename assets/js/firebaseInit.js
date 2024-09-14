@@ -1,8 +1,8 @@
 // Import the Firebase modules needed
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js'; // Import getFirestore
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification, signOut, resetPassword } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-
+import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js'
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyA_bq5-hmAlNbK-2ZgHSFl0Iew4uphF_Eo",
@@ -15,11 +15,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-function resetPassword(email) {
-    return sendPasswordResetEmail(auth, email)
-        .then(() => console.log('Password reset email sent successfully.'))
-        .catch((error) => console.error('Failed to send password reset email:', error));
-}
+//function resetPassword(email) {
+//    return sendPasswordResetEmail(auth, email)
+//        .then(() => console.log('Password reset email sent successfully.'))
+//        .catch((error) => console.error('Failed to send password reset email:', error));
+//}
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
@@ -38,4 +38,4 @@ console.log('Firestore initialized:', db);
 console.log('sendEmailVerification from Firebase initialized:', sendEmailVerification);
 
 // Exporting necessary variables and functions for use in other modules
-export { app, db, auth, onAuthStateChanged, resetPassword, sendEmailVerification, signInWithEmailAndPassword, signOut  };
+export { app, db, auth, onAuthStateChanged, sendEmailVerification, signInWithEmailAndPassword, signOut  };
