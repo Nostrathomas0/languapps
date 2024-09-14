@@ -13,26 +13,13 @@ const firebaseConfig = {
     measurementId: "G-MCZY61SSMM" 
 };
 
-// Initialize Firebase
-//function resetPassword(email) {
-//    return sendPasswordResetEmail(auth, email)
-//        .then(() => console.log('Password reset email sent successfully.'))
-//        .catch((error) => console.error('Failed to send password reset email:', error));
-//}
-// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 
 // Initialize services
 const db = getFirestore(app);
 const auth = getAuth(app);
-// Function to sign in a user
-//function signInUser(email, password) {
-//    return signInWithEmailAndPassword(auth, email, password)
-//        .then((userCredential) => console.log("User signed in:", userCredential.user))
-//        .catch((error) => console.error("Error signing in:", error));
-//}
 
-// Logging to check Firestore is initialized correctly
 console.log('Firestore initialized:', db);
 console.log('sendEmailVerification from Firebase initialized:', sendEmailVerification);
 
