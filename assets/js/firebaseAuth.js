@@ -1,6 +1,6 @@
 // assets/js/firebaseAuth.js
 import { generateRecaptchaToken } from './recapAuth.js';
-import { auth, sendEmailVerification, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
+import { auth, sendEmailVerification, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
 
 console.log('sendEmailVerification imported correctly:', sendEmailVerification);
 
@@ -76,13 +76,24 @@ async function signUp(email, password) {
   }
 }
 
-
 async function sendVerificationEmail(user) {
   try {
     await sendEmailVerification(user);
     console.log('Verification email sent.');
   } catch (error) {
     console.error('Failed to send verification email:', error);
+  }
+}
+
+// Ensure signIn is correctly defined in firebaseAuth.js
+async function signIn(email, password) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("User signed in:", userCredential.user);
+    // Further signIn logic here...
+  } catch (error) {
+    console.error("Error signing in:", error);
+    alert('Sign-in failed: ' + error.message);
   }
 }
 
