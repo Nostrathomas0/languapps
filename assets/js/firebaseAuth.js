@@ -30,6 +30,19 @@ onAuthStateChanged(auth, user => {
   }
 });
 
+function transitionModalStep(currentStepId, nextStepId) {
+  const currentStep = document.getElementById(currentStepId);
+  const nextStep = document.getElementById(nextStepId);
+
+  if (currentStep && nextStep) {
+    currentStep.style.display = 'none'; // Hide the current step
+    nextStep.style.display = 'block';   // Show the next step
+    console.log(`Transitioned from ${currentStepId} to ${nextStepId}`);
+  } else {
+    console.error('Transition error: Step elements not found');
+  }
+}
+
 
 async function signUp(email, password) {
   try {
