@@ -33,14 +33,14 @@ onAuthStateChanged(auth, user => {
 
 async function signUp(email, password) {
   try {
-    // Step 1: Generate the reCAPTCHA token inside the function
+    // Step 1: Generate the reCAPTCHA token on the frontend
     const recaptchaToken = await generateRecaptchaToken('signup');
     console.log('Generated reCAPTCHA token:', recaptchaToken);
 
-    // Step 2: Prepare data to send to the backend Cloud Function
+    // Step 2: Prepare the request body with the recaptchaToken, email, and password
     const requestBody = { token: recaptchaToken, email, password };
 
-    // Step 3: Call the backend Cloud Function to verify reCAPTCHA and sign up the user
+    // Step 3: Send the data to the backend for verification and user creation
     const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -49,30 +49,21 @@ async function signUp(email, password) {
 
     // Step 4: Parse the response from the backend
     const data = await response.json();
-    console.log("Response data from server:", data);
+    console.log("Response from server:", data);
 
-    // Step 5: Check if the backend verification was successful
+    // Step 5: Handle the backend response
     if (data.success) {
       console.log('Sign-up and reCAPTCHA verification successful');
-
-      // Step 6: Create user in Firebase using the backend response (if needed)
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User created:', userCredential.user);
-
-      // Step 7: Send the email verification
-      await sendVerificationEmail(userCredential.user);
-      console.log("Verification email sent. Please verify your email before continuing");
-
-      // Step 8: Transition the UI to the next step
-      transitionModalStep('step1', 'step2');
+      // Do something on success, like updating the UI or redirecting
+      transitionModalStep('step1', 'step2'); // Example: transitioning to the next step in the UI
     } else {
-      // If the response is unsuccessful, handle the error
-      throw new Error(data.message || 'reCAPTCHA verification failed');
+      // Handle error from the backend response
+      throw new Error(data.message || 'reCAPTCHA verification or sign-up failed');
     }
   } catch (error) {
-    // Catch any errors that occur during the process
+    // Handle any errors that occur during the process
     console.error('Sign-up error:', error);
-    alert('Sign-up failed: ' + error.message);  // Notify the user of the failure
+    alert('Sign-up failed: ' + error.message);
   }
 }
 
