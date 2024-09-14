@@ -33,7 +33,7 @@ onAuthStateChanged(auth, user => {
 
 async function signUp(email, password) {
   try {
-    // Step 1: Generate the reCAPTCHA token inside the function (cut from arguments)
+    // Step 1: Generate the reCAPTCHA token inside the function
     const recaptchaToken = await generateRecaptchaToken('signup');
     console.log('Generated reCAPTCHA token:', recaptchaToken);
 
@@ -54,8 +54,17 @@ async function signUp(email, password) {
     // Step 5: Check if the backend verification was successful
     if (data.success) {
       console.log('Sign-up and reCAPTCHA verification successful');
-      //UI logic for transitioning after success
-      transitionModalStep('step1', 'step2');  // This might need to be handled in lookies.js
+
+      // Step 6: Create user in Firebase using the backend response (if needed)
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('User created:', userCredential.user);
+
+      // Step 7: Send the email verification
+      await sendVerificationEmail(userCredential.user);
+      console.log("Verification email sent. Please verify your email before continuing");
+
+      // Step 8: Transition the UI to the next step
+      transitionModalStep('step1', 'step2');
     } else {
       // If the response is unsuccessful, handle the error
       throw new Error(data.message || 'reCAPTCHA verification failed');
@@ -67,45 +76,6 @@ async function signUp(email, password) {
   }
 }
 
-
-//async function signUp(email, password) {
-//  try {
-//    const signupResponse = await verifyRecaptchaAndSignup(email, password, recaptchaToken);
-//    
-//    // Check if signupResponse is defined and successful
-//    if (signupResponse && signupResponse.success) {
-//      console.log('Sign-up and reCAPTCHA verification successful');
-//      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-//      console.log('User created:', userCredential.user);
-//      await sendVerificationEmail(userCredential.user);
-//      console.log("Verification email sent. Please verify your email before continuing");
-//      // Transition to the next step in the UI
-//      transitionModalStep('step1', 'step2');
-//    } else {
-//      console.error('Sign-up failed: reCAPTCHA verification or sign-up failed');
-//      throw new Error(signupResponse ? signupResponse.message : 'Unknown error during sign-up');
-//    }
-//  } catch (error) {
-//    console.error('Sign-up error:', error);
-//    alert('Sign-up failed: ' + error.message);
-//  }
-//}
-
-async function signIn(email, password) {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    if (!userCredential.user.emailVerified) {
-      throw new Error('Email not verified.');
-    }
-    console.log("User signed in:", userCredential.user);
-    const token = await userCredential.user.getIdToken();
-    setAuthTokenCookie(token);
-    window.location.href = "https://labase.languapps.com";
-  } catch (error) {
-    console.error("Error signing in:", error);
-    alert('Sign-in failed: ' + error.message);
-  }
-}
 
 async function sendVerificationEmail(user) {
   try {
