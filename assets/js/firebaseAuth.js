@@ -80,14 +80,6 @@ async function signUp(email, password) {
   }
 }
 
-async function sendVerificationEmail(user) {
-  try {
-    await sendEmailVerification(user);
-    console.log('Verification email sent.');
-  } catch (error) {
-    console.error('Failed to send verification email:', error);
-  }
-}
 
 // Ensure signIn is correctly defined in firebaseAuth.js
 async function signIn(email, password) {

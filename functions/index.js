@@ -86,6 +86,11 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       email: email,
     };
 
+    // Send verification email using Firebase Admin SDK
+    const verificationLink = await
+    admin.auth().generateEmailVerificationLink(email);
+    console.log("Verification link generated:", verificationLink);
+
     const jwtToken = jwt.sign(tokenPayload,
         functions.config().jwt.secret, {expiresIn: "24h"});
     console.log("Generated JWT Token:", jwtToken);
