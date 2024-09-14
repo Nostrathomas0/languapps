@@ -5,71 +5,15 @@
 // |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
 //____| /__/  \__\ |_|  \_|    \__/    \_____/  /__/  \__\ |_|      |_|     \__/
 // Import getDocs and collection from Firestore SDK
-import { getDocs, collection, query, orderBy, limit  } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import { db } from './firebaseInit.js'; // Adjust the path to where your Firebase initialization happens and db is exported
+// Import necessary Firebase functions from Firestore
+import { getDocs, collection, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { db } from './firebaseInit.js';
 
-// Section 0 Global Variables
+// Section 0: Global Variables
 let wordToGuess = "";
 let guessedLetters = [];
 let wrongGuesses = 0;
 let wrongLetters = [];
-
-// Section 1 Export Functions
-export function startGame() { 
-    wordToGuess = words[Math.floor(Math.random() * words.length)];
-    guessedLetters = [];
-    wrongGuesses = 0;
-    wrongLetters = [];
-    updateHangmanImage(wrongGuesses);
-    displayWord();
-     // Reset button styles
-     const letterButtons = document.querySelectorAll('#letter-buttons button');
-     letterButtons.forEach(button => {
-         button.classList.remove('guessed');
-         button.disabled = false;
-     });
- }
- export function makeGuess(letter) { 
-   
-    letter = letter.toLowerCase(); // Convert letter to lowercase
-    let wordToGuessLower = wordToGuess.toLowerCase(); // Convert wordToGuess to lowercase
-
-    console.log("Guessed letter: ", letter);
-    if (wordToGuessLower.includes(letter)) {
-        console.log("Correct guess");
-        if (!guessedLetters.includes(letter)) {
-            guessedLetters.push(letter);
-            displayWord();
-        }
-    } else {
-        console.log("Incorrect guess");
-        if (!wrongLetters.includes(letter)) {
-            wrongLetters.push(letter);
-            wrongGuesses++; // Increment wrongGuesses
-            updateHangmanImage(wrongGuesses);
-        }
-    }
-    document.getElementById("button-" + letter).classList.add('guessed');
-    document.getElementById("button-" + letter).disabled = true; // Disable guessed letter button
-
-    checkGameOver();
-}
-
-export function playSound(soundName) {
-    const soundPath = `assets/sounds/${soundName}`;
-    const sound = new Audio(soundPath);
-    sound.play();
-}
-
-// Section 3 Hangman Variables
-
-const words = ["apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew", "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry", "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua", "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry", "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish", "spinach", "tangerine", "blueberry", "durian", "endive", "figs", "grapefruit", "jackfruit", "kiwano", "lime", "lychee", "okra"];
-
-wordToGuess = "";
-guessedLetters = [];
-wrongGuesses = 0;
-wrongLetters = [];
-
 const hangmanImages = [
     '/images/hang/h0.png',
     '/images/hang/h1.png',
@@ -83,179 +27,131 @@ const hangmanImages = [
     '/images/hang/h9.png',
     '/images/hang/h10.png'
 ];
+const words = [
+    "apple", "banana", "carrot", "date", "eggplant", "fig", "grape", "honeydew",
+    "kiwi", "lemon", "mango", "nectarine", "orange", "papaya", "quince", "raspberry",
+    "strawberry", "tomato", "ugli fruit", "watermelon", "zucchini", "yam", "xigua",
+    "cucumber", "broccoli", "avocado", "bell pepper", "dragon fruit", "elderberry",
+    "jicama", "kale", "lettuce", "mushroom", "olive", "peach", "pear", "radish",
+    "spinach", "tangerine", "blueberry", "durian", "endive", "grapefruit", "jackfruit",
+    "kiwano", "lime", "lychee", "okra"
+];
 
-// Section 4 Utility Functions
+// Section 1: Game Logic
+function startGame() {
+    wordToGuess = words[Math.floor(Math.random() * words.length)];
+    guessedLetters = [];
+    wrongGuesses = 0;
+    wrongLetters = [];
+    resetButtons();
+    updateHangmanImage();
+    displayWord();
+}
 
-function updateHangmanImage(wrongGuesses) {
-    console.log("Updating hangman image, wrong guesses:", wrongGuesses);
+function makeGuess(letter) {
+    letter = letter.toLowerCase();
+    const wordToGuessLower = wordToGuess.toLowerCase();
+
+    if (wordToGuessLower.includes(letter)) {
+        if (!guessedLetters.includes(letter)) {
+            guessedLetters.push(letter);
+            displayWord();
+        }
+    } else {
+        if (!wrongLetters.includes(letter)) {
+            wrongLetters.push(letter);
+            wrongGuesses++;
+            updateHangmanImage();
+        }
+    }
+    disableButton(letter);
+    checkGameOver();
+}
+
+function updateHangmanImage() {
     const imageElement = document.getElementById('hangman-image');
     if (imageElement) {
-        let imageIndex = wrongGuesses < hangmanImages.length ? wrongGuesses : hangmanImages.length - 1;
-        console.log("New image source:", hangmanImages[wrongGuesses]);
+        const imageIndex = Math.min(wrongGuesses, hangmanImages.length - 1);
         imageElement.src = hangmanImages[imageIndex];
     } else {
-        console.log("Hangman image element not found");
+        console.error("Hangman image element not found");
     }
 }
 
 function displayWord() {
     const wordDisplay = document.getElementById("word-display");
-    wordDisplay.innerHTML = "";
-    for (const letter of wordToGuess) {
-        if (guessedLetters.includes(letter)) {
-            wordDisplay.innerHTML += letter + " ";
-        } else {
-            wordDisplay.innerHTML += "_ ";
-        }
-    }
+    wordDisplay.innerHTML = wordToGuess.split("").map(letter =>
+        guessedLetters.includes(letter) ? letter : "_").join(" ");
 }
 
 function checkGameOver() {
     if (wordToGuess.split("").every(letter => guessedLetters.includes(letter))) {
-        // Play win sound and show message
-        playSound('win_sound.mp3');  // Replace with your sound file path
-        alert("Congratulations! You guessed the word: " + wordToGuess);
+        alert(`Congratulations! You guessed the word: ${wordToGuess}`);
         startGame();
     } else if (wrongGuesses >= hangmanImages.length - 1) {
-        // Play lose sound and show message
-        playSound('lose_sound.mp3');  // Replace with your sound file path
-        alert("Game over! The word was: " + wordToGuess);
+        alert(`Game over! The word was: ${wordToGuess}`);
         startGame();
     }
 }
 
-
-// Section 5 Random sentence 
-
-function getRandomElement(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+// Utility: Reset buttons
+function resetButtons() {
+    document.querySelectorAll('#letter-buttons button').forEach(button => {
+        button.classList.remove('guessed');
+        button.disabled = false;
+    });
 }
 
+function disableButton(letter) {
+    const button = document.getElementById("button-" + letter);
+    if (button) {
+        button.classList.add('guessed');
+        button.disabled = true;
+    }
+}
+
+// Section 2: Random Sentence Generator
 function generateRandomSentence() {
-    // Elements for constructing the sentence
     const subjectPronouns = ['I', 'You', 'He', 'She', 'They'];
     const objectPronouns = ['me', 'you', 'him', 'her', 'them'];
-    const determiners = ['the', 'a', 'an', 'my', 'your'];
+    const determiners = ['the', 'a', 'my', 'your'];
     const nouns = ['cat', 'dog', 'pizza', 'music', 'car'];
-    const nounPhrases = ["a professor of linguistics", "a beacon of hope", "a voice of reason", "an explorer of truths"];
-    const actionVerbsIntransitive = ["walking", "dreaming", "leading", "striving"];
-    const actionVerbsTransitive = ["encouraging", "inspiring", "challenging", "supporting"];
-    const stateVerbsTransitive = ["have", "embody", "cherish", "seek"];
-    const objects = ["bright, powerful eyes", "an unbreakable spirit", "a keen mind", "a warm heart"];
-    const prepositionPhrases = ["in times of challenge", "with grace and courage", "beyond the horizons", "through the storms"];
 
-    // Verbs in their base form
     const verbs = {
-        base: ['love', 'convince','show', 'enjoy', 'dislike', 'prefer'],
+        base: ['love', 'convince', 'show', 'enjoy', 'dislike', 'prefer'],
         thirdPersonSingular: ['loves', 'convinces', 'shows', 'enjoys', 'dislikes', 'prefers']
     };
+
+    function getRandomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
     function isThirdPersonSingular(subject) {
         return !['I', 'You', 'They'].includes(subject);
     }
 
-    function getSubject() {
-    
-        // Randomly choose between a pronoun or a noun phrase
-        if (Math.random() < 0.5) {
-            // Use a subject pronoun
-            return getRandomElement(subjectPronouns);
-        } else {
-            // Use a noun phrase
-            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
-        }
-    }
-
-    function getObject() {
-        // Randomly choose between an object pronoun or a noun phrase
-        if (Math.random() < 0.5) {
-            return getRandomElement(objectPronouns);
-        } else {
-            return `${getRandomElement(determiners)} ${getRandomElement(nouns)}`;
-        }
-    }
-
-    // Generate the sentence
-    const subject = getSubject();
+    const subject = getRandomElement(subjectPronouns);
     const verb = isThirdPersonSingular(subject) ? getRandomElement(verbs.thirdPersonSingular) : getRandomElement(verbs.base);
-    const object = getObject();
+    const object = getRandomElement(objectPronouns);
 
     return `${subject} ${verb} ${object}.`;
-    // Fortune templates
-    const templates = [
-        "You are {NP} and you are {AVI} while {AVT} {Obj}.",
-        "You {SVT} {Obj}, {NP} {PP}."
-    ];
-
-    function generateMotivationalFortune() {
-        const template = getRandomElement(templates);
-        const sentence = template
-            .replace("{NP}", getRandomElement(nounPhrases))
-            .replace("{AVI}", getRandomElement(actionVerbsIntransitive))
-            .replace("{AVT}", getRandomElement(actionVerbsTransitive))
-            .replace("{SVT}", getRandomElement(stateVerbsTransitive))
-            .replace("{Obj}", getRandomElement(objects))
-            .replace("{PP}", getRandomElement(prepositionPhrases));
-
-        return sentence.charAt(0).toUpperCase() + sentence.slice(1); // Capitalize the first letter
-    }
-
-    // Example usage
-    const fortune = generateMotivationalFortune();
-    console.log(fortune);
-
 }
 
-// Section 6 Analytics and Tracking 
-
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'UA-171464578-1');
-
-!function(f,b,e,v,n,t,s){
-    if(f.fbq)return;
-    n=f.fbq=function(){
-        n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)
-    };
-    if(!f._fbq)f._fbq=n;n.push=n;
-    n.loaded=!0;
-    n.version='2.0';
-    n.queue=[];
-    t=b.createElement(e);
-    t.async=!0;
-    t.src=v;
-    s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)
-}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); 
-fbq('init', '348427750356175'); 
-fbq('track', 'PageView');
-
-// Section 7 Async Function to Load Blog Posts from Firestore
-
+// Section 3: Blog Post Loader
 async function loadBlogPosts() {
     const blogSection = document.getElementById('blog-posts');
-    // Ensure the blogSection exists before attempting to load posts
-    if (!blogSection) {
-        console.error("Error loading blog posts: 'blog-posts' element not found");
-        return;
-    }
+    if (!blogSection) return;
 
     try {
-        // Use the db directly from your import, ensuring it's the initialized instance from your Firebase setup
-        const blogPostsCollectionRef = collection(db, "blogPosts");
-        // Add the orderBy and limit methods to the query
-        const blogPostsQuery = query(blogPostsCollectionRef, orderBy("timestamp", "desc"), limit(4));
+        const blogPostsQuery = query(collection(db, "blogPosts"), orderBy("timestamp", "desc"), limit(4));
         const querySnapshot = await getDocs(blogPostsQuery);
         
-        // Clear existing posts to avoid duplicates
         blogSection.innerHTML = '';
-
-        // Iterate through each document and create a post element
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach(doc => {
             const post = doc.data();
             const postElement = document.createElement('div');
             postElement.classList.add('blog-post');
-            postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+            postElement.innerHTML = `<h3>${escapeHTML(post.title)}</h3><p>${escapeHTML(post.content)}</p>`;
             blogSection.appendChild(postElement);
         });
     } catch (error) {
@@ -263,27 +159,16 @@ async function loadBlogPosts() {
     }
 }
 
-
-// Helper function to escape HTML to prevent XSS attacks
 function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, tag => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
     }[tag] || tag));
 }
 
-// Section 8 DOM Content
-document.addEventListener('DOMContentLoaded', function() {
-    // Start the hangman game
+// Section 4: Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
     startGame();  
-    // Load Blog Posts if the container is present
-    if (document.getElementById('blog-posts')) {
-        loadBlogPosts(); 
-    }
-    // Start Game button 
-    const startGameButton = document.getElementById('start-game');
-    if (startGameButton) {
-        startGameButton.addEventListener('click', startGame);
-    }
+    loadBlogPosts();
 
     const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
     letters.forEach(letter => {
@@ -291,39 +176,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (button) {
             button.addEventListener('click', () => makeGuess(letter));
         }
-        
     });
 
-    const fortuneButton = document.getElementById('Fortune');
-    const fortuneDisplay = document.getElementById('fortune-display'); // Make sure you have this element in your HTML
-
-//   // Check if the elements exist
-//    if (fortuneButton && fortuneDisplay) {
-//        // Add a click event listener to the button
-//        fortuneButton.addEventListener('click', function() {
-            // Generate a motivational fortune
-//            const fortune = generateMotivationalFortune();
-            // Display the fortune in the fortune-display element
- //           fortuneDisplay.textContent = fortune;
- //       });
-//    }
-
-    // Set up the random sentence generator form submission
     const randomSentenceForm = document.getElementById('random');
     if (randomSentenceForm) {
-        randomSentenceForm.addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent traditional form submission
+        randomSentenceForm.addEventListener('submit', event => {
+            event.preventDefault();
             const randomSentence = generateRandomSentence();
-            document.getElementById('random-sentence').textContent = randomSentence; // Display the generated sentence
-    });
+            document.getElementById('random-sentence').textContent = randomSentence;
+        });
     }
-    // Example usage for the random sentence generator
-    const randomSentence = generateRandomSentence();
-    document.getElementById('random-sentence').textContent = randomSentence;
-    if (fortuneButton) {
-        fortuneButton.addEventListener('click', function() {
-            const fortune = generateMotivationalFortune();
-            fortuneDisplay.textContent = fortune; // Display the generated fortune
+
+    const fortuneButton = document.getElementById('Fortune');
+    const fortuneDisplay = document.getElementById('fortune-display');
+    if (fortuneButton && fortuneDisplay) {
+        fortuneButton.addEventListener('click', () => {
+            const fortune = generateRandomSentence();  // Changed to reuse the random sentence generator
+            fortuneDisplay.textContent = fortune;
         });
     }
 });
