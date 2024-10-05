@@ -4,20 +4,26 @@ const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const {verifyRecaptcha} = require("./recaptchaUtils");
 
 admin.initializeApp();
 
 const app = express();
-app.use(cors({
+
+// CORS Configuration
+const corsOptions = {
   origin: [
-    "http://127.0.0.1:2000", "https://languapps.com", "https://www.labase.languapps.com",
-  ], // Allow your specific domains
+    "http://127.0.0.1:2000",
+    "https://languapps.com",
+    "https://www.labase.languapps.com"],
   credentials: true,
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-}));
+};
 
+// Apply CORS with the defined options
+app.use(cors(corsOptions));
 // Handle preflight requests
 app.options("/*", (req, res) => {
   res.set("Access-Control-Allow-Origin", req.headers.origin);
@@ -27,6 +33,17 @@ app.options("/*", (req, res) => {
   res.status(204).send(""); // Send no content for preflight
 });
 app.use(express.json()); // For parsing application/json
+
+// Create Nodemailer SES transporter
+const transporter = nodemailer.createTransport({
+  host: "email-smtp.us-east-1.amazonaws.com",
+  port: 587,
+  secure: false, // true for 465, false for other ports like 587
+  auth: {
+    user: "AKIAZ6QBS7VB5ZJ2W77K",
+    pass: "BB6dLe22FBj+PXUHjAYcF4DdHaZ3Uta3Idjea8s9OuYk",
+  },
+});
 
 // Endpoint to verify reCAPTCHA and sign up a user
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
@@ -65,7 +82,6 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
 
     const userExists = await
     admin.auth().getUserByEmail(email).catch(() => null);
-
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -81,15 +97,32 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
 
     console.log("User creation successful. UID:", userRecord.uid);
 
+    // Step 3: Generate email verification link
+    const verificationLink = await
+    admin.auth().generateEmailVerificationLink(email, {
+      url: "https://labase.languapps.com",
+      handleCodeInApp: true,
+    });
+    console.log("Verification link generated:", verificationLink);
+
+    // Step 4: Send the email using SES via Nodemailer
+    const mailOptions = {
+      from: `Languapps <noreply@languapps.com>`,
+      to: email,
+      subject: "Verify your email for Languapps",
+      text: `Verify your email by clicking this link: ${verificationLink}`,
+      html: `<p>Verify your email by clicking this link:
+       <a href="${verificationLink}">Verify Email</a></p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Verification email sent to:", email);
+    // Now send the verification email manually
+
     const tokenPayload = {
       uid: userRecord.uid,
       email: email,
     };
-
-    // Send verification email using Firebase Admin SDK
-    const verificationLink = await
-    admin.auth().generateEmailVerificationLink(email);
-    console.log("Verification link generated:", verificationLink);
 
     const jwtToken = jwt.sign(tokenPayload,
         functions.config().jwt.secret, {expiresIn: "24h"});

@@ -14,10 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(`Transitioning from ${currentStepId} to ${nextStepId}`);
             currentStep.style.display = 'none';
             nextStep.style.display = 'block';
+
+            // Ensure blog post form is visible when transitioning to step2
+            if (nextStepId === 'step2') {
+                const blogForm = document.getElementById('addBlogPostForm');
+                if (blogForm) {
+                    blogForm.style.display = 'block';  // Make sure the blog form is visible
+                } else {
+                    console.error('Blog form not found.');
+                }
+            }
         } else {
             console.error('Error transitioning steps: Step elements not found.');
         }
     }
+
 
     function openModalById(modalId, stepId) {
         console.log("Attempting to open modal", modalId);

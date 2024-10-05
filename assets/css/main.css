@@ -2589,5 +2589,6 @@ input, select, textarea {
 #step2, #step3 {
     display: none;  /* Hide other steps initially */
 }
-
-	
+#step2.active #addBlogPostForm {
+    display: block;  /* Show the form when step 2 is active */
+}

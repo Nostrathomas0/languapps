@@ -1,3 +1,4 @@
+// blogFormHandler.js
 import './firebaseInit.js';  // Ensures Firebase is initialized
 import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
@@ -38,6 +39,7 @@ export async function addBlogPost(title, content, author) {
         console.error("Error adding document: ", e);
     }
 }
+console.log(window.db);  // This should log the Firestore instance if Firebase is correctly initialized
 
 
 // document.addEventListener('DOMContentLoaded', async function() {
