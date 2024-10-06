@@ -18,7 +18,8 @@ const app = initializeApp(firebaseConfig);
 // Initialize services
 const db = getFirestore(app);
 const auth = getAuth(app);
-
+// Attach db to the window object for global access
+window.db = db;
 console.log('Firestore initialized:', db);
 console.log('sendEmailVerification from Firebase initialized:', sendEmailVerification);
 
