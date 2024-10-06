@@ -7,25 +7,35 @@ if (addPostForm) {
     addPostForm.addEventListener('submit', async function(event) {
         event.preventDefault();  // Prevent the default form submission action
 
-        // Retrieve the title and content from the form in the auth modal
-        var title = document.getElementById('blogTitle').value;
-        var content = document.getElementById('blogContent').value;
-
         try {
+            // Log for debugging purposes
+            console.log("Submitting blog form");
+
+            // Retrieve the title and content from the form
+            var title = document.getElementById('blogTitle').value;
+            var content = document.getElementById('blogContent').value;
+
+            // Log retrieved values
+            console.log("Blog Title:", title, "Content:", content);
+
+            // Ensure Firestore instance is valid
+            console.log("Firestore instance (window.db):", window.db);
+
             // Call the function to add the blog post to Firestore
+            console.log("Calling addBlogPost function");
             await addBlogPost(title, content, "Tom");
 
-            // After successful submission, print the blog post to the index.html
-            printBlogPostToIndex(title, content);
-            
-            // Optionally close the modal after submission
-            closeModal();  // Assuming you have a function to close the modal
+            // Log success after Firestore call
+            console.log("Blog post added successfully");
+
+            // Optionally close the modal after successful submission
+            closeModal();
         } catch (error) {
-            console.error("Error adding post:", error);
-            // Optionally, display an error message to the user
+            console.error("Unexpected error during form submission:", error);
         }
     });
 }
+
 
 // Function to add the blog post to Firestore
 async function addBlogPost(title, content, author) {
