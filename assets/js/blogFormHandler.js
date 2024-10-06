@@ -29,6 +29,7 @@ if (addPostForm) {
 
 // Function to add the blog post to Firestore
 async function addBlogPost(title, content, author) {
+    console.log("addBlogPost function called with:", title, content, author); // Add this log
     try {
         const docRef = await addDoc(collection(window.db, "blogPosts"), {
             title,
