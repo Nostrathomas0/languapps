@@ -4,7 +4,6 @@ import { auth } from './firebaseInit.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event fired");
-
     // Function to handle the transition between steps in modals
     function transitionModalStep(currentStepId, nextStepId) {
         const currentStep = document.getElementById(currentStepId);
@@ -20,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const blogForm = document.getElementById('addBlogPostForm');
                 if (blogForm) {
                     blogForm.style.display = 'block';  // Make sure the blog form is visible
+
+                    // Add the event listener for blog form submission here
+                    attachBlogPostListener(blogForm);
                 } else {
                     console.error('Blog form not found.');
                 }
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error transitioning steps: Step elements not found.');
         }
     }
+
 
 
     function openModalById(modalId, stepId) {
@@ -263,11 +266,38 @@ document.addEventListener('DOMContentLoaded', function() {
         transitionModalStep('step2', 'step3');
     }
 
-    function handleBlogPostSubmit(event) {
+    function attachBlogPostListener(blogForm) {
+        // Make sure the listener is not attached multiple times
+        if (!blogForm.hasListener) {
+            blogForm.addEventListener('submit', handleBlogPostSubmit);  // Attach listener
+            blogForm.hasListener = true;  // Mark that the listener has been added
+            console.log("Blog post form listener attached");
+        }
+    }
+
+    async function handleBlogPostSubmit(event) {
         event.preventDefault();
+        
         const title = event.target.querySelector('#blogTitle').value;
         const content = event.target.querySelector('#blogContent').value;
-        console.log("Posting blog titled:", title);
+        console.log("Posting blog titled:", title);  // This is the log you're seeing
+
+    try {
+        //
+        if (!window.db) {
+            throw new Error("Firestore not initialized.");
+        }
+        // Here the Firestore write should happen
+        await addDoc(collection(window.db, "blogPosts"), {
+            title,
+            content,
+            timestamp: serverTimestamp()
+        });
+
+        console.log("Blog post successfully added to Firestore");
+    } catch (error) {
+        console.error("Error adding blog post to Firestore:", error);
+    }
         closeModalById('auth-modal');
     }
 
