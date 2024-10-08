@@ -267,3 +267,4 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     checkForModalOpening();
 });
+export { closeModalById };
