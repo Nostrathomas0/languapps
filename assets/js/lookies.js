@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event fired");
     
     // Utility functions for modals
-    function openModalById(modalId) {
+    function openModalById(modalId, stepId) {
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.style.display = 'block';  // Open the modal
