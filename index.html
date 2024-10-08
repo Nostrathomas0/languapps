@@ -257,7 +257,7 @@
 						<form id="addBlogPostForm" accept-charset="utf-8">
 							<label for="title">Title:</label><br>
 							<input type="text" id="blogTitle" name="title" required maxlength="100" 
-								   pattern="[A-Za-z0-9]+" title="Letters and numbers only"><br>
+								   pattern="[A-Za-z0-9 ]+" title="Letters and numbers only"><br>
 					
 							<label for="content">Content:</label><br>
 							<textarea id="blogContent" name="content" required maxlength="5000"></textarea><br>
@@ -295,6 +295,7 @@
 		
 		<!-- Firebase Initialization -->
 		<script type="module" src="assets/js/firebaseInit.js"></script>
+		<script type="module" src="/assets/js/blogFormHandler.js"></script>
 
 		<!-- reCAPTCHA script -->
 		<script src="https://www.google.com/recaptcha/enterprise.js?render=6LcewCcqAAAAAJvJ_Oti9lFKy_MaxcUHTmt8rDFE"></script>

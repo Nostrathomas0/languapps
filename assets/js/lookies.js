@@ -1,62 +1,30 @@
 //assets/js/lookies.js
 import { signUp } from './firebaseAuth.js';
 import { auth } from './firebaseInit.js';
+import { attachBlogPostListener, handleBlogPostSubmit } from './blogFormHandler.js';  // Adjust the path as needed
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event fired");
-    // Function to handle the transition between steps in modals
-    function transitionModalStep(currentStepId, nextStepId) {
-        const currentStep = document.getElementById(currentStepId);
-        const nextStep = document.getElementById(nextStepId);
-
-        if (currentStep && nextStep) {
-            console.log(`Transitioning from ${currentStepId} to ${nextStepId}`);
-            currentStep.style.display = 'none';
-            nextStep.style.display = 'block';
-
-            // Ensure blog post form is visible when transitioning to step2
-            if (nextStepId === 'step2') {
-                const blogForm = document.getElementById('addBlogPostForm');
-                if (blogForm) {
-                    blogForm.style.display = 'block';  // Make sure the blog form is visible
-
-                    // Add the event listener for blog form submission here
-                    attachBlogPostListener(blogForm);
-                } else {
-                    console.error('Blog form not found.');
-                }
-            }
-        } else {
-            console.error('Error transitioning steps: Step elements not found.');
-        }
-    }
-
-
-
-    function openModalById(modalId, stepId) {
-        console.log("Attempting to open modal", modalId);
+    
+    // Utility functions for modals
+    function openModalById(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
-            console.log("Modal Found:", modalId);
-            modal.style.display = 'block';
+            modal.style.display = 'block';  // Open the modal
+            console.log(`Modal with ID ${modalId} is now open.`);
             if (stepId) {
-                console.log("Attempting to show step", stepId);
-                modal.querySelectorAll('.modal-step').forEach(step => {
-                    step.style.display = 'none';
-                });
-                const step = document.getElementById(stepId);
-                if (step) {
-                    console.log("Step Found:", stepId);
-                    step.style.display = 'block';
-                } else {
-                    console.error('Specified step not found:', stepId);
-                }
+                showModalStep(stepId);  // Show the specific step
+            }
+            // After opening the modal, check if the blog post form is present
+            const blogForm = document.getElementById('addBlogPostForm');
+            if (blogForm) {
+                attachBlogPostListener(blogForm);  // Attach listener to the blog post form
             }
         } else {
-            console.error('Modal not found:', modalId);
+            console.error(`Modal with ID ${modalId} not found.`);
         }
     }
-
+    
     function closeModalById(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
@@ -66,6 +34,19 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Modal not found:', modalId);
         }
     }
+    
+    // Function to handle the transition between steps in modals
+    function transitionModalStep(currentStepId, nextStepId) {
+        const currentStep = document.getElementById(currentStepId);
+        const nextStep = document.getElementById(nextStepId);
+
+        if (currentStep && nextStep) {
+            currentStep.style.display = 'none';
+            nextStep.style.display = 'block';
+        } else {
+            console.error('Blog form not found.');
+        }
+    }  
 
     const openModalButton = document.getElementById('openModalButton');
     if (openModalButton) {
@@ -122,9 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
-    function eraseCookie(name) {
-        setCookie(name, "", -1);
-    }
+//    function eraseCookie(name) {
+//        setCookie(name, "", -1);
+//    }
 
     async function applyLanguageSettings(language) {
         try {
@@ -147,15 +128,15 @@ document.addEventListener('DOMContentLoaded', function() {
         applyLanguageSettings(language);
     }
 
-    function acceptCookies() {
-        setCookie('userConsent', 'accepted', 365);
-        closeModalById('cookie-consent-modal');
-    }
+//    function acceptCookies() {
+//        setCookie('userConsent', 'accepted', 365);
+//        closeModalById('cookie-consent-modal');
+//    }
 
-    function declineCookies() {
-        setCookie('userConsent', 'declined', 365);
-        closeModalById('cookie-consent-modal');
-    }
+//    function declineCookies() {
+//        setCookie('userConsent', 'declined', 365);
+//        closeModalById('cookie-consent-modal');
+//    }
 
     function checkUserConsent() {
         const consentGiven = getCookie('userConsent');
@@ -169,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setupEventListeners() {
         checkUserConsent();
-
+        
         const acceptBtn = document.getElementById('accept-cookies');
         const declineBtn = document.getElementById('decline-cookies');
         const languageDropdown = document.getElementById('language-dropdown');
@@ -179,25 +160,36 @@ document.addEventListener('DOMContentLoaded', function() {
         const addBlogPostForm = document.getElementById('addBlogPostForm');
 
         if (acceptBtn) {
-            acceptBtn.removeEventListener('click', handleAcceptClick);
             acceptBtn.addEventListener('click', handleAcceptClick);
         }
 
-        if (declineBtn) {
-            declineBtn.removeEventListener('click', handleDeclineClick);
+        if (declineBtn) { 
             declineBtn.addEventListener('click', handleDeclineClick);
         }
 
         if (languageDropdown) {
-            languageDropdown.removeEventListener('change', handleLanguageChange);
             languageDropdown.addEventListener('change', handleLanguageChange);
         }
 
         if (loginButton) {
-            loginButton.removeEventListener('click', handleLoginClick);
             loginButton.addEventListener('click', handleLoginClick);
         }
-
+       
+        
+        function showModalStep(stepId) {
+            const step = document.getElementById(stepId);
+            if (step) {
+                document.querySelectorAll('.modal-step').forEach(step => {
+                    step.style.display = 'none';  // Hide all steps
+                });
+                step.style.display = 'block';  // Show the specified step
+                console.log(`Step with ID ${stepId} is now visible.`);
+            } else {
+                console.error('Step not found:', stepId);
+            }
+        }
+        
+        
         if (signUpForm) {
             // Remove previous listener before adding a new one
             signUpForm.removeEventListener('submit', handleSignUp);
@@ -266,40 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
         transitionModalStep('step2', 'step3');
     }
 
-    function attachBlogPostListener(blogForm) {
-        // Make sure the listener is not attached multiple times
-        if (!blogForm.hasListener) {
-            blogForm.addEventListener('submit', handleBlogPostSubmit);  // Attach listener
-            blogForm.hasListener = true;  // Mark that the listener has been added
-            console.log("Blog post form listener attached");
-        }
-    }
-
-    async function handleBlogPostSubmit(event) {
-        event.preventDefault();
-        
-        const title = event.target.querySelector('#blogTitle').value;
-        const content = event.target.querySelector('#blogContent').value;
-        console.log("Posting blog titled:", title);  // This is the log you're seeing
-
-    try {
-        //
-        if (!window.db) {
-            throw new Error("Firestore not initialized.");
-        }
-        // Here the Firestore write should happen
-        await addDoc(collection(window.db, "blogPosts"), {
-            title,
-            content,
-            timestamp: serverTimestamp()
-        });
-
-        console.log("Blog post successfully added to Firestore");
-    } catch (error) {
-        console.error("Error adding blog post to Firestore:", error);
-    }
-        closeModalById('auth-modal');
-    }
 
     function userIsAuthenticated() {
         // Updated to use Firebase auth check
