@@ -1,6 +1,7 @@
 // blogFormHandler.js
 import { db } from './firebaseInit.js';  // Ensures Firebase is initialized
-import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+console.log('Firestore DB in blogFormHandler:', db);
+import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 function attachBlogPostListener(blogForm) {
     // Make sure the listener is not attached multiple times
