@@ -1,6 +1,6 @@
 // blogFormHandler.js
+import { closeModalById } from './lookies.js';  // Adjust the path as necessary
 import { db } from './firebaseInit.js';  // Ensures Firebase is initialized
-console.log('Firestore DB in blogFormHandler:', db);
 import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 function attachBlogPostListener(blogForm) {
@@ -19,24 +19,29 @@ async function handleBlogPostSubmit(event) {
     const title = event.target.querySelector('#blogTitle').value;
     const content = event.target.querySelector('#blogContent').value;
     console.log("Posting blog titled:", title);  // This is the log you're seeing
+
     try {
-        //
         if (!db) {
             throw new Error("Firestore not initialized.");
         }
-        // Here the Firestore write should happen
+
         await addDoc(collection(db, "blogPosts"), {
             title,
             content,
             timestamp: serverTimestamp()
         });
-       
+
         console.log("Blog post successfully added to Firestore");
+
+        // Add log to check if closeModalById is being called
+        console.log("Calling closeModalById for auth-modal");
+        closeModalById('auth-modal');
+
     } catch (error) {
         console.error("Error adding blog post to Firestore:", error);
     }
-    closeModalById('auth-modal');
 }
+
 
 
 // Function to print the blog post on index.html dynamically

@@ -28,12 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeModalById(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
-            console.log("Closing modal", modalId);
+            console.log(`Closing modal with ID: ${modalId}`);
             modal.style.display = 'none';
         } else {
-            console.error('Modal not found:', modalId);
+            console.error(`Modal with ID ${modalId} not found.`);
         }
     }
+
     
     // Function to handle the transition between steps in modals
     function transitionModalStep(currentStepId, nextStepId) {
@@ -61,17 +62,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.close').forEach(function(element) {
         element.addEventListener('click', function() {
-            const modal = element.closest('.modal');
+            const modal = element.closest('.modal');  // Find the closest modal container
             if (modal) {
-                const modalId = modal.id;
+                const modalId = modal.id;  // Get the ID of the modal
                 console.log("Closing modal with class 'close'", modalId);
-                closeModalById(modalId);
+                closeModalById(modalId);  // Close the modal
             } else {
                 console.error('Modal not found for closing element');
             }
         });
     });
-
+    
     function checkForModalOpening() {
         const urlParams = new URLSearchParams(window.location.search);
         const shouldOpenModal = urlParams.get('openModal');

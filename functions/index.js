@@ -6,9 +6,9 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const {verifyRecaptcha} = require("./recaptchaUtils");
-
+const {SESClient, SendEmailCommand} = require("@aws-sdk/client-ses");
+const sesClient = new SESClient({region: "us-east-1"});
 admin.initializeApp();
-
 const app = express();
 
 // CORS Configuration
@@ -40,45 +40,72 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for 465, false for other ports like 587
   auth: {
-    user: "AKIAZ6QBS7VB5ZJ2W77K",
-    pass: "BB6dLe22FBj+PXUHjAYcF4DdHaZ3Uta3Idjea8s9OuYk",
+    user: functions.config().smtp.user,
+    pass: functions.config().smtp.pass,
   },
 });
 
 // Endpoint to verify reCAPTCHA and sign up a user
+const SCORE_THRESHOLD = 4;
+const rateLimiter = {};
+
+const MAX_REQUESTS_PER_MINUTE = 30;
+const TIME_WINDOW_MS = 60000;
+// Endpoint to verify reCAPTCHA and sign up a user
 app.post("/verifyRecaptchaAndSignup", async (req, res) => {
   const {token, email, password} = req.body;
+  const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
-  console.log("Received token for verification:", token);
-  console.log("Received email:", email);
-  console.log("Received password: [Hidden for security]");
+  if (!rateLimiter[ip]) {
+    rateLimiter[ip] = {count: 1, lastRequest: Date.now()};
+  } else {
+    const timeElapsed = Date.now() - rateLimiter[ip].lastRequest;
+
+    // Reset count after time window has passed
+    if (timeElapsed > TIME_WINDOW_MS) {
+      rateLimiter[ip] = {count: 1, lastRequest: Date.now()};
+    } else {
+      rateLimiter[ip].count++;
+    }
+
+    // If the count exceeds the limit, reject the request
+    if (rateLimiter[ip].count > MAX_REQUESTS_PER_MINUTE) {
+      return res.status(429).json({
+        success: false,
+        message: "Too many requests. Please try again later.",
+      });
+    }
+  }
 
   try {
     console.log("Starting reCAPTCHA verification for signup");
 
-    const userAgent = req.headers["user-agent"] || "";
-    const userIpAddress = req.headers["x-forwarded-for"] ||
-    req.connection.remoteAddress || "";
-
-    console.log("User Agent:", userAgent);
-    console.log("User IP Address:", userIpAddress);
-
-    const recaptchaResponse = await
-    verifyRecaptcha(token, userAgent, userIpAddress, "signup");
-
-    console.log("Verification Result:",
-        JSON.stringify(recaptchaResponse, null, 2));
+    const recaptchaResponse = await verifyRecaptcha(
+        token,
+        req.headers["user-agent"],
+        ip,
+        "signup",
+    );
 
     if (!recaptchaResponse.tokenProperties.valid) {
-      console.error("Invalid", recaptchaResponse.tokenProperties.invalidReason);
       return res.status(400).json({
         success: false,
         message: "reCAPTCHA verification failed",
-        errorCodes: recaptchaResponse.tokenProperties.invalidReason,
       });
     }
 
-    console.log("reCAPTCHA verification passed");
+    // Step 3: Check the reCAPTCHA score
+    const score = recaptchaResponse.riskAnalysis.score;
+    console.log("reCAPTCHA score:", score);
+
+    if (score < SCORE_THRESHOLD) {
+      return res.status(403).json({
+        success: false,
+        message: "Low reCAPTCHA score. Signup blocked.",
+      });
+    }
+
+    console.log("reCAPTCHA passed with score:", score);
 
     const userExists = await
     admin.auth().getUserByEmail(email).catch(() => null);
@@ -95,38 +122,29 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       emailVerified: false,
     });
 
-    console.log("User creation successful. UID:", userRecord.uid);
-
     // Step 3: Generate email verification link
     const verificationLink = await
     admin.auth().generateEmailVerificationLink(email, {
-      url: "https://labase.languapps.com",
+      url: "https://labase.languapps.com", // Adjust URL as needed
       handleCodeInApp: true,
     });
-    console.log("Verification link generated:", verificationLink);
 
-    // Step 4: Send the email using SES via Nodemailer
+    // Step 4: Send the email using Nodemailer (SES)
     const mailOptions = {
       from: `Languapps <noreply@languapps.com>`,
       to: email,
       subject: "Verify your email for Languapps",
-      text: `Verify your email by clicking this link: ${verificationLink}`,
-      html: `<p>Verify your email by clicking this link:
-       <a href="${verificationLink}">Verify Email</a></p>`,
+      html: `<p>Click the link to verify: 
+      <a href="${verificationLink}">Verify Email</a></p>`,
     };
 
     await transporter.sendMail(mailOptions);
     console.log("Verification email sent to:", email);
-    // Now send the verification email manually
 
-    const tokenPayload = {
-      uid: userRecord.uid,
-      email: email,
-    };
-
+    // Return the response with JWT token
+    const tokenPayload = {uid: userRecord.uid, email: email};
     const jwtToken = jwt.sign(tokenPayload,
         functions.config().jwt.secret, {expiresIn: "24h"});
-    console.log("Generated JWT Token:", jwtToken);
 
     res.json({
       success: true,
@@ -134,19 +152,58 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       jwtToken: jwtToken,
     });
   } catch (error) {
-    if (error.code === "auth/email-already-exists") {
-      return res.status(400).json({
-        success: false,
-        message: "Email already exists",
-      });
+    console.error("Error during signup:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
+// Only send further transactional emails once the user is verified
+exports.sendTransactionalEmail =
+functions.https.onCall(async (data, context) => {
+  const email = data.email;
+  const ip = context.rawRequest.ip;// Get IP
+  if (!rateLimiter[ip]) {
+    rateLimiter[ip] = {count: 1, lastRequest: Date.now()};
+  } else {
+    const timeElapsed = Date.now() - rateLimiter[ip].lastRequest;
+
+    if (timeElapsed > TIME_WINDOW_MS) {
+      rateLimiter[ip] = {count: 1, lastRequest: Date.now()};
     } else {
-      console.error("Error during signup:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Server error",
-        error: error.message,
-      });
+      rateLimiter[ip].count++;
     }
+
+    if (rateLimiter[ip].count > MAX_REQUESTS_PER_MINUTE) {
+      throw new functions.https.HttpsError("resource-exhausted requests");
+    }
+  }
+
+  try {
+    const user = await admin.auth().getUserByEmail(email);
+    if (!user.emailVerified) {
+      throw new Error("Email not verified. Cannot send email via SES.");
+    }
+
+    // Send transactional email via SES
+    const sesParams = {
+      Destination: {ToAddresses: [email]},
+      Message: {
+        Body: {Text: {Data: "Languapps Welcomes"}},
+        Subject: {Data: "You're now part of the early community"},
+      },
+      Source: "thomas@languapps.com", // Must be a verified sender in SES
+    };
+    const command = new SendEmailCommand(sesParams);
+    const result = await sesClient.send(command);
+    console.log("Transactional email sent via SES:", result);
+    return {success: true, message: "Email sent"};
+  } catch (error) {
+    console.error("Error sending email via SES:", error);
+    throw new functions.https.HttpsError("internal", error.message);
   }
 });
 

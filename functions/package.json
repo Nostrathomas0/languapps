@@ -14,7 +14,9 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.670.0",
     "@google-cloud/recaptcha-enterprise": "^5.9.0",
+    "aws-sdk": "^2.1691.0",
     "axios": "^1.6.8",
     "cors": "^2.8.5",
     "express": "^4.19.2",
