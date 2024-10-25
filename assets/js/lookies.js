@@ -1,271 +1,272 @@
+
 //assets/js/lookies.js
 import { signUp } from './firebaseAuth.js';
 import { auth } from './firebaseInit.js';
 import { attachBlogPostListener, handleBlogPostSubmit } from './blogFormHandler.js';  // Adjust the path as needed
+// Utility Functions for Modals & Their Event Listeners
+console.log("Lookies loaded");
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOMContentLoaded event fired");
-    
-    // Utility functions for modals
-    function openModalById(modalId, stepId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'block';  // Open the modal
-            console.log(`Modal with ID ${modalId} is now open.`);
-            if (stepId) {
-                showModalStep(stepId);  // Show the specific step
-            }
-            // After opening the modal, check if the blog post form is present
-            const blogForm = document.getElementById('addBlogPostForm');
-            if (blogForm) {
-                attachBlogPostListener(blogForm);  // Attach listener to the blog post form
-            }
-        } else {
-            console.error(`Modal with ID ${modalId} not found.`);
-        }
-    }
-    
-    function closeModalById(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            console.log(`Closing modal with ID: ${modalId}`);
-            modal.style.display = 'none';
-        } else {
-            console.error(`Modal with ID ${modalId} not found.`);
-        }
-    }
-
-    
-    // Function to handle the transition between steps in modals
-    function transitionModalStep(currentStepId, nextStepId) {
-        const currentStep = document.getElementById(currentStepId);
-        const nextStep = document.getElementById(nextStepId);
-
-        if (currentStep && nextStep) {
-            currentStep.style.display = 'none';
-            nextStep.style.display = 'block';
-        } else {
-            console.error('Blog form not found.');
-        }
-    }  
-
-    const openModalButton = document.getElementById('openModalButton');
-    if (openModalButton) {
-        console.log("openModalButton found");
-        openModalButton.addEventListener('click', function() {
-            console.log("openModalButton clicked");
-            openModalById('auth-modal', 'step1');
+function showModalStep(stepId) {
+    const step = document.getElementById(stepId);
+    if (step) {
+        document.querySelectorAll('.modal-step').forEach(step => {
+            step.style.display = 'none';  // Hide all steps
         });
+        step.style.display = 'block';  // Show the specified step
+        console.log(`Step with ID ${stepId} is now visible.`);
     } else {
-        console.error('openModalButton not found');
+        console.error('Step not found:', stepId);
     }
+}
 
-    document.querySelectorAll('.close').forEach(function(element) {
-        element.addEventListener('click', function() {
-            const modal = element.closest('.modal');  // Find the closest modal container
-            if (modal) {
-                const modalId = modal.id;  // Get the ID of the modal
-                console.log("Closing modal with class 'close'", modalId);
-                closeModalById(modalId);  // Close the modal
-            } else {
-                console.error('Modal not found for closing element');
-            }
-        });
+// --- Function to Open a Modal by ID ---
+function openModalById(modalId, stepId = null) {
+    console.log("Attempting to open modal:", modalId);
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';  // Open the modal
+        console.log(`Modal with ID ${modalId} is now open.`);
+        if (stepId) {
+            showModalStep(stepId);
+        }
+        const blogForm = document.getElementById('addBlogPostForm');
+        if (blogForm && !blogForm.hasListener) {
+            attachBlogPostListener(blogForm);
+            blogForm.hasListener = true;
+            console.log("Blog post listener attached.");
+        }
+    } else {
+        console.error(`Modal with ID ${modalId} not found.`);
+    }
+};
+
+// Utility function for closing modals based on modal ID
+function closeModalById(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        console.log(`Closed modal with ID: ${modalId}`);
+    } else {
+        console.error(`Modal with ID ${modalId} not found.`);
+    }
+};
+
+// Attach click event to close buttons inside each modal
+document.querySelectorAll('.close').forEach(function(element) {
+    element.addEventListener('click', function() {
+        const modal = element.closest('.modal'); // Find closest modal container
+        if (modal) {
+            closeModalById(modal.id); // Use modal ID to close it
+        } else {
+            console.error('No modal container found for close button.');
+        }
     });
-    
-    function checkForModalOpening() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const shouldOpenModal = urlParams.get('openModal');
+});
 
-        if (shouldOpenModal === 'true') {
-            console.log("URL parameter indicates to open modal");
-            openModalById('auth-modal', 'step1');
-        }
+// --- Function to Transition Between Modal Steps ---
+function transitionModalStep(currentStepId, nextStepId) {
+    const currentStep = document.getElementById(currentStepId);
+    const nextStep = document.getElementById(nextStepId);
+
+    if (currentStep && nextStep) {
+        currentStep.style.display = 'none';
+        nextStep.style.display = 'block';
+        console.log(`Transitioned from step ${currentStepId} to ${nextStepId}`);
+    } else {
+        console.error("Modal step elements not found.");
     }
+}
 
-    function setCookie(name, value, days) {
-        let expires = "";
-        if (days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
+// --- Event Listener for 'Open Modal' Button ---
+const openModalButton = document.getElementById('openModalButton');
+if (openModalButton) {
+    console.log("Open modal button found");
+    openModalButton.addEventListener('click', () => {
+        console.log("Open modal button clicked");
+        openModalById('auth-modal', 'step1');
+    });
+} else {
+    console.error("Open modal button not found.");
+}
+
+// --- Check for URL parameter to open a modal on page load ---
+function checkForModalOpening() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldOpenModal = urlParams.get('openModal');
+
+    if (shouldOpenModal === 'true') {
+        console.log("URL parameter indicates opening the auth modal");
+        openModalById('auth-modal', 'step1');
     }
+}
 
-    function getCookie(name) {
-        const nameEQ = name + "=";
-        const ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-
-//    function eraseCookie(name) {
-//        setCookie(name, "", -1);
-//    }
-
-    async function applyLanguageSettings(language) {
-        try {
-            const response = await fetch(`assets/trans/${language}.json`);
-            const translations = await response.json();
-
-            document.querySelectorAll('[data-translate]').forEach(function (elem) {
-                const key = elem.getAttribute('data-translate');
-                if (translations[key]) {
-                    elem.textContent = translations[key];
-                }
-            });
-        } catch (error) {
-            console.error('Error loading or applying translations:', error);
-        }
-    }
-
-    function setLanguagePreference(language) {
-        setCookie('userLanguage', language, 365);
-        applyLanguageSettings(language);
-    }
-
-//    function acceptCookies() {
-//        setCookie('userConsent', 'accepted', 365);
-//        closeModalById('cookie-consent-modal');
-//    }
-
-//    function declineCookies() {
-//        setCookie('userConsent', 'declined', 365);
-//        closeModalById('cookie-consent-modal');
-//    }
-
-    function checkUserConsent() {
-        const consentGiven = getCookie('userConsent');
-        if (!consentGiven) {
-            console.log("User consent not found, showing consent modal");
-            openModalById('cookie-consent-modal');
-        } else {
-            console.log("User consent found");
-        }
-    }
-
-    function setupEventListeners() {
-        checkUserConsent();
-        
-        const acceptBtn = document.getElementById('accept-cookies');
-        const declineBtn = document.getElementById('decline-cookies');
-        const languageDropdown = document.getElementById('language-dropdown');
-        const loginButton = document.getElementById("loginButton");
-        const signUpForm = document.getElementById('signupForm');
-        const userDetailsForm = document.getElementById('userDetailsForm');
-        const addBlogPostForm = document.getElementById('addBlogPostForm');
-
-        if (acceptBtn) {
-            acceptBtn.addEventListener('click', handleAcceptClick);
-        }
-
-        if (declineBtn) { 
-            declineBtn.addEventListener('click', handleDeclineClick);
-        }
-
-        if (languageDropdown) {
-            languageDropdown.addEventListener('change', handleLanguageChange);
-        }
-
-        if (loginButton) {
-            loginButton.addEventListener('click', handleLoginClick);
-        }
-       
-        
-        function showModalStep(stepId) {
-            const step = document.getElementById(stepId);
-            if (step) {
-                document.querySelectorAll('.modal-step').forEach(step => {
-                    step.style.display = 'none';  // Hide all steps
-                });
-                step.style.display = 'block';  // Show the specified step
-                console.log(`Step with ID ${stepId} is now visible.`);
-            } else {
-                console.error('Step not found:', stepId);
-            }
-        }
-        
-        
-        if (signUpForm) {
-            // Remove previous listener before adding a new one
-            signUpForm.removeEventListener('submit', handleSignUp);
-            signUpForm.addEventListener('submit', handleSignUp);
-        }
-
-        if (userDetailsForm) {
-            userDetailsForm.removeEventListener('submit', handleUserDetails);
-            userDetailsForm.addEventListener('submit', handleUserDetails);
-        }
-
-        if (addBlogPostForm) {
-            addBlogPostForm.removeEventListener('submit', handleBlogPostSubmit);
-            addBlogPostForm.addEventListener('submit', handleBlogPostSubmit);
-        }
-    }
-
-    // Function handlers to manage events
-    function handleAcceptClick() {
-        setCookie('userConsent', 'accepted', 365);
-        closeModalById('cookie-consent-modal');
-    }
-
-    function handleDeclineClick() {
-        setCookie('userConsent', 'declined', 365);
-        closeModalById('cookie-consent-modal');
-    }
-
-    function handleLanguageChange(event) {
-        const language = event.target.value;
-        setLanguagePreference(language);
-        console.log("Language preference set to:", language);
-    }
-
-    function handleLoginClick() {
-        if (userIsAuthenticated()) {
-            openModalById('alreadyLoggedInModal');
-        } else {
-            openModalById('auth-modal');
-        }
-    }
-
-    function handleSignUp(event) {
-        event.preventDefault();
-        const submitButton = event.target.querySelector('button[type="submit"]');
-        submitButton.disabled = true; // Prevent double submission
-
-        const email = event.target.querySelector('#signupEmail').value;
-        const password = event.target.querySelector('#signupPassword').value;
-
-        signUp(email, password).then(() => {
-            console.log("Sending validation email to:", email);
-            transitionModalStep('step1', 'step2');
-        }).catch(error => {
-            console.error("Error during sign-up:", error);
-            submitButton.disabled = false; // Re-enable if error occurs
-        });
-    }
-
-    function handleUserDetails(event) {
-        event.preventDefault();
-        const userName = event.target.querySelector('#userName').value;
-        const activationCode = event.target.querySelector('#activationCode').value;
-        const password = event.target.querySelector('#choosePassword').value;
-        console.log("Verifying details for:", userName, "with code:", activationCode);
-        transitionModalStep('step2', 'step3');
-    }
-
-
-    function userIsAuthenticated() {
-        // Updated to use Firebase auth check
-        return !!auth.currentUser;
-    }
-
-    setupEventListeners();
+// Ensure modal opening is checked on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
     checkForModalOpening();
 });
-export { closeModalById };
+
+// Cookie Consent, Language Translation & Preference Settings
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function setLanguagePreference(language) {
+    setCookie('userLanguage', language, 365);
+    applyLanguageSettings(language);
+}
+
+async function applyLanguageSettings(language) {
+    try {
+        const response = await fetch(`assets/trans/${language}.json`);
+        const translations = await response.json();
+
+        document.querySelectorAll('[data-translate]').forEach(function(elem) {
+            const key = elem.getAttribute('data-translate');
+            if (translations[key]) {
+                elem.textContent = translations[key];
+            }
+        });
+    } catch (error) {
+        console.error('Error loading or applying translations:', error);
+    }
+}
+function checkUserConsent() {
+    const consentGiven = getCookie('userConsent');
+    if (!consentGiven) {
+        console.log("User consent not found, showing consent modal");
+        openModalById('cookie-consent-modal');
+    } else {
+        console.log("User consent found");
+    }
+}    
+function setupEventListeners() {
+    checkUserConsent();
+    
+    const acceptBtn = document.getElementById('accept-cookies');
+    const declineBtn = document.getElementById('decline-cookies');
+    const languageDropdown = document.getElementById('language-dropdown');
+    const loginButton = document.getElementById("loginButton");
+    const signUpForm = document.getElementById('signupForm');
+    const userDetailsForm = document.getElementById('userDetailsForm');
+    const addBlogPostForm = document.getElementById('addBlogPostForm');
+
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', handleAcceptClick);
+    }
+
+    if (declineBtn) { 
+        declineBtn.addEventListener('click', handleDeclineClick);
+    }
+
+    if (languageDropdown) {
+        languageDropdown.addEventListener('change', handleLanguageChange);
+    }
+    
+    if (loginButton) {
+        loginButton.addEventListener('click', () => {
+            console.log('Login Button Clicked');
+            openModalById('auth-modal', 'step1');
+        });
+    }
+
+    if (signUpForm) {
+        // Remove previous listener before adding a new one
+        signUpForm.removeEventListener('submit', handleSignUp);
+        signUpForm.addEventListener('submit', handleSignUp);
+    }
+
+    if (userDetailsForm) {
+        userDetailsForm.removeEventListener('submit', handleUserDetails);
+        userDetailsForm.addEventListener('submit', handleUserDetails);
+    }
+
+    if (addBlogPostForm) {
+        addBlogPostForm.removeEventListener('submit', handleBlogPostSubmit);
+        addBlogPostForm.addEventListener('submit', handleBlogPostSubmit);
+    }
+}
+
+
+// Cookie functions 
+
+function eraseCookie(name) {
+    setCookie(name, "", -1);
+}
+function acceptCookies() {
+    setCookie('userConsent', 'accepted', 365);
+    closeModalById('cookie-consent-modal');
+}
+
+function declineCookies() {
+    setCookie('userConsent', 'declined', 365);
+    closeModalById('cookie-consent-modal');
+}
+// Function handlers to manage events
+function handleAcceptClick() {
+    setCookie('userConsent', 'accepted', 365);
+    closeModalById('cookie-consent-modal');
+}
+
+function handleDeclineClick() {
+    setCookie('userConsent', 'declined', 365);
+    closeModalById('cookie-consent-modal');
+}
+
+function handleLanguageChange(event) {
+    const language = event.target.value;
+    setLanguagePreference(language);
+    console.log("Language preference set to:", language);b
+}
+
+
+function handleSignUp(event) {
+    event.preventDefault();
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true; // Prevent double submission
+
+    const email = event.target.querySelector('#signupEmail').value;
+    const password = event.target.querySelector('#signupPassword').value;
+
+    signUp(email, password).then(() => {
+        console.log("Sending validation email to:", email);
+        transitionModalStep('step1', 'step2');
+    }).catch(error => {
+        console.error("Error during sign-up:", error);
+        submitButton.disabled = false; // Re-enable if error occurs
+    });
+}
+function handleUserDetails(event) {
+    event.preventDefault();
+    const userName = event.target.querySelector('#userName').value;
+    const activationCode = event.target.querySelector('#activationCode').value;
+    const password = event.target.querySelector('#choosePassword').value;
+    console.log("Verifying details for:", userName, "with code:", activationCode);
+    transitionModalStep('step2', 'step3');
+}
+
+
+function userIsAuthenticated() {
+    return !!auth.currentUser;
+};
+
+setupEventListeners();
+checkForModalOpening();
+       
+export { closeModalById, openModalById, showModalStep, transitionModalStep, userIsAuthenticated };

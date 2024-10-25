@@ -21,7 +21,6 @@ const auth = getAuth(app);
 // Attach db to the window object for global access
 window.db = db;
 console.log('Firestore initialized:', db);
-console.log('sendEmailVerification from Firebase initialized:', sendEmailVerification);
 
 // Exporting necessary variables and functions for use in other modules
 export { app, db, auth, onAuthStateChanged, sendEmailVerification, signInWithEmailAndPassword, signOut  };

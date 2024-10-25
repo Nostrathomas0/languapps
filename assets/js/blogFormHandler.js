@@ -1,7 +1,7 @@
 // blogFormHandler.js
 import { closeModalById } from './lookies.js';  // Adjust the path as necessary
 import { db } from './firebaseInit.js';  // Ensures Firebase is initialized
-import { collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 function attachBlogPostListener(blogForm) {
     // Make sure the listener is not attached multiple times

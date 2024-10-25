@@ -1,8 +1,6 @@
 // assets/js/firebaseAuth.js
 import { generateRecaptchaToken } from './recapAuth.js';
-import { auth, sendEmailVerification, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
-
-console.log('sendEmailVerification imported correctly:', sendEmailVerification);
+import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
 
 function setAuthTokenCookie(token) {
   const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;

@@ -47,10 +47,8 @@
 			<section id="intro" class="main style1 dark fullscreen">
 				<div class="content">
 					<h2>Languapps</h2>
-				
-					<button id="openModalButton">Login / Register</button> 
-				
-					<p data-translate="statement">Play Hangman in English <br>Guess letters to solve <br> Hint : fruits and vegetables. </p>
+					<button id="openModalButton">Login / Register</button>
+					<p data-translate="statement">Hangman <br>Guess letters to solve <br> Hint : fruits and vegetables. </p>
 					<header>  <!-- Hangman Game Elements -->
 						<div id="hangman-container">
 							<img id="hangman-image" src="/images/hang/h0.png" alt="hangman">
@@ -200,33 +198,33 @@
 					</div>
 					<div>
 						<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign-Up Form</title>
-    <style>
-        .honeypot {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <form id="sign-up-form" action="/signup" method="POST">
-        <!-- Normal email input -->
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        
-        <!-- Honeypot field (should not be filled by legitimate users) -->
-        <div class="honeypot">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username">
-        </div>
-        
-        <button type="submit">Sign Up</button>
-    </form>
-</body>
-</html>
+					<html lang="en">
+					<head>
+						<meta charset="UTF-8">
+						<meta name="viewport" content="width=device-width, initial-scale=1.0">
+						<title>Sign-Up Form</title>
+						<style>
+							.honeypot {
+								display: none;
+							}
+						</style>
+					</head>
+					<body>
+						<form id="sign-up-form" action="/signup" method="POST">
+							<!-- Normal email input -->
+							<label for="email">Email:</label>
+							<input type="email" id="email" name="email" required>
+							
+							<!-- Honeypot field (should not be filled by legitimate users) -->
+							<div class="honeypot">
+								<label for="username">Username:</label>
+								<input type="text" id="username" name="username">
+							</div>
+							
+							<button type="submit">Sign Up</button>
+						</form>
+					</body>
+					</html>
 
 					</div>
 				</div>
@@ -262,7 +260,7 @@
 			<!-- Auth Modal -->
 			<div id="auth-modal" class="modal">
 				<div class="modal-content">
-					<span class="close" onclick="closeModalById('auth-modal')">&times;</span>
+					<span class="close">&times;</span>
 					
 					<div id="step1" class="modal-step">
 						<h2>Sign up</h2>
@@ -301,7 +299,7 @@
 			</div>
 			<div id="alreadyLoggedInModal" class="modal">
 				<div class="modal-content">
-					<span class="close" onclick="closeModalById('alreadyLoggedInModal')">&times;</span>
+					<span class="close">&times;</span>
 					<p>You are already logged in!</p>
 				</div>
 			</div>
@@ -324,10 +322,11 @@
 		<script src="assets/js/util.js"></script>
 		<script src="assets/js/main.js"></script>
 		
+	
 		<!-- Firebase Initialization -->
-		<script type="module" src="assets/js/firebaseInit.js"></script>
-		<script type="module" src="/assets/js/blogFormHandler.js"></script>
-
+		<!--<script type="module" src="assets/js/firebaseInit.js"></script>
+		<script type="module" src="/assets/js/blogFormHandler.js"></script>-->
+		
 		<!-- reCAPTCHA script -->
 		<script src="https://www.google.com/recaptcha/enterprise.js?render=6LcewCcqAAAAAJvJ_Oti9lFKy_MaxcUHTmt8rDFE"></script>
 	
@@ -337,11 +336,11 @@
 
 		<!-- Other scripts -->
 		<script type="module" src="assets/js/games.js"></script>
-		<script type="module" src="assets/js/lookies.js"></script>
 		<script src="assets/js/burger.js"></script>
-		
+		<!-- Lookies-->
+		<script type="module" src="assets/js/lookies.js"></script>	
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171464578-1"></script>
-	
+		
 	</body>
 </html>
