@@ -46,7 +46,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Endpoint to verify reCAPTCHA and sign up a user
-const SCORE_THRESHOLD = 4;
+const SCORE_THRESHOLD = .5;
 const rateLimiter = {};
 
 const MAX_REQUESTS_PER_MINUTE = 30;

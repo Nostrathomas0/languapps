@@ -2478,7 +2478,7 @@ input, select, textarea {
 	}
 
 	#letter-buttons button {
-		font-size: 14px; /* Smaller font size */
+		font-size: 15px; /* Smaller font size */
 		padding: 5px 10px; /* Smaller padding */
 		margin: 5px; /* Space out buttons */
 	}
@@ -2535,6 +2535,9 @@ input, select, textarea {
 
 #work header h2, #work p {
     color: #000000; /* Ensures text is black for contrast against the white background */
+}
+.honeypot {
+	display: none;
 }
 /* General Modal Styles */
 .modal {

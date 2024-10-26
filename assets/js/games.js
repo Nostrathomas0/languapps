@@ -111,30 +111,147 @@ function disableButton(letter) {
 }
 
 // Section 2: Random Sentence Generator
-function generateRandomSentence() {
-    const subjectPronouns = ['I', 'You', 'He', 'She', 'They'];
-    const objectPronouns = ['me', 'you', 'him', 'her', 'them'];
-    const determiners = ['the', 'a', 'my', 'your'];
-    const nouns = ['cat', 'dog', 'pizza', 'music', 'car'];
+//function generateRandomSentence() {
+//    const subjectPronouns = ['I', 'You', 'He', 'She', 'They'];
+//    const objectPronouns = ['me', 'you', 'him', 'her', 'them'];
+//    const determiners = ['the', 'a', 'my', 'your'];
+//    const nouns = ['cat', 'dog', 'pizza', 'music', 'car'];
+//
+//    const verbs = {
+//        base: ['love', 'convince', 'show', 'enjoy', 'dislike', 'prefer'],
+//        thirdPersonSingular: ['loves', 'convinces', 'shows', 'enjoys', 'dislikes', 'prefers']
+//    };
+//
+//    function getRandomElement(arr) {
+//        return arr[Math.floor(Math.random() * arr.length)];
+//    }
+//
+//    function isThirdPersonSingular(subject) {
+//        return !['I', 'You', 'They'].includes(subject);
+//    }
+//
+//    const subject = getRandomElement(subjectPronouns);
+//    const verb = isThirdPersonSingular(subject) ? getRandomElement(verbs.thirdPersonSingular) : getRandomElement(verbs.base);
+//    const object = getRandomElement(objectPronouns);
+//
+//    return `${subject} ${verb} ${object}.`;
 
-    const verbs = {
-        base: ['love', 'convince', 'show', 'enjoy', 'dislike', 'prefer'],
-        thirdPersonSingular: ['loves', 'convinces', 'shows', 'enjoys', 'dislikes', 'prefers']
-    };
+//3.2 generateFortune
 
-    function getRandomElement(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function isThirdPersonSingular(subject) {
-        return !['I', 'You', 'They'].includes(subject);
-    }
-
-    const subject = getRandomElement(subjectPronouns);
-    const verb = isThirdPersonSingular(subject) ? getRandomElement(verbs.thirdPersonSingular) : getRandomElement(verbs.base);
-    const object = getRandomElement(objectPronouns);
-
-    return `${subject} ${verb} ${object}.`;
+const templates = [
+    "You will {action} {object} {time}",
+    "An {adjective} {noun} has been {verbPastParticiple}.",
+    "The {noun} {action} {adverb}.",
+    "Expect {object} to {action} {time}.",
+    "An {adjective} opportunity is coming your way.",
+    "Your {noun} will {action} soon.",
+    "Embrace the {noun} that {action}.",
+    "An {adjective} journey awaits you {time}.",
+    "The future {verb} {noun}.",
+    "You are destined to {action} {object}."
+]
+const wordLists = {
+    action: [
+        "embrace",
+        "discover",
+        "achieve",
+        "overcome",
+        "pursue",
+        "seek",
+        "find",
+        "nurture",
+        "unlock",
+        "cultivate"
+    ],
+    object: [
+        "new opportunities",
+        "hidden talents",
+        "inner strength",
+        "lasting relationships",
+        "unforeseen challenges",
+        "great success",
+        "unexpected joys",
+        "personal growth",
+        "lasting happiness",
+        "meaningful connections"
+    ],
+    time: [
+        "soon",
+        "in the near future",
+        "unexpectedly",
+        "before long",
+        "in the coming months",
+        "shortly",
+        "in due time",
+        "when you least expect it",
+        "at this moment",
+        "in the next phase of your life"
+    ],
+    adjective: [
+        "honest",
+        "unexpected",
+        "earnest",
+        "exciting",
+        "amorphous",
+        "inspiring",
+        "unfolding",
+        "exciting",
+        "irascable"
+    ],
+    noun: [
+        "opportunity",
+        "journey",
+        "challenge",
+        "path",
+        "adventure",
+        "experience",
+        "turning point",
+        "moment",
+        "chapter",
+        "phase"
+    ],
+    verbPastParticiple: [
+        "laid",
+        "built",
+        "established",
+        "created",
+        "designed",
+        "implemented",
+        "initiated",
+        "crafted",
+        "developed",
+        "formed"
+    ],
+    adverb: [
+        "steadily",
+        "gradually",
+        "quietly",
+        "swiftly",
+        "boldly",
+        "gently",
+        "confidently",
+        "gracefully",
+        "boldly",
+        "quietly"
+    ]
+};
+function getRandomElement(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+function generateFortune() {
+    const template = getRandomElement(templates);
+    
+    // Replace placeholders with random words/phrases
+    const fortune = template
+        .replace("{action}", getRandomElement(wordLists.action))
+        .replace("{object}", getRandomElement(wordLists.object))
+        .replace("{time}", getRandomElement(wordLists.time))
+        .replace("{adjective}", getRandomElement(wordLists.adjective))
+        .replace("{noun}", getRandomElement(wordLists.noun))
+        .replace("{verbPastParticiple}", getRandomElement(wordLists.verbPastParticiple))
+        .replace("{adverb}", getRandomElement(wordLists.adverb));
+    
+    return fortune;
 }
 
 // Section 3: Blog Post Loader
@@ -182,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (randomSentenceForm) {
         randomSentenceForm.addEventListener('submit', event => {
             event.preventDefault();
-            const randomSentence = generateRandomSentence();
+            const randomSentence = generateFortune();
             document.getElementById('random-sentence').textContent = randomSentence;
         });
     }

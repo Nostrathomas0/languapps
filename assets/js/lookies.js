@@ -21,6 +21,13 @@ function showModalStep(stepId) {
 
 // --- Function to Open a Modal by ID ---
 function openModalById(modalId, stepId = null) {
+    // Honeypot check
+    const honeypot = document.getElementById('username');
+    if (honeypot && honeypot.value !== '') {
+        console.log("Honeypot field is filled, blocking access.");
+        return; // Stop the function if the honeypot is filled
+    }
+
     console.log("Attempting to open modal:", modalId);
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -223,18 +230,15 @@ function handleAcceptClick() {
     setCookie('userConsent', 'accepted', 365);
     closeModalById('cookie-consent-modal');
 }
-
 function handleDeclineClick() {
     setCookie('userConsent', 'declined', 365);
     closeModalById('cookie-consent-modal');
 }
-
 function handleLanguageChange(event) {
     const language = event.target.value;
     setLanguagePreference(language);
     console.log("Language preference set to:", language);b
 }
-
 
 function handleSignUp(event) {
     event.preventDefault();
