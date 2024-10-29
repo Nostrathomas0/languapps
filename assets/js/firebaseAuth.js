@@ -2,11 +2,7 @@
 import { generateRecaptchaToken } from './recapAuth.js';
 import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
 
-function setAuthTokenCookie(token) {
-  const domain = window.location.hostname.endsWith('.languapps.com') ? '.languapps.com' : window.location.hostname;
-  document.cookie = `authToken=${token}; max-age=3600; path=/; domain=${domain}; secure; samesite=none; httponly`;
-  console.log('Auth token set:', token);
-}
+
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, user => {
@@ -63,7 +59,7 @@ async function signUp(email, password) {
     console.log("Response from server:", data);
 
     // Step 5: Handle the backend response
-    if (data.success) {
+    if (data.success && data.authToken) {
       console.log('Sign-up and reCAPTCHA verification successful');
       // Do something on success, like updating the UI or redirecting
       transitionModalStep('step1', 'step2'); // Example: transitioning to the next step in the UI
