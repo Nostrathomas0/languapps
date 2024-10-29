@@ -2,7 +2,19 @@
 import { generateRecaptchaToken } from './recapAuth.js';
 import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
 
+// Function to set the JWT token as a cookie
+function setAuthToken(token) {
+  const cookieName = 'authToken';
+  const maxAge = 3600; // 1 hour in seconds, adjust as needed
+  document.cookie = `${cookieName}=${token}; max-age=${maxAge}; path=/; secure; samesite=strict`;
+}
 
+// Utility function to clear the JWT token from cookies and localStorage
+function clearAuthToken() {
+  document.cookie = `jwtToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none;`;
+  localStorage.removeItem('jwtToken');
+  console.log("JWT token cleared from cookie and localStorage");
+}
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, async (user) => {
@@ -14,6 +26,9 @@ onAuthStateChanged(auth, async (user) => {
 
       // Set the auth token cookie
       document.cookie = `jwtToken=${data.jwtToken}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
+      console.log("JWT token from response:", data.jwtToken);
+      console.log("Document cookie after setting:", document.cookie);
+      setAuthToken(idToken);
 
       // Redirect to subdomain if already on it
       if (window.location.hostname === 'labase.languapps.com') {
@@ -24,7 +39,8 @@ onAuthStateChanged(auth, async (user) => {
     }
   } else {
     // Clear the auth token cookie
-    document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none";
+    clearAuthToken;
+
 
     // Redirect to main domain if signed out
     if (window.location.hostname === 'labase.languapps.com') {
@@ -70,7 +86,7 @@ async function signUp(email, password) {
 
     // Step 5: Handle the backend response
     if (data.success && data.jwtToken) {
-      document.cookie = `authToken=${data.jwtToken}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none;`;
+      setAuthToken(data,jwtToken);
       console.log("JWT token saved to cookie");
       // Do something on success, like updating the UI or redirecting
       transitionModalStep('step1', 'step2'); // Example: transitioning to the next step in the UI
@@ -91,7 +107,9 @@ async function signIn(email, password) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     console.log("User signed in:", userCredential.user);
-    // Further signIn logic here...
+     // Get Firebase ID token
+     const idToken = await userCredential.user.getIdToken();
+     setAuthToken(idToken);
   } catch (error) {
     console.error("Error signing in:", error);
     alert('Sign-in failed: ' + error.message);

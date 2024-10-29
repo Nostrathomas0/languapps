@@ -149,7 +149,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     res.json({
       success: true,
       message: "User registered and verification email sent.",
-      authToken: jwtToken,
+      jwtToken,
     });
   } catch (error) {
     console.error("Error during signup:", error);
