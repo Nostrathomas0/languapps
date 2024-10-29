@@ -13,7 +13,7 @@ onAuthStateChanged(auth, async (user) => {
       const token = await user.getIdToken();
 
       // Set the auth token cookie
-      document.cookie = `authToken=${token}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
+      document.cookie = `jwtToken=${data.jwtToken}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
 
       // Redirect to subdomain if already on it
       if (window.location.hostname === 'labase.languapps.com') {
