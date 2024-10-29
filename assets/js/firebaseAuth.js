@@ -69,8 +69,9 @@ async function signUp(email, password) {
     console.log("Response from server:", data);
 
     // Step 5: Handle the backend response
-    if (data.success && data.authToken) {
-      console.log('Sign-up and reCAPTCHA verification successful');
+    if (data.success && data.jwtToken) {
+      document.cookie = `authToken=${data.jwtToken}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none;`;
+      console.log("JWT token saved to cookie");
       // Do something on success, like updating the UI or redirecting
       transitionModalStep('step1', 'step2'); // Example: transitioning to the next step in the UI
     } else {
