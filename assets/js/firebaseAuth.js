@@ -5,24 +5,34 @@ import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut as fireba
 
 
 // Monitor authentication state changes
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async (user) => {
   console.log('Auth state changed:', user);
+
   if (user) {
-    user.getIdToken().then(token => {
-      setAuthTokenCookie(token);
+    try {
+      const token = await user.getIdToken();
+
+      // Set the auth token cookie
+      document.cookie = `authToken=${token}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
+
+      // Redirect to subdomain if already on it
       if (window.location.hostname === 'labase.languapps.com') {
         window.location.href = `https://labase.languapps.com/?authToken=${token}`;
       }
-    }).catch(error => {
+    } catch (error) {
       console.error('Error getting token:', error);
-    });
+    }
   } else {
-    document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none; httponly";
+    // Clear the auth token cookie
+    document.cookie = "authToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none";
+
+    // Redirect to main domain if signed out
     if (window.location.hostname === 'labase.languapps.com') {
       window.location.href = "https://languapps.com/?auth-modal";
     }
   }
 });
+
 
 function transitionModalStep(currentStepId, nextStepId) {
   const currentStep = document.getElementById(currentStepId);
