@@ -1,46 +1,62 @@
 // assets/js/firebaseAuth.js
 import { generateRecaptchaToken } from './recapAuth.js';
-import { auth, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from './firebaseInit.js';
+import { 
+  auth, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut as firebaseSignOut, 
+  createUserWithEmailAndPassword 
+} from './firebaseInit.js';
 
-// Function to set the JWT token as a cookie
-function setAuthToken(token) {
-  const cookieName = 'authToken';
+// Utility function to set the Firebase ID token in both cookies and localStorage
+function setFirebaseAuthToken(token) {
+  const cookieName = 'firebaseJwtToken';
   const maxAge = 3600; // 1 hour in seconds, adjust as needed
-  document.cookie = `${cookieName}=${token}; max-age=${maxAge}; path=/; secure; samesite=strict`;
+  document.cookie = `${cookieName}=${token}; max-age=${maxAge}; path=/; domain=.languapps.com; secure; samesite=none;`;
+  localStorage.setItem('firebaseJwtToken', token);
+  console.log("Firebase JWT token saved to cookie and localStorage:", token);
 }
 
-// Utility function to clear the JWT token from cookies and localStorage
-function clearAuthToken() {
-  document.cookie = `jwtToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none;`;
-  localStorage.removeItem('jwtToken');
-  console.log("JWT token cleared from cookie and localStorage");
+// Utility function to clear the Firebase ID token from cookies and localStorage
+function clearFirebaseAuthToken() {
+  const cookieName = 'firebaseJwtToken';
+  document.cookie = `${cookieName}=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none;`;
+  localStorage.removeItem('firebaseJwtToken');
+  console.log("Firebase JWT token cleared from cookie and localStorage");
 }
 
-// Monitor authentication state changes
+// Utility function to set the Backend JWT token in localStorage
+function setBackendAuthToken(token) {
+  localStorage.setItem('backendJwtToken', token);
+  console.log("Backend JWT token saved to localStorage:", token);
+}
+
+// Utility function to clear the Backend JWT token from localStorage
+function clearBackendAuthToken() {
+  localStorage.removeItem('backendJwtToken');
+  console.log("Backend JWT token cleared from localStorage");
+}
+
+// Monitor Firebase authentication state changes
 onAuthStateChanged(auth, async (user) => {
-  console.log('Auth state changed:', user);
+  console.log('Firebase Auth state changed:', user);
 
   if (user) {
     try {
-      const token = await user.getIdToken();
-
-      // Set the auth token cookie
-      document.cookie = `jwtToken=${data.jwtToken}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
-      console.log("JWT token from response:", data.jwtToken);
-      console.log("Document cookie after setting:", document.cookie);
-      setAuthToken(idToken);
+      // Get Firebase ID token
+      const idToken = await user.getIdToken();
+      setFirebaseAuthToken(idToken);
 
       // Redirect to subdomain if already on it
       if (window.location.hostname === 'labase.languapps.com') {
-        window.location.href = `https://labase.languapps.com/?authToken=${token}`;
+        window.location.href = `https://labase.languapps.com/?authToken=${idToken}`;
       }
     } catch (error) {
-      console.error('Error getting token:', error);
+      console.error('Error getting Firebase token:', error);
     }
   } else {
-    // Clear the auth token cookie
-    clearAuthToken;
-
+    // Clear Firebase auth token
+    clearFirebaseAuthToken();
 
     // Redirect to main domain if signed out
     if (window.location.hostname === 'labase.languapps.com') {
@@ -48,7 +64,6 @@ onAuthStateChanged(auth, async (user) => {
     }
   }
 });
-
 
 function transitionModalStep(currentStepId, nextStepId) {
   const currentStep = document.getElementById(currentStepId);
@@ -62,7 +77,6 @@ function transitionModalStep(currentStepId, nextStepId) {
     console.error('Transition error: Step elements not found');
   }
 }
-
 
 async function signUp(email, password) {
   try {
@@ -84,10 +98,14 @@ async function signUp(email, password) {
     const data = await response.json();
     console.log("Response from server:", data);
 
+    // Debugging: Log individual properties
+    console.log("data.success:", data.success, "data.jwtToken:", data.jwtToken);
+
     // Step 5: Handle the backend response
     if (data.success && data.jwtToken) {
-      setAuthToken(data,jwtToken);
-      console.log("JWT token saved to cookie");
+      setBackendAuthToken(data.jwtToken);
+      console.log("Backend JWT token saved to localStorage");
+
       // Do something on success, like updating the UI or redirecting
       transitionModalStep('step1', 'step2'); // Example: transitioning to the next step in the UI
     } else {
@@ -101,15 +119,31 @@ async function signUp(email, password) {
   }
 }
 
-
-// Ensure signIn is correctly defined in firebaseAuth.js
 async function signIn(email, password) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     console.log("User signed in:", userCredential.user);
-     // Get Firebase ID token
-     const idToken = await userCredential.user.getIdToken();
-     setAuthToken(idToken);
+
+    // Get Firebase ID token
+    const idToken = await userCredential.user.getIdToken();
+    setFirebaseAuthToken(idToken);
+
+    // Optionally, send the ID token to your backend to get a custom JWT
+    /*
+    const response = await fetch('https://your-backend.com/getCustomToken', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: idToken }),
+    });
+    const data = await response.json();
+    if (data.success && data.jwtToken) {
+      setBackendAuthToken(data.jwtToken);
+    }
+    */
+
+    // Redirect or update UI as needed
+    // Example: transitionModalStep('loginStep', 'dashboardStep');
+    console.log("Sign-in successful and tokens are set.");
   } catch (error) {
     console.error("Error signing in:", error);
     alert('Sign-in failed: ' + error.message);
@@ -129,6 +163,8 @@ async function handleSignOut() {
   try {
     await firebaseSignOut(auth);
     console.log('User signed out.');
+    clearFirebaseAuthToken();
+    clearBackendAuthToken();
     alert('Signed out successfully.');
     window.location.href = "https://languapps.com";
   } catch (error) {
@@ -137,7 +173,7 @@ async function handleSignOut() {
   }
 }
 
-// Function to send the JWT token to the Lambda function
+// Function to send the Backend JWT token to the Lambda function
 async function sendJWTToLambda(jwtToken) {
   try {
     const lambdaResponse = await fetch("https://jjvdfnsx2ii5qf4nblmpyzysju0kfobg.lambda-url.us-east-1.on.aws/", {
