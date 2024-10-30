@@ -7,13 +7,6 @@ import {
   signOut as firebaseSignOut 
 } from './firebaseInit.js';
 
-// Function to set the JWT token as a cookie
-function setAuthToken(token) {
-  const cookieName = 'authToken';
-  const maxAge = 3600; // 1 hour in seconds, adjust as needed
-  document.cookie = `${cookieName}=${token}; max-age=${maxAge}; path=/; secure; samesite=strict`;
-  console.log("Auth token set as cookie:", token);
-}
 
 // Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
@@ -60,7 +53,7 @@ onAuthStateChanged(auth, async (user) => {
       console.log("Firebase ID token obtained:", token);
 
       // Set the auth token cookie
-      setAuthToken(token);
+      setBackendAuthToken(token);
 
       // Optionally, set the jwtToken cookie if needed for backend
       // Note: Ensure the backend expects this cookie
@@ -164,7 +157,7 @@ async function signIn(email, password) {
     const idToken = await userCredential.user.getIdToken();
     console.log("Firebase ID token obtained:", idToken);
 
-    setAuthToken(idToken);
+    setBackendAuthToken(idToken);
     console.log("Auth token set as cookie successfully");
 
     // Optionally, set the backend JWT token if your backend returns it on sign-in
