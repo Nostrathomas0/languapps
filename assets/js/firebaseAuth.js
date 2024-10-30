@@ -22,20 +22,21 @@ function clearAuthToken() {
   console.log("JWT tokens cleared from cookies and localStorage");
 }
 
-// Function to set the Backend JWT token in localStorage
+// Function to set the Backend JWT token in localStorage and as a cookie
 function setBackendAuthToken(token) {
   try {
+    // Store in localStorage
     localStorage.setItem('backendJwtToken', token);
     console.log("Backend JWT token saved to localStorage:", token);
+    
+    // Set as a cookie accessible to subdomains
+    document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=lax`;
+    console.log("Backend JWT token set as cookie for subdomains.");
   } catch (error) {
     console.error("Error setting backend JWT token:", error);
     throw new Error("Failed to set backend JWT token");
   }
 }
-// Debugging log
-console.log("setBackendAuthToken defined:", typeof setBackendAuthToken);
-
-
 
 // Function to clear the Backend JWT token from localStorage
 function clearBackendAuthToken() {
