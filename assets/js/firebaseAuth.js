@@ -91,39 +91,24 @@ async function signUp(email, password) {
     }
 
     // Step 4: Parse the response from the backend
-    let data;
-    try {
-      data = await response.json();
-      console.log("Parsed response from server:", data);
-    } catch (parseError) {
-      console.error("Error parsing JSON response:", parseError);
-      throw new Error("Invalid server response");
-    }
-      // **Enhanced Logging**
-      console.log("data.success:", data.success, "type:", typeof data.success);
-      console.log("data.jwtToken:", data.jwtToken, "type:", typeof data.jwtToken);
-  
+    const data = await response.json();
+    console.log("Response from server:", data);
+
+    // **Enhanced Logging**
+    console.log("data.success:", data.success, "type:", typeof data.success);
+    console.log("data.jwtToken:", data.jwtToken, "type:", typeof data.jwtToken);
+
 
     // Step 5: Handle the backend response
     if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
       console.log("Entering if condition: data.success === true && typeof data.jwtToken === 'string' && jwtToken is not empty");
 
-      try {
-        setBackendAuthToken(data.jwtToken);
-        console.log("Backend JWT token set successfully");
-      } catch (tokenError) {
-        console.error("Error setting backend JWT token:", tokenError);
-        throw new Error("Failed to set backend JWT token");
-      }
-
-      try {
-        transitionModalStep('step1', 'step2'); 
-        console.log("Transitioned to step2 successfully");
-      } catch (transitionError) {
-        console.error("Error during modal transition:", transitionError);
-        throw new Error("Failed to transition modal");
-      }
-
+      setBackendAuthToken(data.jwtToken);
+      console.log("Backend JWT token set successfully");
+    
+      transitionModalStep('step1', 'step2'); 
+      console.log("Transitioned to step2 successfully");
+     
       // Ensure the function exits here to prevent further execution
       return;
     } else {
