@@ -26,12 +26,15 @@ function clearAuthToken() {
 function setBackendAuthToken(token) {
   try {
     // Store in localStorage
-    localStorage.setItem('backendJwtToken', token);
-    console.log("Backend JWT token saved to localStorage:", token);
+    // localStorage.setItem('backendJwtToken', token);
+    // console.log("Backend JWT token saved to localStorage:", token);
     
     // Set as a cookie accessible to subdomains
     document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=lax`;
     console.log("Backend JWT token set as cookie for subdomains.");
+
+    // Log all cookies for debugging
+    console.log("Current cookies:", document.cookie);
   } catch (error) {
     console.error("Error setting backend JWT token:", error);
     throw new Error("Failed to set backend JWT token");
@@ -59,6 +62,9 @@ onAuthStateChanged(auth, async (user) => {
 
       // Set the auth token cookie
       setBackendAuthToken(token);
+      
+       // Log the current cookies
+       console.log("Cookies after setting backendJwtToken:", document.cookie);
 
       // Optionally, set the jwtToken cookie if needed for backend
       // Note: Ensure the backend expects this cookie
