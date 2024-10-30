@@ -32,6 +32,10 @@ function setBackendAuthToken(token) {
     throw new Error("Failed to set backend JWT token");
   }
 }
+// Debugging log
+console.log("setBackendAuthToken defined:", typeof setBackendAuthToken);
+
+
 
 // Function to clear the Backend JWT token from localStorage
 function clearBackendAuthToken() {
@@ -127,6 +131,10 @@ async function signUp(email, password) {
     // Step 5: Handle the backend response
     if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
       console.log("Entering if condition: data.success === true && typeof data.jwtToken === 'string' && jwtToken is not empty");
+
+      // Debugging log
+      console.log("setBackendAuthToken defined inside signUp:", typeof setBackendAuthToken);
+
 
       setBackendAuthToken(data.jwtToken);
       console.log("Backend JWT token set successfully");
