@@ -10,45 +10,15 @@ import {
 
 // Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
-  // Clear the jwtToken cookie
-  document.cookie = `jwtToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none;`;
-  
-  // Clear the authToken cookie
-  document.cookie = `authToken=; max-age=0; path=/; secure; samesite=strict;`;
-  
-  // Clear the backendJwtToken from localStorage
-  clearBackendAuthToken();
-  
+  document.cookie = `backendJwtToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none;`;
   console.log("JWT tokens cleared from cookies and localStorage");
 }
 
 // Function to set the Backend JWT token in localStorage and as a cookie
 function setBackendAuthToken(token) {
-  try {
-    // Store in localStorage
-    // localStorage.setItem('backendJwtToken', token);
-    // console.log("Backend JWT token saved to localStorage:", token);
-    
-    // Set as a cookie accessible to subdomains
+
     document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
     console.log("Backend JWT token set as cookie for subdomains.");
-
-    // Log all cookies for debugging
-    console.log("Current cookies:", document.cookie);
-  } catch (error) {
-    console.error("Error setting backend JWT token:", error);
-    throw new Error("Failed to set backend JWT token");
-  }
-}
-
-// Function to clear the Backend JWT token from localStorage
-function clearBackendAuthToken() {
-  try {
-    localStorage.removeItem('backendJwtToken');
-    console.log("Backend JWT token cleared from localStorage");
-  } catch (error) {
-    console.error("Error clearing backend JWT token:", error);
-  }
 }
 
 // Monitor authentication state changes
@@ -58,17 +28,8 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
       const token = await user.getIdToken();
-      console.log("Firebase ID token obtained:", token);
-
-      // Set the auth token cookie
       setBackendAuthToken(token);
-      
-       // Log the current cookies
-       console.log("Cookies after setting backendJwtToken:", document.cookie);
-
-      // Optionally, set the jwtToken cookie if needed for backend
-      // Note: Ensure the backend expects this cookie
-      // document.cookie = `jwtToken=${token}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
+      console.log("Cookies after setting backendJwtToken:", document.cookie);
 
       // Redirect to subdomain if already on it
       if (window.location.hostname === 'labase.languapps.com') {
@@ -195,7 +156,6 @@ async function sendPasswordResetEmail(email) {
 async function handleSignOut() {
   try {
     await firebaseSignOut(auth);
-    console.log('User signed out.');
     alert('Signed out successfully.');
     clearAuthToken();
     window.location.href = "https://languapps.com";
