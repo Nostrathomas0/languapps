@@ -30,7 +30,7 @@ function setBackendAuthToken(token) {
     // console.log("Backend JWT token saved to localStorage:", token);
     
     // Set as a cookie accessible to subdomains
-    document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=lax`;
+    document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
     console.log("Backend JWT token set as cookie for subdomains.");
 
     // Log all cookies for debugging
