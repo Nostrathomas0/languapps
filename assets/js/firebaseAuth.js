@@ -10,14 +10,14 @@ import {
 
 // Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
-  document.cookie = `backendJwtToken=; max-age=0; path=/; domain=.languapps.com; secure; samesite=none;`;
+  document.cookie = `backendJwtToken=; max-age=0; path=/; domain=.languapps.com; secure; SameSite=None;`;
   console.log("JWT tokens cleared from cookies and localStorage");
 }
 
 // Function to set the Backend JWT token in localStorage and as a cookie
 function setBackendAuthToken(token) {
 
-    document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; samesite=none`;
+    document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
     console.log("Backend JWT token set as cookie for subdomains.");
 }
 
