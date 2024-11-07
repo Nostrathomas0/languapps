@@ -6,7 +6,7 @@ import {
   onAuthStateChanged, 
   signOut as firebaseSignOut 
 } from './firebaseInit.js';
-
+import { storeJwtInFirestore } from './firebaseUtils.js'
 
 // Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
@@ -103,10 +103,19 @@ async function signUp(email, password) {
       // Debugging log
       console.log("setBackendAuthToken defined inside signUp:", typeof setBackendAuthToken);
 
-
+      // Step 6 Set JWT token in cookie
       setBackendAuthToken(data.jwtToken);
       console.log("Backend JWT token set successfully");
-    
+      
+       // Step 7: Store JWT token in Firestore
+       const userId = auth.currentUser?.uid;
+       if (userId) {
+         await storeJwtInFirestore(userId, data.jwtToken);
+         console.log("JWT token stored in Firestore for user:", userId);
+       } else {
+         console.error("User ID not found; unable to store JWT in Firestore");
+       }
+
       transitionModalStep('step1', 'step2'); 
       console.log("Transitioned to step2 successfully");
      
