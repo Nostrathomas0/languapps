@@ -154,14 +154,20 @@ async function signIn(email, password) {
       // Set the JWT token as a cookie for subdomain access
       setBackendAuthToken(jwtToken);
       console.log("JWT token set as cookie successfully");
+
+      // Alert user of successful sign-in
+      alert("Sign-in successful! You are now authenticated.");
     } else {
       console.error("No JWT token found in Firestore for user:", userId);
+      alert("Sign-in failed: Unable to retrieve JWT token.");
     }
   } catch (error) {
-    console.error("Error signing in:", error);
-    alert('Sign-in failed: ' + error.message);
+    // Log the error and show an alert to the user if sign-in fails
+    console.error("Error during sign-in process:", error);
+    alert("Sign-in failed: " + error.message);
   }
 }
+
 
 async function sendPasswordResetEmail(email) {
   try {
