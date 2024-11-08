@@ -1,6 +1,6 @@
 // firebaseUtils.js
 import { db } from './firebaseInit';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // Store JWT token in Firestore
 export async function storeJwtInFirestore(userId, jwtToken) {
