@@ -105,31 +105,28 @@ async function signUp(email, password) {
 
     // Step 5: Handle the backend response
     if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
-      console.log("Entering if condition: data.success === true && typeof data.jwtToken === 'string' && jwtToken is not empty");
+      console.log("Backend returned a valid JWT token.");
 
-      // Debugging log
-      console.log("setBackendAuthToken defined inside signUp:", typeof setBackendAuthToken);
-
-      // Step 6 Set JWT token in cookie
+      // Set JWT token in cookie
       setBackendAuthToken(data.jwtToken);
       console.log("Backend JWT token set successfully");
-      
-       // Step 7: Store JWT token in Firestore
-       const userId = auth.currentUser?.uid;
-       if (userId) {
-         await storeJwtInFirestore(userId, data.jwtToken);
-         console.log("JWT token stored in Firestore for user:", userId);
-       } else {
-         console.error("User ID not found; unable to store JWT in Firestore");
-       }
 
-      transitionModalStep('step1', 'step2'); 
+      // Step 6: Retrieve the UID of the authenticated user
+      const userId = auth.currentUser?.uid;
+      
+      if (userId) {
+        // Store user information in Firestore's users collection
+        await storeJwtInFirestore(userId, data.jwtToken);
+        console.log("User data stored in Firestore with JWT token:", userId);
+      } else {
+        console.error("User ID not found; unable to store user data in Firestore");
+      }
+
+      transitionModalStep('step1', 'step2');
       console.log("Transitioned to step2 successfully");
-     
-      // Ensure the function exits here to prevent further execution
       return;
     } else {
-      console.log("Entering else condition: data.success !== true || typeof data.jwtToken !== 'string' || jwtToken is empty");
+      console.error("Invalid response from server: JWT token not provided.");
       throw new Error(data.message || 'reCAPTCHA verification or sign-up failed');
     }
   } catch (error) {
