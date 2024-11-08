@@ -77,7 +77,7 @@ async function signUp(email, password) {
     const recaptchaToken = await generateRecaptchaToken('signup');
     console.log('Generated reCAPTCHA token:', recaptchaToken);
 
-    // Step 2: Prepare the request body with the recaptchaToken, email, and password
+    // Step 2: Prepare the request body with the reCAPTCHA token, email, and password
     const requestBody = { token: recaptchaToken, email, password };
     console.log("Request body for sign-up:", requestBody);
 
@@ -99,7 +99,7 @@ async function signUp(email, password) {
     const data = await response.json();
     console.log("Response from server:", data);
 
-    // Step 5: Handle the backend response
+    // Step 5: Set JWT token in cookie if response is valid
     if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
       console.log("Backend returned a valid JWT token.");
 
@@ -107,24 +107,24 @@ async function signUp(email, password) {
       setBackendAuthToken(data.jwtToken);
       console.log("Backend JWT token set successfully");
 
-      // Step 6: Ensure user is authenticated in Firebase before storing JWT token
-      await new Promise((resolve) => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            const userId = user.uid;
-            unsubscribe(); // Stop listening once we have the user
+      // Step 6: Send email verification
+      await auth.currentUser.sendEmailVerification();
+      alert("A verification email has been sent to your email address. Please verify to complete registration.");
 
-            // Store JWT token in Firestore
-            await storeJwtInFirestore(userId, data.jwtToken);
-            console.log("User data stored in Firestore with JWT token:", userId);
-            resolve();
-          }
-        });
+      // Step 7: Listen for email verification status
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user && user.emailVerified) {
+          const userId = user.uid;
+          unsubscribe(); // Stop listening once email is verified
+
+          // Store JWT token in Firestore
+          await storeJwtInFirestore(userId, data.jwtToken);
+          console.log("User data stored in Firestore with JWT token after email verification:", userId);
+
+          // Notify user of completion or redirect
+          alert("Email verified! You’re fully registered.");
+        }
       });
-
-      transitionModalStep('step1', 'step2');
-      console.log("Transitioned to step2 successfully");
-      return;
     } else {
       console.error("Invalid response from server: JWT token not provided.");
       throw new Error(data.message || 'reCAPTCHA verification or sign-up failed');
@@ -134,6 +134,7 @@ async function signUp(email, password) {
     alert('Sign-up failed: ' + error.message);
   }
 }
+
 
 async function signIn(email, password) {
   try {
