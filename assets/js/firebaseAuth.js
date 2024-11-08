@@ -22,32 +22,39 @@ function setBackendAuthToken(token) {
 }
 
 // Monitor authentication state changes
+// Monitor authentication state changes
 onAuthStateChanged(auth, async (user) => {
   console.log('Auth state changed:', user);
 
   if (user) {
     try {
-      const token = await user.getIdToken();
-      setBackendAuthToken(token);
-      console.log("Cookies after setting backendJwtToken:", document.cookie);
+      // Get the JWT token from Firestore for the authenticated user
+      const jwtToken = await getJwtFromFirestore(user.uid);
+      if (jwtToken) {
+        setBackendAuthToken(jwtToken); // Set the retrieved token as a cookie
+        console.log("JWT token set as cookie successfully:", jwtToken);
 
-      // Redirect to subdomain if already on it
-      if (window.location.hostname === 'labase.languapps.com') {
-        window.location.href = `https://labase.languapps.com/?authToken=${token}`;
+        // Redirect to subdomain if necessary
+        if (window.location.hostname === 'labase.languapps.com') {
+          window.location.href = `https://labase.languapps.com/?authToken=${jwtToken}`;
+        }
+      } else {
+        console.error("No JWT token found in Firestore for user:", user.uid);
       }
     } catch (error) {
-      console.error('Error getting token:', error);
+      console.error('Error retrieving JWT token from Firestore:', error);
     }
   } else {
-    // Clear the auth token cookies and localStorage
+    // User is signed out: clear the auth token cookies
     clearAuthToken();
 
-    // Redirect to main domain if signed out
+    // Redirect to the main domain if signed out
     if (window.location.hostname === 'labase.languapps.com') {
       window.location.href = "https://languapps.com/?auth-modal";
     }
   }
 });
+
 
 function transitionModalStep(currentStepId, nextStepId) {
   const currentStep = document.getElementById(currentStepId);
@@ -132,21 +139,24 @@ async function signUp(email, password) {
   }
 }
 
-// Ensure signIn is correctly defined in firebaseAuth.js
 async function signIn(email, password) {
   try {
+    // Sign in the user with Firebase Authentication
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userId = userCredential.user.uid; // Retrieve user ID
     console.log("User signed in:", userCredential.user);
-    
-    // Get Firebase ID token
-    const idToken = await userCredential.user.getIdToken();
-    console.log("Firebase ID token obtained:", idToken);
 
-    setBackendAuthToken(idToken);
-    console.log("Auth token set as cookie successfully");
+    // Retrieve JWT token from Firestore for the authenticated user
+    const jwtToken = await getJwtFromFirestore(userId);
+    if (jwtToken) {
+      console.log("JWT token retrieved from Firestore:", jwtToken);
 
-    // Optionally, set the backend JWT token if your backend returns it on sign-in
-    // If not, ensure backend JWT is handled appropriately elsewhere
+      // Set the JWT token as a cookie for subdomain access
+      setBackendAuthToken(jwtToken);
+      console.log("JWT token set as cookie successfully");
+    } else {
+      console.error("No JWT token found in Firestore for user:", userId);
+    }
   } catch (error) {
     console.error("Error signing in:", error);
     alert('Sign-in failed: ' + error.message);
