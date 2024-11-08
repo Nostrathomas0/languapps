@@ -69,21 +69,6 @@ function transitionModalStep(currentStepId, nextStepId) {
   }
 }
 
-// Function to wait until auth.currentUser is available
-async function ensureAuthCurrentUser() {
-  return new Promise((resolve, reject) => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("User authenticated with Firebase:", user);
-        unsubscribe(); // Stop listening after obtaining user
-        resolve(user);
-      }
-    });
-    // Fallback in case onAuthStateChanged does not resolve
-    setTimeout(() => reject(new Error("User authentication timeout")), 5000);
-  });
-}
-
 async function signUp(email, password) {
   try {
     console.log("Initiating sign-up process for:", email);
@@ -111,18 +96,20 @@ async function signUp(email, password) {
     }
     console.log("Backend returned a valid JWT token.");
 
-    // Step 4: Set JWT token as a cookie
+    // Set JWT token in cookie
     setBackendAuthToken(data.jwtToken);
     console.log("Backend JWT token set successfully as cookie.");
 
-    // Step 5: Ensure Firebase authentication is complete
-    const user = await ensureAuthCurrentUser();
-    const userId = user.uid;
+    // Step 4: Explicitly sign in with Firebase Authentication to access auth.currentUser
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userId = userCredential.user.uid;
+    console.log("User authenticated with Firebase:", userId);
 
-    // Step 6: Store JWT in Firestore
+    // Step 5: Store JWT in Firestore
     await storeJwtInFirestore(userId, data.jwtToken);
     console.log("User data stored in Firestore with JWT token:", userId);
 
+    // Transition to next step in your flow
     transitionModalStep('step1', 'step2');
     console.log("Transitioned to step2 successfully");
 
@@ -131,6 +118,7 @@ async function signUp(email, password) {
     alert('Sign-up failed: ' + error.message);
   }
 }
+
 
 
 async function signIn(email, password) {
