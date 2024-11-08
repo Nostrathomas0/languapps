@@ -99,10 +99,6 @@ async function signUp(email, password) {
     const data = await response.json();
     console.log("Response from server:", data);
 
-    // **Enhanced Logging**
-    console.log("data.success:", data.success, "type:", typeof data.success);
-    console.log("data.jwtToken:", data.jwtToken, "type:", typeof data.jwtToken);
-
     // Step 5: Handle the backend response
     if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
       console.log("Backend returned a valid JWT token.");
@@ -111,16 +107,20 @@ async function signUp(email, password) {
       setBackendAuthToken(data.jwtToken);
       console.log("Backend JWT token set successfully");
 
-      // Step 6: Retrieve the UID of the authenticated user
-      const userId = auth.currentUser?.uid;
-      
-      if (userId) {
-        // Store user information in Firestore's users collection
-        await storeJwtInFirestore(userId, data.jwtToken);
-        console.log("User data stored in Firestore with JWT token:", userId);
-      } else {
-        console.error("User ID not found; unable to store user data in Firestore");
-      }
+      // Step 6: Ensure user is authenticated in Firebase before storing JWT token
+      await new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            const userId = user.uid;
+            unsubscribe(); // Stop listening once we have the user
+
+            // Store JWT token in Firestore
+            await storeJwtInFirestore(userId, data.jwtToken);
+            console.log("User data stored in Firestore with JWT token:", userId);
+            resolve();
+          }
+        });
+      });
 
       transitionModalStep('step1', 'step2');
       console.log("Transitioned to step2 successfully");
@@ -130,7 +130,6 @@ async function signUp(email, password) {
       throw new Error(data.message || 'reCAPTCHA verification or sign-up failed');
     }
   } catch (error) {
-    // Handle any errors that occur during the process
     console.error('Sign-up error:', error);
     alert('Sign-up failed: ' + error.message);
   }
@@ -159,7 +158,6 @@ async function signIn(email, password) {
       alert("Sign-in failed: Unable to retrieve JWT token.");
     }
   } catch (error) {
-    // Log the error and show an alert to the user if sign-in fails
     console.error("Error during sign-in process:", error);
     alert("Sign-in failed: " + error.message);
   }
