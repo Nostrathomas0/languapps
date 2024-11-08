@@ -6,7 +6,7 @@ import {
   onAuthStateChanged, 
   signOut as firebaseSignOut 
 } from './firebaseInit.js';
-import { storeJwtInFirestore } from './firebaseUtils.js'
+import { storeJwtInFirestore, getJwtFromFirestore } from './firebaseUtils.js'
 
 // Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
