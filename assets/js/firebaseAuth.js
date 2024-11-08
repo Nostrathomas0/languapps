@@ -107,22 +107,27 @@ async function signUp(email, password) {
       setBackendAuthToken(data.jwtToken);
       console.log("Backend JWT token set successfully");
 
-      // Step 6: Send email verification
-      await auth.currentUser.sendEmailVerification();
-      alert("A verification email has been sent to your email address. Please verify to complete registration.");
-
-      // Step 7: Listen for email verification status
+      // Step 6: Use onAuthStateChanged to wait until auth.currentUser is populated
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user && user.emailVerified) {
-          const userId = user.uid;
-          unsubscribe(); // Stop listening once email is verified
+        if (user) {
+          unsubscribe(); // Stop listening once we have the user
 
-          // Store JWT token in Firestore
-          await storeJwtInFirestore(userId, data.jwtToken);
-          console.log("User data stored in Firestore with JWT token after email verification:", userId);
+          // Send email verification
+          await user.sendEmailVerification();
+          alert("A verification email has been sent to your email address. Please verify to complete registration.");
 
-          // Notify user of completion or redirect
-          alert("Email verified! You’re fully registered.");
+          // Listen for email verification status
+          onAuthStateChanged(auth, async (verifiedUser) => {
+            if (verifiedUser && verifiedUser.emailVerified) {
+              const userId = verifiedUser.uid;
+
+              // Store JWT token in Firestore
+              await storeJwtInFirestore(userId, data.jwtToken);
+              console.log("User data stored in Firestore with JWT token after email verification:", userId);
+
+              alert("Email verified! You’re fully registered.");
+            }
+          });
         }
       });
     } else {
