@@ -81,12 +81,13 @@ async function signUp(email, password) {
     const requestBody = { token: recaptchaToken, email, password };
     console.log("Request body for sign-up:", requestBody);
 
-    // Step 3: Send the data to the backend for verification and user creation
+    // Step 3: Send data to the backend for verification and user creation
     const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody),
     });
+
     console.log("Fetch response status:", response.status);
 
     if (!response.ok) {
@@ -99,37 +100,36 @@ async function signUp(email, password) {
     const data = await response.json();
     console.log("Response from server:", data);
 
-    // Step 5: Set JWT token in cookie if response is valid
+    // Step 5: Validate the server response
     if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
       console.log("Backend returned a valid JWT token.");
 
       // Set JWT token in cookie
       setBackendAuthToken(data.jwtToken);
-      console.log("Backend JWT token set successfully");
+      console.log("JWT token set as cookie:", document.cookie);
 
-      // Step 6: Use onAuthStateChanged to wait until auth.currentUser is populated
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          unsubscribe(); // Stop listening once we have the user
+      // Step 6: Wait until `auth.currentUser` is ready by listening for authentication state change
+      await new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            console.log("User authenticated with Firebase:", user);
 
-          // Send email verification
-          await user.sendEmailVerification();
-          alert("A verification email has been sent to your email address. Please verify to complete registration.");
+            const userId = user.uid;
+            unsubscribe(); // Stop listening once we have the user
 
-          // Listen for email verification status
-          onAuthStateChanged(auth, async (verifiedUser) => {
-            if (verifiedUser && verifiedUser.emailVerified) {
-              const userId = verifiedUser.uid;
-
-              // Store JWT token in Firestore
-              await storeJwtInFirestore(userId, data.jwtToken);
-              console.log("User data stored in Firestore with JWT token after email verification:", userId);
-
-              alert("Email verified! You’re fully registered.");
-            }
-          });
-        }
+            // Store JWT token in Firestore
+            await storeJwtInFirestore(userId, data.jwtToken);
+            console.log("User data stored in Firestore with JWT token:", userId);
+            resolve(); // Resolve the promise once the token is stored
+          } else {
+            console.warn("auth.currentUser is null. Waiting for Firebase to authenticate the user.");
+          }
+        });
       });
+
+      transitionModalStep('step1', 'step2');
+      console.log("Transitioned to step2 successfully");
+      return;
     } else {
       console.error("Invalid response from server: JWT token not provided.");
       throw new Error(data.message || 'reCAPTCHA verification or sign-up failed');
@@ -139,7 +139,6 @@ async function signUp(email, password) {
     alert('Sign-up failed: ' + error.message);
   }
 }
-
 
 async function signIn(email, password) {
   try {
