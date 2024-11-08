@@ -69,76 +69,69 @@ function transitionModalStep(currentStepId, nextStepId) {
   }
 }
 
+// Function to wait until auth.currentUser is available
+async function ensureAuthCurrentUser() {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("User authenticated with Firebase:", user);
+        unsubscribe(); // Stop listening after obtaining user
+        resolve(user);
+      }
+    });
+    // Fallback in case onAuthStateChanged does not resolve
+    setTimeout(() => reject(new Error("User authentication timeout")), 5000);
+  });
+}
+
 async function signUp(email, password) {
   try {
     console.log("Initiating sign-up process for:", email);
 
-    // Step 1: Generate the reCAPTCHA token on the frontend
+    // Step 1: Generate the reCAPTCHA token
     const recaptchaToken = await generateRecaptchaToken('signup');
     console.log('Generated reCAPTCHA token:', recaptchaToken);
 
-    // Step 2: Prepare the request body with the reCAPTCHA token, email, and password
-    const requestBody = { token: recaptchaToken, email, password };
-    console.log("Request body for sign-up:", requestBody);
-
-    // Step 3: Send data to the backend for verification and user creation
+    // Step 2: Send data to the backend for user creation
     const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/verifyRecaptchaAndSignup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({ token: recaptchaToken, email, password }),
     });
-
     console.log("Fetch response status:", response.status);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Fetch response not ok:", errorText);
       throw new Error("Server responded with an error");
     }
 
-    // Step 4: Parse the response from the backend
+    // Step 3: Parse the backend response
     const data = await response.json();
-    console.log("Response from server:", data);
-
-    // Step 5: Validate the server response
-    if (data.success === true && typeof data.jwtToken === 'string' && data.jwtToken.trim() !== '') {
-      console.log("Backend returned a valid JWT token.");
-
-      // Set JWT token in cookie
-      setBackendAuthToken(data.jwtToken);
-      console.log("JWT token set as cookie:", document.cookie);
-
-      // Step 6: Wait until `auth.currentUser` is ready by listening for authentication state change
-      await new Promise((resolve) => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            console.log("User authenticated with Firebase:", user);
-
-            const userId = user.uid;
-            unsubscribe(); // Stop listening once we have the user
-
-            // Store JWT token in Firestore
-            await storeJwtInFirestore(userId, data.jwtToken);
-            console.log("User data stored in Firestore with JWT token:", userId);
-            resolve(); // Resolve the promise once the token is stored
-          } else {
-            console.warn("auth.currentUser is null. Waiting for Firebase to authenticate the user.");
-          }
-        });
-      });
-
-      transitionModalStep('step1', 'step2');
-      console.log("Transitioned to step2 successfully");
-      return;
-    } else {
-      console.error("Invalid response from server: JWT token not provided.");
+    if (!data.success || !data.jwtToken) {
       throw new Error(data.message || 'reCAPTCHA verification or sign-up failed');
     }
+    console.log("Backend returned a valid JWT token.");
+
+    // Step 4: Set JWT token as a cookie
+    setBackendAuthToken(data.jwtToken);
+    console.log("Backend JWT token set successfully as cookie.");
+
+    // Step 5: Ensure Firebase authentication is complete
+    const user = await ensureAuthCurrentUser();
+    const userId = user.uid;
+
+    // Step 6: Store JWT in Firestore
+    await storeJwtInFirestore(userId, data.jwtToken);
+    console.log("User data stored in Firestore with JWT token:", userId);
+
+    transitionModalStep('step1', 'step2');
+    console.log("Transitioned to step2 successfully");
+
   } catch (error) {
     console.error('Sign-up error:', error);
     alert('Sign-up failed: ' + error.message);
   }
 }
+
 
 async function signIn(email, password) {
   try {
