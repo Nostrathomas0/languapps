@@ -101,14 +101,17 @@ if (openModalButton) {
 
 // --- Check for URL parameter to open a modal on page load ---
 function checkForModalOpening() {
-      const urlParams = new URLSearchParams(window.location.search);
-    const shouldOpenModal = urlParams.get('openModal');
+    const urlParams = new URLSearchParams(window.location.search);
+    const modalToOpen = urlParams.get('openModal');
 
-    if (shouldOpenModal === 'true') {
+    if (modalToOpen === 'auth') {
         console.log("URL parameter indicates opening the auth modal");
         openModalById('auth-modal', 'step1');
+    } else {
+        console.log(`URL parameter openModal=${modalToOpen} not recognized.`);
     }
 }
+
 
 // Ensure modal opening is checked on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
