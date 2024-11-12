@@ -1,4 +1,3 @@
-
 //assets/js/lookies.js
 import { signUp } from './firebaseAuth.js';
 import { auth } from './firebaseInit.js';
@@ -265,7 +264,28 @@ function handleUserDetails(event) {
     transitionModalStep('step2', 'step3');
 }
 
+// Function to toggle password visibility
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const showPasswordButton = document.getElementById('showPassword');
 
+    if (passwordInput && showPasswordButton) {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordButton.textContent = 'Hide Password';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordButton.textContent = 'Show Password';
+        }
+    }
+}
+// Attach click event to show password button if it exists
+document.addEventListener('DOMContentLoaded', () => {
+    const showPasswordButton = document.getElementById('showPassword');
+    if (showPasswordButton) {
+        showPasswordButton.addEventListener('click', togglePasswordVisibility);
+    }
+});
 function userIsAuthenticated() {
     return !!auth.currentUser;
 };
