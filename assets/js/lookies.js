@@ -266,19 +266,27 @@ function handleUserDetails(event) {
 
 // Function to toggle password visibility
 function togglePasswordVisibility() {
-    const passwordInput = document.getElementById('password');
+    const signupPasswordInput = document.getElementById('signupPassword');
+    const loginPasswordInput = document.getElementById('loginPassword');
     const showPasswordButton = document.getElementById('showPassword');
 
-    if (passwordInput && showPasswordButton) {
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
+    if (showPasswordButton) {
+        if (signupPasswordInput && signupPasswordInput.type === 'password') {
+            signupPasswordInput.type = 'text';
             showPasswordButton.textContent = 'Hide Password';
-        } else {
-            passwordInput.type = 'password';
+        } else if (signupPasswordInput) {
+            signupPasswordInput.type = 'password';
             showPasswordButton.textContent = 'Show Password';
+        }
+        
+        if (loginPasswordInput && loginPasswordInput.type === 'password') {
+            loginPasswordInput.type = 'text';
+        } else if (loginPasswordInput) {
+            loginPasswordInput.type = 'password';
         }
     }
 }
+
 // Attach click event to show password button if it exists
 document.addEventListener('DOMContentLoaded', () => {
     const showPasswordButton = document.getElementById('showPassword');
