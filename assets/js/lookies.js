@@ -27,6 +27,10 @@ function openModalById(modalId, stepId = null) {
         return; // Stop the function if the honeypot is filled
     }
 
+    const url = new URL(window.location);
+    url.searchParams.set('openModal', modalId);
+    window.history.pushState({}, '', url);
+
     console.log("Attempting to open modal:", modalId);
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -97,7 +101,7 @@ if (openModalButton) {
 
 // --- Check for URL parameter to open a modal on page load ---
 function checkForModalOpening() {
-    const urlParams = new URLSearchParams(window.location.search);
+      const urlParams = new URLSearchParams(window.location.search);
     const shouldOpenModal = urlParams.get('openModal');
 
     if (shouldOpenModal === 'true') {
