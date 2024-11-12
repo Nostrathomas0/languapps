@@ -6,7 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 firebase-debug.*.log*
-
+# Lambda function
+lambda-function*
 # Firebase cache
 .firebase/
 
