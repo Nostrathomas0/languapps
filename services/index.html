@@ -1,52 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Online Lessons </title>
+
+<head>
+    <title>Online Lessons</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/style.css" />
     <link rel="shortcut icon" href="images/yata.ico">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <!-- Facebook Pixel Code -->
-  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '348427750356175'); fbq('track', 'PageView');</script><noscript> <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1"/></noscript>
-  <!-- End Facebook Pixel Code -->
-  </head>
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+            t = b.createElement(e); t.async = !0; t.src = v;
+            s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
+        }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '348427750356175'); fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
 
-  <body>
+    <style>
+        .profile-images {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+        }
+        .profile-images img {
+            position: absolute;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+        }
+        .profile-images img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 1s ease-in-out;
+        }
+        .profile-images img.main-image {
+            position: relative;
+            opacity: 1;
+        }
+        .service-box {
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .cta-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header with Links -->
     <header class="links">
-      <a class="left" href="images/Seawolves.pdf" alt="CV">MA TESOL 2020</a><a class="right" href="Tutoring Contract.pdf" alt="Contract">First Form</a>
+        <a class="left" href="images/Seawolves.pdf" alt="CV">MA TESOL 2020</a>
+        <a class="right" href="Tutoring Contract.pdf" alt="Contract">First Form</a>
     </header>
-    
-    <section>
-      <div class="profile">
-      <p>&emsp; Book Thomas</p><h1> the <i>&emsp; &emsp; teach engine</i></h1>
-        <img class="clout" src="images/image1.jpg" alt="Presenting" />
-        <img class="clout4" src="images/2020 grad.jpg" />
-        <ing class="moreclout" src="images/81jJJYN9alL._AC_SL1500_.jpg" />
-        <img class="clout2" src="images/Genel-Ingilizce-Kursu-Galeri2022-06-06-11-09-54am.png" />
-        <img class="clout3" src="images/beykent.jpg" />
-        <img class="moreclout" src="images/image001.png" />
-        
-      </div>
 
-      <article>
-        <ul><h4>Trial</h4></ul> 
-        <li class="icon"><a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL"><img src="images/trial lesson.png" alt="25 minute free trial" /></a></li>
-        <ul><h4>Basic Unit</h4></ul>
-        <li class="icon"><a href="https://buy.stripe.com/aEU6p2aapawwbOUbIJ"><img src="images/10.png" alt="10 hours" width="120" height="120"></a></li> 
-          <li>National Geographic: World English</li>
-          <li><a href="https://www.bbc.co.uk/learningenglish/english" alt="British Broadcasting Channel"></a>BBC Learning English - All levels</li>
-        <ul><h4>Full Course</h4></ul>  
-        <li class="icon"><a href="https://buy.stripe.com/fZe28M96l200cSY8wy"><img src="images/25.png" alt="25 hours" width="120" height="120"></a></li>
-          <li>National Geographic: Explore our World - Levels 1,2 and 4</li>
-          <li>Touchstone</li>
-          <li>New Success and many more</li>
-      </article>
+    <!-- Main Section with Profile and Service Offerings -->
+    <section class="main-content">
+        <!-- Profile Section -->
+        <div class="profile">
+          <p>&emsp; Book Thomas</p><h1> the <i>&emsp; &emsp; teach engine</i></h1>>
+            <p>&emsp; Personalized English lessons to help you achieve your language goals.</p>
+            <img class="clout main-image" src="images/image1.jpg" alt="Presenting" />
+            <!-- Profile Images with Dynamic Rotation -->
 
+           <div class="profile-images">
+            <img class="clout4" src="images/2020 grad.jpg" alt="Graduation" style="opacity: 0;" />
+            <img class="moreclout" src="images/81jJJYN9alL._AC_SL1500_.jpg" alt="Teaching Resources" style="opacity: 0;" />
+            <img class="clout2" src="images/Genel-Ingilizce-Kursu-Galeri2022-06-06-11-09-54am.png" alt="English Class" style="opacity: 0;" />
+            <img class="clout3" src="images/beykent.jpg" alt="Beykent University" style="opacity: 0;" />
+            <img class="moreclout" src="images/image001.png" alt="ESL Teaching" style="opacity: 0;" />
+        </div>
+        </div>
+
+        <!-- Article with Purchase Options -->
+        <article class="services">
+            <!-- Trial Service -->
+            <div class="service-box">
+                <h4>Trial Lesson</h4>
+                <p>Try a free 25-minute lesson and see how our courses can help you achieve your goals.</p>
+                <a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL">
+                    <img src="images/trial lesson.png" alt="25 minute free trial" class="service-image" />
+                </a>
+                <a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL" class="cta-button">Book Your Free Trial</a>
+            </div>
+
+            <!-- Basic Unit -->
+            <div class="service-box">
+                <h4>Basic Unit</h4>
+                <p>10 hours of personalized English lessons with National Geographic: World English and BBC Learning English resources.</p>
+                <a href="https://buy.stripe.com/aEU6p2aapawwbOUbIJ">
+                    <img src="images/10.png" alt="10 hours" class="service-image" />
+                </a>
+                <a href="https://buy.stripe.com/aEU6p2aapawwbOUbIJ" class="cta-button">Buy Basic Unit</a>
+            </div>
+
+            <!-- Full Course -->
+            <div class="service-box">
+                <h4>Full Course</h4>
+                <p>25 hours of in-depth English lessons using resources like National Geographic: Explore our World, Touchstone, and New Success.</p>
+                <a href="https://buy.stripe.com/fZe28M96l200cSY8wy">
+                    <img src="images/25.png" alt="25 hours" class="service-image" />
+                </a>
+                <a href="https://buy.stripe.com/fZe28M96l200cSY8wy" class="cta-button">Enroll in Full Course</a>
+            </div>
+        </article>
     </section>
 
-  <footer class="links">
-     <a class="left" href= "https://nostrathomas0.github.io/Web_CV" alt="CV">Curriculum Vitae</a><a class="right" href="https://languapps.com#contact" alt="Contact">Contact</a>
-  </footer>
+    <!-- Footer Section with Social Icons and Contact Links -->
+    <footer class="links">
+        <a class="left" href="https://nostrathomas0.github.io/Web_CV" alt="CV">Curriculum Vitae</a>
+        <a class="right" href="https://languapps.com#contact" alt="Contact">Contact</a>
 
-  </body>
+        <!-- Social Media Links -->
+        <div class="social-icons">
+            <ul class="icons">
+                <li><a href="https://facebook.com/ESLforInternats" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="https://instagram.com/languapps" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="https://www.linkedin.com/in/thomas-schwartz-b9899417/" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+                <li><a href="https://dribbble.com/Nostrathomas" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+                <li><a href="https://pin.it/4dKl3hd" class="icon brands fa-pinterest"><span class="label">Pinterest</span></a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        // jQuery for rotating images in the profile section
+        $(document).ready(function () {
+            let images = $('.profile-images img').not('.main-image');
+            let index = 0;
+
+            function rotateImages() {
+                images.css('opacity', '0');
+                images.eq(index).css('opacity', '1');
+                index = (index + 1) % images.length;
+            }
+
+            setInterval(rotateImages, 3000); // Rotate every 3 seconds
+        });
+    </script>
+</body>
+
 </html>
