@@ -8,30 +8,49 @@ import {
 } from './firebaseInit.js';
 import { storeJwtInFirestore, getJwtFromFirestore } from './firebaseUtils.js'
 
-// Utility function to clear the JWT token from cookies and localStorage
+/// Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
-  document.cookie = `backendJwtToken=; max-age=0; path=/; domain=.languapps.com; secure; SameSite=None;`;
-  console.log("JWT tokens cleared from cookies and localStorage");
+  console.log("Before clearing:", document.cookie);
+  
+  // Use a hardcoded past date string instead of using date variable
+  const pastDateStr = 'Thu, 01 Jan 1970 00:00:00 GMT';
+  
+  // Clear both token names for consistency
+  document.cookie = `JWT=; expires=${pastDateStr}; path=/; domain=.languapps.com; secure; SameSite=None;`;
+  document.cookie = `backendJwtToken=; expires=${pastDateStr}; path=/; domain=.languapps.com; secure; SameSite=None;`;
+  
+  // Also clear from localStorage if present
+  if (localStorage) {
+    localStorage.removeItem('JWT');
+    localStorage.removeItem('emulatorJWT');
+  }
+  
+  console.log("After clearing:", document.cookie);
 }
 
 // Function to set the Backend JWT token in localStorage and as a cookie
-function setBackendAuthToken(token) {
+function setAuthToken(token) {
+  // Just use one consistent name
+  document.cookie = `JWT=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
+  document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
 
-    document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
-    console.log("Backend JWT token set as cookie for subdomains.");
-}
+  if (localStorage) {
+    localStorage.setItem('JWT', token);
+  }
 
-// Monitor authentication state changes
+  console.log("JWT set in cookies");
+} 
 // Monitor authentication state changes
 onAuthStateChanged(auth, async (user) => {
   console.log('Auth state changed:', user);
+
 
   if (user) {
     try {
       // Get the JWT token from Firestore for the authenticated user
       const jwtToken = await getJwtFromFirestore(user.uid);
       if (jwtToken) {
-        setBackendAuthToken(jwtToken); // Set the retrieved token as a cookie
+        setAuthToken(jwtToken); // Set the retrieved token as a cookie
         console.log("JWT token set as cookie successfully:", jwtToken);
 
         // Redirect to subdomain if necessary
@@ -97,7 +116,7 @@ async function signUp(email, password) {
     console.log("Backend returned a valid JWT token.");
 
     // Set JWT token in cookie
-    setBackendAuthToken(data.jwtToken);
+    setAuthToken(data.jwtToken);
     console.log("Backend JWT token set successfully as cookie.");
 
     // Step 4: Explicitly sign in with Firebase Authentication to access auth.currentUser
@@ -134,7 +153,7 @@ async function signIn(email, password) {
       console.log("JWT token retrieved from Firestore:", jwtToken);
 
       // Set the JWT token as a cookie for subdomain access
-      setBackendAuthToken(jwtToken);
+      setAuthToken(jwtToken);
       console.log("JWT token set as cookie successfully");
 
       // Alert user of successful sign-in
