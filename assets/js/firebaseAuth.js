@@ -163,9 +163,12 @@ async function signIn(email, password) {
       setAuthToken(jwtToken);
       console.log("JWT token set as cookie successfully");
 
-      // Immediately redirect to subdomain with the JWT token
-      window.location.href = `https://labase.languapps.com/?authToken=${encodeURIComponent(jwtToken)}`;
-      console.log("Redirecting to subdomain...");
+      // Explicitly redirect to the subdomain with the JWT token
+      const subdomain = "https://labase.languapps.com";
+      console.log("Redirecting to:", subdomain);
+      
+      // Force redirect to the subdomain
+      window.location.href = `${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`;
     } else {
       console.error("No JWT token found in Firestore for user:", userId);
       alert("Sign-in failed: Unable to retrieve JWT token.");
