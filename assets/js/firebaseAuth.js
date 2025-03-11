@@ -131,6 +131,13 @@ async function signUp(email, password) {
     // Transition to next step in your flow
     transitionModalStep('step1', 'step2');
     console.log("Transitioned to step2 successfully");
+    
+    // Add a longer delay for signUp to allow users to see the step2 content
+    setTimeout(() => {
+      // Redirect to subdomain with the JWT token
+      window.location.href = `https://labase.languapps.com/?authToken=${encodeURIComponent(data.jwtToken)}`;
+      console.log("Redirecting to subdomain after showing step2...");
+    }, 3000); // 3 second delay to give users time to see step2
 
   } catch (error) {
     console.error('Sign-up error:', error);
@@ -156,8 +163,9 @@ async function signIn(email, password) {
       setAuthToken(jwtToken);
       console.log("JWT token set as cookie successfully");
 
-      // Alert user of successful sign-in
-      alert("Sign-in successful! You are now authenticated.");
+      // Immediately redirect to subdomain with the JWT token
+      window.location.href = `https://labase.languapps.com/?authToken=${encodeURIComponent(jwtToken)}`;
+      console.log("Redirecting to subdomain...");
     } else {
       console.error("No JWT token found in Firestore for user:", userId);
       alert("Sign-in failed: Unable to retrieve JWT token.");
