@@ -56,6 +56,11 @@ function closeModalById(modalId) {
     if (modal) {
         modal.style.display = 'none';
         console.log(`Closed modal with ID: ${modalId}`);
+    
+        // Clean up URL parameter when closing modal
+        const url = new URL(window.location);
+        url.searchParams.delete('openModal');
+        window.history.pushState({}, '', url);
     } else {
         console.error(`Modal with ID ${modalId} not found.`);
     }
@@ -104,11 +109,19 @@ function checkForModalOpening() {
     const urlParams = new URLSearchParams(window.location.search);
     const modalToOpen = urlParams.get('openModal');
 
-    if (modalToOpen === 'auth') {
+    console.log("Checking URL paramaters: openModal=", modalToOpen);
+
+    if (modalToOpen === 'auth-modal') {
         console.log("URL parameter indicates opening the auth modal");
         openModalById('auth-modal', 'step1');
-    } else {
-        console.log(`URL parameter openModal=${modalToOpen} not recognized.`);
+    // Clean up URL after processing (optional, if you want to remove it)
+        // Uncomment if you want to remove the parameter after opening modal
+        // const url = new URL(window.location);
+        // url.searchParams.delete('openModal');
+        // window.history.replaceState({}, '', url);
+    } else if (modalToOpen) {
+        console.log(`Attempting to open modal with ID: ${modalToOpen}`);
+        openModalById(modalToOpen);
     }
 }
 
@@ -117,6 +130,11 @@ function checkForModalOpening() {
 document.addEventListener('DOMContentLoaded', () => {
     checkForModalOpening();
 });
+
+window.addEventListener('load', ( => {
+    console.log("Window loaded, checking for modal paramater");
+    checkForModalOpening();
+}))
 
 // Cookie Consent, Language Translation & Preference Settings
 function setCookie(name, value, days) {
