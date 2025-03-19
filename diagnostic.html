@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudFront Diagnostic Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #0066cc;
+      margin-top: 0;
+    }
+    .section {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+    .info-item {
+      margin-bottom: 10px;
+    }
+    .label {
+      font-weight: bold;
+      display: inline-block;
+      width: 180px;
+    }
+    .value {
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .test-button {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .status-ok {
+      color: green;
+    }
+    .status-error {
+      color: red;
+    }
+    #request-log {
+      max-height: 300px;
+      overflow-y: auto;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CloudFront Diagnostic Tool</h1>
+    
+    <div class="section">
+      <h2>Browser Information</h2>
+      <div class="info-item">
+        <span class="label">User Agent:</span>
+        <span class="value" id="user-agent"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Platform:</span>
+        <span class="value" id="platform"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Screen Size:</span>
+        <span class="value" id="screen-size"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Viewport Size:</span>
+        <span class="value" id="viewport-size"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Is Mobile:</span>
+        <span class="value" id="is-mobile"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Connection Type:</span>
+        <span class="value" id="connection-type"></span>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Page Information</h2>
+      <div class="info-item">
+        <span class="label">Current URL:</span>
+        <span class="value" id="current-url"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Domain:</span>
+        <span class="value" id="domain"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Protocol:</span>
+        <span class="value" id="protocol"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Referrer:</span>
+        <span class="value" id="referrer"></span>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Network Tests</h2>
+      <button class="test-button" id="test-same-origin">Test Same Origin</button>
+      <button class="test-button" id="test-home">Test Homepage</button>
+      <button class="test-button" id="test-image">Test Image</button>
+      <button class="test-button" id="test-text">Test Text File</button>
+      
+      <div class="info-item">
+        <span class="label">Last Test Status:</span>
+        <span class="value" id="test-status"></span>
+      </div>
+      
+      <h3>Request Log</h3>
+      <div id="request-log"></div>
+    </div>
+    
+    <div class="section">
+      <h2>Headers and Cookies</h2>
+      <div class="info-item">
+        <span class="label">Accept Header:</span>
+        <span class="value" id="accept-header"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Accept-Encoding:</span>
+        <span class="value" id="accept-encoding"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Cookies Enabled:</span>
+        <span class="value" id="cookies-enabled"></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Local Storage:</span>
+        <span class="value" id="local-storage"></span>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>CloudFront Specific</h2>
+      <div class="info-item">
+        <span class="label">Via Header:</span>
+        <span class="value" id="via-header">Will show after running a test</span>
+      </div>
+      <div class="info-item">
+        <span class="label">CloudFront-Forwarded-Proto:</span>
+        <span class="value" id="cf-proto-header">Will show after running a test</span>
+      </div>
+      <div class="info-item">
+        <span class="label">CloudFront-Is-Mobile-Viewer:</span>
+        <span class="value" id="cf-mobile-header">Will show after running a test</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fill browser information
+    document.getElementById('user-agent').textContent = navigator.userAgent;
+    document.getElementById('platform').textContent = navigator.platform;
+    document.getElementById('screen-size').textContent = `${screen.width}x${screen.height}`;
+    document.getElementById('viewport-size').textContent = `${window.innerWidth}x${window.innerHeight}`;
+    document.getElementById('is-mobile').textContent = /Mobile|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) ? 'Yes' : 'No';
+    
+    // Connection information if available
+    if (navigator.connection) {
+      document.getElementById('connection-type').textContent = navigator.connection.effectiveType || 'Not available';
+    } else {
+      document.getElementById('connection-type').textContent = 'API not supported';
+    }
+    
+    // Page information
+    document.getElementById('current-url').textContent = window.location.href;
+    document.getElementById('domain').textContent = window.location.hostname;
+    document.getElementById('protocol').textContent = window.location.protocol;
+    document.getElementById('referrer').textContent = document.referrer || 'No referrer';
+    
+    // Header information
+    document.getElementById('accept-header').textContent = navigator.userAgent.includes('Firefox') ? 'Not available in Firefox' : 'Will show after running a test';
+    document.getElementById('accept-encoding').textContent = navigator.userAgent.includes('Firefox') ? 'Not available in Firefox' : 'Will show after running a test';
+    document.getElementById('cookies-enabled').textContent = navigator.cookieEnabled ? 'Yes' : 'No';
+    
+    // Local storage test
+    try {
+      localStorage.setItem('test', 'test');
+      localStorage.removeItem('test');
+      document.getElementById('local-storage').textContent = 'Available';
+    } catch (e) {
+      document.getElementById('local-storage').textContent = 'Not available: ' + e.message;
+    }
+    
+    // Log function
+    function logRequest(message) {
+      const log = document.getElementById('request-log');
+      const entry = document.createElement('div');
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    // Network tests
+    document.getElementById('test-same-origin').addEventListener('click', function() {
+      testFetch(window.location.href);
+    });
+    
+    document.getElementById('test-home').addEventListener('click', function() {
+      testFetch('/');
+    });
+    
+    document.getElementById('test-image').addEventListener('click', function() {
+      // Attempting to fetch a common image file
+      testFetch('/favicon.ico');
+    });
+    
+    document.getElementById('test-text').addEventListener('click', function() {
+      // Create a random parameter to avoid caching
+      const random = Math.floor(Math.random() * 10000000);
+      testFetch(`/diagnostic.txt?nocache=${random}`);
+    });
+    
+    function testFetch(url) {
+      const statusEl = document.getElementById('test-status');
+      statusEl.textContent = 'Testing...';
+      statusEl.className = '';
+      
+      logRequest(`Fetching: ${url}`);
+      
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      })
+      .then(response => {
+        logRequest(`Response status: ${response.status} ${response.statusText}`);
+        
+        // Display CloudFront specific headers if available
+        response.headers.forEach((value, name) => {
+          logRequest(`Header: ${name}: ${value}`);
+          
+          if (name.toLowerCase() === 'via') {
+            document.getElementById('via-header').textContent = value;
+          }
+          if (name.toLowerCase() === 'cloudfront-forwarded-proto') {
+            document.getElementById('cf-proto-header').textContent = value;
+          }
+          if (name.toLowerCase() === 'cloudfront-is-mobile-viewer') {
+            document.getElementById('cf-mobile-header').textContent = value;
+          }
+          if (name.toLowerCase() === 'accept') {
+            document.getElementById('accept-header').textContent = value;
+          }
+          if (name.toLowerCase() === 'accept-encoding') {
+            document.getElementById('accept-encoding').textContent = value;
+          }
+        });
+        
+        if (response.ok) {
+          statusEl.textContent = `Success (${response.status})`;
+          statusEl.className = 'status-ok';
+        } else {
+          statusEl.textContent = `Error (${response.status}): ${response.statusText}`;
+          statusEl.className = 'status-error';
+        }
+        
+        return response.text().catch(e => `[Failed to read response body: ${e.message}]`);
+      })
+      .then(text => {
+        // Try to determine if this is an error page
+        if (text.includes('AccessDenied') || text.includes('403 Forbidden')) {
+          logRequest('Response appears to be an AccessDenied error page');
+        }
+        
+        // Log just the first 200 chars of the response
+        const preview = text.substring(0, 200) + (text.length > 200 ? '...' : '');
+        logRequest(`Response body (preview): ${preview}`);
+      })
+      .catch(error => {
+        statusEl.textContent = `Fetch error: ${error.message}`;
+        statusEl.className = 'status-error';
+        logRequest(`Fetch error: ${error.message}`);
+      });
+    }
+  </script>
+</body>
+</html>
