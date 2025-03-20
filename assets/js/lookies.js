@@ -131,10 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
     checkForModalOpening();
 });
 
-window.addEventListener('load', ( => {
+window.addEventListener('load', function() {
     console.log("Window loaded, checking for modal paramater");
     checkForModalOpening();
-}))
+});
 
 // Cookie Consent, Language Translation & Preference Settings
 function setCookie(name, value, days) {
