@@ -8,7 +8,7 @@ console.log("Lookies loaded");
 function showModalStep(stepId) {
     const step = document.getElementById(stepId);
     if (step) {
-        document.querySelectorAll('.modal-step').forEach(step => {
+        document.querySelectorAll('.modal-step').forEach(function(step) {
             step.style.display = 'none';  // Hide all steps
         });
         step.style.display = 'block';  // Show the specified step
@@ -96,7 +96,7 @@ function transitionModalStep(currentStepId, nextStepId) {
 const openModalButton = document.getElementById('openModalButton');
 if (openModalButton) {
     console.log("Open modal button found");
-    openModalButton.addEventListener('click', () => {
+    openModalButton.addEventListener('click', function() {
         console.log("Open modal button clicked");
         openModalById('auth-modal', 'step1');
     });
@@ -127,7 +127,7 @@ function checkForModalOpening() {
 
 
 // Ensure modal opening is checked on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     checkForModalOpening();
 });
 
@@ -211,7 +211,7 @@ function setupEventListeners() {
     }
     
     if (loginButton) {
-        loginButton.addEventListener('click', () => {
+        loginButton.addEventListener('click', function() {
             console.log('Login Button Clicked');
             openModalById('auth-modal', 'step1');
         });
@@ -272,10 +272,10 @@ function handleSignUp(event) {
     const email = event.target.querySelector('#signupEmail').value;
     const password = event.target.querySelector('#signupPassword').value;
 
-    signUp(email, password).then(() => {
+    signUp(email, password).then(function() {
         console.log("Sending validation email to:", email);
         transitionModalStep('step1', 'step2');
-    }).catch(error => {
+    }).catch(function(error) {
         console.error("Error during sign-up:", error);
         submitButton.disabled = false; // Re-enable if error occurs
     });
@@ -313,7 +313,7 @@ function togglePasswordVisibility() {
 }
 
 // Attach click event to show password button if it exists
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     const showPasswordButton = document.getElementById('showPassword');
     if (showPasswordButton) {
         showPasswordButton.addEventListener('click', togglePasswordVisibility);
