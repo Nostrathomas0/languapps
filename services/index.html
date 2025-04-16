@@ -27,88 +27,41 @@
         <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1" />
     </noscript>
     <!-- End Facebook Pixel Code -->
-
-    <style>
-        .profile-images {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
-        }
-        .profile-images img {
-            position: absolute;
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
-        }
-        .profile-images img {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 1s ease-in-out;
-        }
-        .profile-images img.main-image {
-            position: relative;
-            opacity: 1;
-        }
-        .service-box {
-            text-align: center;
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .cta-button {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .cta-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 
 <body>
     <!-- Header with Links -->
     <header class="links">
-        <a class="left" href="images/Seawolves.pdf" alt="CV">MA TESOL 2020</a>
-        <a class="right" href="Tutoring Contract.pdf" alt="Contract">First Form</a>
+        <a class="left" href="images/Seawolves.pdf" alt="Masters degree image for Thomas Schwartz">MA TESOL 2020</a>
+        <a class="right" href="Tutoring Contract.pdf" alt="A draft contract we can start from">First Form</a>
     </header>
 
     <!-- Main Section with Profile and Service Offerings -->
     <section class="main-content">
         <!-- Profile Section -->
-        <div class="profile">
-          <p>&emsp; Book Thomas</p><h1> the <i>&emsp; &emsp; teach engine</i></h1>>
-            <p>&emsp; Personalized English lessons to help you achieve your language goals.</p>
+        <section class="profile">
+          <p>&emsp; Book Thomas</p><h1> the <i>&emsp; &emsp; teach engine</i></h1>
+            <p>&emsp; Personalized English lessons or Small Classes</p>
             <img class="clout main-image" src="images/image1.jpg" alt="Presenting" />
             <!-- Profile Images with Dynamic Rotation -->
 
            <div class="profile-images">
-            <img class="clout4" src="images/2020 grad.jpg" alt="Graduation" style="opacity: 0;" />
-            <img class="moreclout" src="images/81jJJYN9alL._AC_SL1500_.jpg" alt="Teaching Resources" style="opacity: 0;" />
-            <img class="clout2" src="images/Genel-Ingilizce-Kursu-Galeri2022-06-06-11-09-54am.png" alt="English Class" style="opacity: 0;" />
-            <img class="clout3" src="images/beykent.jpg" alt="Beykent University" style="opacity: 0;" />
-            <img class="moreclout" src="images/image001.png" alt="ESL Teaching" style="opacity: 0;" />
-        </div>
-        </div>
+                <img class="clout" src="images/2020 grad.jpg" alt="Snipped from Diploma" style="opacity: 0;" />
+                <img class="clout" src="images/image001.png" alt="Teaching Resources" style="opacity: 0;" />
+                <img class="clout" src="images/Genel-Ingilizce-Kursu-Galeri2022-06-06-11-09-54am.png" alt="English Class" style="opacity: 0;" />
+                <img class="clout" src="images/VIPFeedback1.jpg" alt="Chinese Review" style="opacity: 0;" />
+                <img class="clout" src="images/ACE_EDUCATION_LOGO_BLANC.png" alt="ESL Teaching" style="opacity: 0;" />
+            </div>
+        </section>
 
         <!-- Article with Purchase Options -->
-        <article class="services">
+        <section class="services right-aligned">
             <!-- Trial Service -->
-            <div class="service-box">
-                <h4>Trial Lesson</h4>
-                <p>Try a free 25-minute lesson and see how our courses can help you achieve your goals.</p>
+            <div class="service-box" role="region" aria-label="Trial Lesson Information">
+                <h4 id="trial-heading" >Trial Lesson</h4>
+                <p id="trial-desc">Try a free 25-minute lesson and see how our courses can help you achieve your goals.</p>
                 <a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL">
-                    <img src="images/trial lesson.png" alt="25 minute free trial" class="service-image" />
+                    <img src="images/trial lesson.png" alt="25 minute free trial illustration" class="service-image" />
                 </a>
                 <a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL" class="cta-button">Book Your Free Trial</a>
             </div>
@@ -132,7 +85,7 @@
                 </a>
                 <a href="https://buy.stripe.com/fZe28M96l200cSY8wy" class="cta-button">Enroll in Full Course</a>
             </div>
-        </article>
+        </section>
     </section>
 
     <!-- Footer Section with Social Icons and Contact Links -->

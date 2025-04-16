@@ -3,6 +3,7 @@ body {
   box-sizing: border-box;
 }
 
+/* Header styling */
 header {
   background-color: #003153;
   padding: 4px;
@@ -26,17 +27,81 @@ header {
   width: 35%;
 }
 
-div {
-  display: inline-block;
-  background-color: #67074e;
-  float: left;
-  width: 62%;
-  height: auto;
-  padding: 2px;
-  margin: 2px solid;
-  object-fit: contain;
+/* Main content layout */
+.main-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
+/* Profile section - left side */
+.profile {
+  background-color: #67074e;
+  width: 62%;
+  padding: 2px;
+  margin: 2px solid;
+}
+
+/* Profile images */
+.profile-images {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.profile-images img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1s ease-in-out;
+}
+
+.profile-images img.main-image {
+  position: relative;
+  opacity: 1;
+}
+
+.clout {
+  height: 320px;
+  width: auto;
+}
+
+/* Services section - right side */
+.services {
+  background-color: #dd9933;
+  color: #67074e;
+  width: 32%;
+  padding: 5px;
+}
+
+/* Service boxes styling */
+.service-box {
+  text-align: center;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0056b3;
+}
+
+/* Text styling */
 p {
   color: #dd9933;
   font-size: 33px;
@@ -46,41 +111,11 @@ h1 {
   color: #67074e;
   text-align: center;
 }
- 
-.clout {
-  height: 320px;
-  width: auto;
-}
 
-.clout1 {
-  height: auto;
-  width: 300px;
-}
-
-.clout2 {
-  height: auto;
-  width: 220px;
-}
-
-.clout3 {
-   height: 127px;
-   width: auto;
-}
-
-.clout4 {
-  height: auto;
-  width: 333px;
-}
-  
-.moreclout {
-  height: 50%;
-  max-width: 330px;
-}
-
-/* Style the list inside the menu */
-article ul {
+/* List styling */
+.services ul {
   list-style-type: none;
-  padding: 4;
+  padding: 4px;
 }
 
 .color ul {
@@ -92,33 +127,45 @@ article ul {
   width: auto;
 }
 
-article {
-  background-color: #dd9933;
-  color: #67074e;
-  float: right;
-  padding: 5px;
-  width: 32%;
-  height: 98%;
-}
-
- /* Clear floats after the columns */
-section::after {
-  content: "main";
-  display: table;
-  clear: both;
-}
-
-/* Style the footer */
+/* Footer styling */
 footer {
   background-color: #003153;
   padding: 10px;
   text-align: center;
+  clear: both;
 }
 
-/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+/* Clear floats after the columns */
+section::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - tablets */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+  
+  .profile, .services {
+    width: 95%;
+    margin: 0 auto;
+  }
+}
+
+/* Responsive layout - mobile phones */
 @media (max-width: 600px) {
-  div, article {
+  .profile, .services {
     width: 100%;
     height: auto;
+  }
+  
+  .links a {
+    font-size: 18px;
+  }
+  
+  p {
+    font-size: 24px;
   }
 }
