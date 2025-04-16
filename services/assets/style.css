@@ -53,18 +53,19 @@ header {
 .profile-images img {
   position: absolute;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 300px ;
+  object-fit: contain;
   transition: opacity 1s ease-in-out;
 }
 
 .profile-images img.main-image {
   position: relative;
   opacity: 1;
+  height: 300px; 
 }
 
 .clout {
-  height: 320px;
+  height: 300px;
   width: auto;
 }
 
@@ -76,16 +77,44 @@ header {
   padding: 5px;
 }
 
+/* Services section - right side */
+.services.right-aligned {
+  background-color: #dd9933;
+  color: #67074e;
+  width: 32%;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
 /* Service boxes styling */
 .service-box {
   text-align: center;
-  margin: 20px;
-  padding: 20px;
+  margin: 10px;
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 6px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.service-box h4 {
+  font-size: 18px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
+.service-box p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #67074e;
+  line-height: 1.3;
+}
+
+/* Smaller images */
+.service-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 120px; /* Limit image height */
+}
 .cta-button {
   display: inline-block;
   margin-top: 10px;
@@ -134,7 +163,40 @@ footer {
   text-align: center;
   clear: both;
 }
+.social-icons ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
 
+.social-icons li {
+  display: inline-block;
+}
+
+.social-icons a {
+  color: #dd9933; /* Match your color scheme */
+  font-size: 24px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #ffffff; /* Change color on hover */
+}
+
+.social-icons .label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 /* Clear floats after the columns */
 section::after {
   content: "";
