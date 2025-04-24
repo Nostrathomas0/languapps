@@ -151,34 +151,109 @@ async function signIn(email, password) {
   try {
     // Sign in the user with Firebase Authentication
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const userId = userCredential.user.uid; // Retrieve user ID
+    const userId = userCredential.user.uid;
     console.log("User signed in:", userCredential.user);
 
-    // Retrieve JWT token from Firestore for the authenticated user
+    // Retrieve JWT token from Firestore
     const jwtToken = await getJwtFromFirestore(userId);
     if (jwtToken) {
       console.log("JWT token retrieved from Firestore:", jwtToken);
 
       // Set the JWT token as a cookie for subdomain access
       setAuthToken(jwtToken);
-      console.log("JWT token set as cookie successfully");
-
-      // Explicitly redirect to the subdomain with the JWT token
-      const subdomain = "https://labase.languapps.com";
-      console.log("Redirecting to:", subdomain);
       
-      // Force redirect to the subdomain
-      window.location.href = `${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`;
+      // Pre redirect
+      const subdomain = "https://labase.languapps.com";
+      const redirectUrl = `${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`;
+      
+      // Close modals
+      document.querySelectorAll('.modal').forEach(modal => {
+        if (modal.style.display === 'block') {
+          modal.style.display = 'none';
+        }
+      })
+
+      // Clear URL
+      const cleanUrl = new URL(window.location);
+      cleanUrl.search = '';
+      window.history.pushState({}, '', cleanUrl);
+
+      console.log("Redirecting to:", subdomain);
+
+      // Excecute redirect
+      executeRedirect(redirectUrl);
+
+      return true;
     } else {
-      console.error("No JWT token found in Firestore for user:", userId);
-      alert("Sign-in failed: Unable to retrieve JWT token.");
+      console.error("No Token found for user", userId);
+      alert("Sign-in failed: Unable to retrieve auth token.");
+      return false
     }
   } catch (error) {
     console.error("Error during sign-in process:", error);
     alert("Sign-in failed: " + error.message);
+    return false;
   }
 }
 
+function executeRedirect(url) {
+  // functino to check if we're still in the same origin
+  const checkIfRedirected = () => {
+    return window.location.href.indexOf(new URL(url).origin) !== -1;
+  };
+
+
+  // Method 1: Standard location change
+  window.location.href = url;
+    
+  // Set up fallback methods with increasing delays
+  setTimeout(() => {
+    if (!checkIfRedirected()) {
+      console.log("Attempting fallback redirect method...");
+      window.location.replace(url);
+    }
+  }, 200);
+
+  setTimeout(() => {
+    if (!checkIfRedirected()) {
+      console.log("Attempting programmatic link click...");
+      const link = document.createElement('a');
+      link.href = url;
+      link.style.display = 'none';
+      link.setAttribute('target', '_self');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }, 500);
+
+  setTimeout(() => {
+    if (!checkIfRedirected()) {
+      console.log("Final redirect attempt with user notification");
+      alert("Redirecting you to La Base. Please click OK to continue.");
+      window.location.href = url;
+    }
+  }, 1000);
+}
+// Function to check authentication status and redirect if needed
+// Add this to your main JS file or where appropriate
+function checkAuthAndRedirect() {
+  if (auth.currentUser) {
+    const userId = auth.currentUser.uid;
+    
+    getJwtFromFirestore(userId)
+      .then(jwtToken => {
+        if (jwtToken) {
+          setAuthToken(jwtToken);
+          const subdomain = "https://labase.languapps.com";
+          executeRedirect(`${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`);
+        }
+      })
+      .catch(error => {
+        console.error("Error checking authentication status:", error);
+      });
+  }
+}
 
 async function sendPasswordResetEmail(email) {
   try {
