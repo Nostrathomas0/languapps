@@ -149,7 +149,7 @@ async function signUp(email, password) {
 
 async function signIn(email, password) {
   try {
-    // Sign in the user with Firebase Authentication
+    // Sconsole.log("executeRedirect called with URL:", url);ign in the user with Firebase Authentication
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const userId = userCredential.user.uid;
     console.log("User signed in:", userCredential.user);
@@ -171,7 +171,7 @@ async function signIn(email, password) {
         if (modal.style.display === 'block') {
           modal.style.display = 'none';
         }
-      })
+      });
 
       // Clear URL
       const cleanUrl = new URL(window.location);
