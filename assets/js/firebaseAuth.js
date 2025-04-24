@@ -149,7 +149,7 @@ async function signUp(email, password) {
 
 async function signIn(email, password) {
   try {
-    // Sconsole.log("executeRedirect called with URL:", url);ign in the user with Firebase Authentication
+    // Sign in the user with Firebase Authentication
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const userId = userCredential.user.uid;
     console.log("User signed in:", userCredential.user);
@@ -197,6 +197,7 @@ async function signIn(email, password) {
 }
 
 function executeRedirect(url) {
+  console.log("executeRedirect called with URL:" url)
   // functino to check if we're still in the same origin
   const checkIfRedirected = () => {
     return window.location.href.indexOf(new URL(url).origin) !== -1;
