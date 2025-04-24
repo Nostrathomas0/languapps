@@ -197,7 +197,7 @@ async function signIn(email, password) {
 }
 
 function executeRedirect(url) {
-  console.log("executeRedirect called with URL:" url)
+  console.log("executeRedirect called with URL:", url)
   // functino to check if we're still in the same origin
   const checkIfRedirected = () => {
     return window.location.href.indexOf(new URL(url).origin) !== -1;
