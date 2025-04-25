@@ -197,6 +197,7 @@ function setupEventListeners() {
     const signUpForm = document.getElementById('signupForm');
     const userDetailsForm = document.getElementById('userDetailsForm');
     const addBlogPostForm = document.getElementById('addBlogPostForm');
+    const skipBlogButton = document.getElementById('skipBlogButton')
 
     if (acceptBtn) {
         acceptBtn.addEventListener('click', handleAcceptClick);
@@ -231,6 +232,16 @@ function setupEventListeners() {
     if (addBlogPostForm) {
         addBlogPostForm.removeEventListener('submit', handleBlogPostSubmit);
         addBlogPostForm.addEventListener('submit', handleBlogPostSubmit);
+    }
+
+    if (skipBlogButton) {
+        // Import the handler from blogFormghandler.js
+        import('./blogFormHandler.js').then(module => {
+            skipBlogButton.addEventListener('click', module.handleSkipButtonClick);
+            console.log("Skip button listener attached");
+        }).catch(error => {
+            console.error("Error importing blogFormHandler for skip button:", error);
+            });
     }
 }
 

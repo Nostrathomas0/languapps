@@ -196,65 +196,6 @@ async function signIn(email, password) {
   }
 }
 
-function executeRedirect(url) {
-  console.log("executeRedirect called with URL:", url)
-  // functino to check if we're still in the same origin
-  const checkIfRedirected = () => {
-    return window.location.href.indexOf(new URL(url).origin) !== -1;
-  };
-
-
-  // Method 1: Standard location change
-  window.location.href = url;
-    
-  // Set up fallback methods with increasing delays
-  setTimeout(() => {
-    if (!checkIfRedirected()) {
-      console.log("Attempting fallback redirect method...");
-      window.location.replace(url);
-    }
-  }, 200);
-
-  setTimeout(() => {
-    if (!checkIfRedirected()) {
-      console.log("Attempting programmatic link click...");
-      const link = document.createElement('a');
-      link.href = url;
-      link.style.display = 'none';
-      link.setAttribute('target', '_self');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }, 500);
-
-  setTimeout(() => {
-    if (!checkIfRedirected()) {
-      console.log("Final redirect attempt with user notification");
-      alert("Redirecting you to La Base. Please click OK to continue.");
-      window.location.href = url;
-    }
-  }, 1000);
-}
-// Function to check authentication status and redirect if needed
-// Add this to your main JS file or where appropriate
-function checkAuthAndRedirect() {
-  if (auth.currentUser) {
-    const userId = auth.currentUser.uid;
-    
-    getJwtFromFirestore(userId)
-      .then(jwtToken => {
-        if (jwtToken) {
-          setAuthToken(jwtToken);
-          const subdomain = "https://labase.languapps.com";
-          executeRedirect(`${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`);
-        }
-      })
-      .catch(error => {
-        console.error("Error checking authentication status:", error);
-      });
-  }
-}
 
 async function sendPasswordResetEmail(email) {
   try {
