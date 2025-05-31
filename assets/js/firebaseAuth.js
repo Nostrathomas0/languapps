@@ -15,8 +15,10 @@ function clearAuthToken() {
   // Use a hardcoded past date string instead of using date variable
   const pastDateStr = 'Thu, 01 Jan 1970 00:00:00 GMT';
   
-  // Clear both token names for consistency
+  // Clear JWT cookie (standardized name)
   document.cookie = `JWT=; expires=${pastDateStr}; path=/; domain=.languapps.com; secure; SameSite=None;`;
+  
+  // Clean up legacy cookie if it exists
   document.cookie = `backendJwtToken=; expires=${pastDateStr}; path=/; domain=.languapps.com; secure; SameSite=None;`;
   
   // Also clear from localStorage if present
@@ -28,22 +30,17 @@ function clearAuthToken() {
   console.log("After clearing:", document.cookie);
 }
 
-// Function to set the Backend JWT token in localStorage and as a cookie
+// Function to set the JWT token - SIMPLIFIED to use only JWT cookie
 function setAuthToken(token) {
-  // Just use one consistent name
+  // Set only JWT cookie (our standardized name)
   document.cookie = `JWT=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
-  document.cookie = `backendJwtToken=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
-
-  if (localStorage) {
-    localStorage.setItem('JWT', token);
-  }
-
-  console.log("JWT set in cookies");
+  
+  console.log("JWT cookie set successfully");
 } 
+
 // Monitor authentication state changes
 onAuthStateChanged(auth, async (user) => {
   console.log('Auth state changed:', user);
-
 
   if (user) {
     try {
@@ -73,7 +70,6 @@ onAuthStateChanged(auth, async (user) => {
     }
   }
 });
-
 
 function transitionModalStep(currentStepId, nextStepId) {
   const currentStep = document.getElementById(currentStepId);
@@ -145,8 +141,6 @@ async function signUp(email, password) {
   }
 }
 
-
-
 async function signIn(email, password) {
   try {
     // Sign in the user with Firebase Authentication
@@ -180,7 +174,7 @@ async function signIn(email, password) {
 
       console.log("Redirecting to:", subdomain);
 
-      // Excecute redirect
+      // Execute redirect
       executeRedirect(redirectUrl);
 
       return true;
@@ -195,7 +189,6 @@ async function signIn(email, password) {
     return false;
   }
 }
-
 
 async function sendPasswordResetEmail(email) {
   try {
