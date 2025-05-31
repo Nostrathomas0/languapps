@@ -43,6 +43,12 @@ onAuthStateChanged(auth, async (user) => {
   console.log('Auth state changed:', user);
 
   if (user) {
+    // Check if we're in the middle of a signup flow
+    if (window.signupJwtToken) {
+      console.log("Signup flow in progress, skipping automatic redirect");
+      return; // Don't redirect during signup
+    }
+    
     try {
       // Get the JWT token from Firestore for the authenticated user
       const jwtToken = await getJwtFromFirestore(user.uid);
@@ -50,7 +56,7 @@ onAuthStateChanged(auth, async (user) => {
         setAuthToken(jwtToken); // Set the retrieved token as a cookie
         console.log("JWT token set as cookie successfully:", jwtToken);
 
-        // Redirect to subdomain if necessary
+        // Only redirect if we're NOT on the main domain during signup
         if (window.location.hostname === 'labase.languapps.com') {
           window.location.href = `https://labase.languapps.com/?authToken=${jwtToken}`;
         }
@@ -101,19 +107,19 @@ async function signUp(email, password) {
     console.log("Fetch response status:", response.status);
 
     if (!response.ok) {
-    // Get the actual error message from the server
-    const errorData = await response.text();
-    console.error("Server error response:", errorData);
-    
-    // Show user-friendly error messages
-    if (errorData.includes("Email already exists")) {
-      alert("This email is already registered. Please try signing in instead, or use a different email address.");
-      return; // Stop the signup process
-    } else {
-      alert("Sign-up failed: " + errorData);
-      return; // Stop the signup process
+      // Get the actual error message from the server
+      const errorData = await response.text();
+      console.error("Server error response:", errorData);
+      
+      // Show user-friendly error messages
+      if (errorData.includes("Email already exists")) {
+        alert("This email is already registered. Please try signing in instead, or use a different email address.");
+        return; // Stop the signup process
+      } else {
+        alert("Sign-up failed: " + errorData);
+        return; // Stop the signup process
+      }
     }
-  }
 
     // Step 3: Parse the backend response
     const data = await response.json();
@@ -139,12 +145,11 @@ async function signUp(email, password) {
     transitionModalStep('step1', 'step2');
     console.log("Transitioned to step2 successfully");
     
-    // Add a longer delay for signUp to allow users to see the step2 content
-    setTimeout(() => {
-      // Redirect to subdomain with the JWT token
-      window.location.href = `https://labase.languapps.com/?authToken=${encodeURIComponent(data.jwtToken)}`;
-      console.log("Redirecting to subdomain after showing step2...");
-    }, 3000); // 3 second delay to give users time to see step2
+    // Store the JWT token for later use in redirect
+    window.signupJwtToken = data.jwtToken;
+    console.log("JWT token stored for user choice redirect");
+    
+    // No automatic redirect - user controls when to proceed
 
   } catch (error) {
     console.error('Sign-up error:', error);
@@ -242,4 +247,15 @@ async function sendJWTToLambda(jwtToken) {
   }
 }
 
-export { signUp, signIn, sendPasswordResetEmail, handleSignOut };
+// Function to redirect to subdomain after signup
+function proceedToApp() {
+  const token = window.signupJwtToken;
+  if (token) {
+    window.location.href = `https://labase.languapps.com/?authToken=${encodeURIComponent(token)}`;
+    console.log("Redirecting to subdomain...");
+  } else {
+    console.error("No JWT token found for redirect");
+  }
+}
+
+export { signUp, signIn, sendPasswordResetEmail, handleSignOut, proceedToApp };
