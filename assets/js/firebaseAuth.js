@@ -82,7 +82,7 @@ function transitionModalStep(currentStepId, nextStepId) {
   } else {
     console.error('Transition error: Step elements not found');
   }
-}
+}step
 
 async function signUp(email, password) {
   try {
@@ -101,8 +101,19 @@ async function signUp(email, password) {
     console.log("Fetch response status:", response.status);
 
     if (!response.ok) {
-      throw new Error("Server responded with an error");
+    // Get the actual error message from the server
+    const errorData = await response.text();
+    console.error("Server error response:", errorData);
+    
+    // Show user-friendly error messages
+    if (errorData.includes("Email already exists")) {
+      alert("This email is already registered. Please try signing in instead, or use a different email address.");
+      return; // Stop the signup process
+    } else {
+      alert("Sign-up failed: " + errorData);
+      return; // Stop the signup process
     }
+  }
 
     // Step 3: Parse the backend response
     const data = await response.json();
