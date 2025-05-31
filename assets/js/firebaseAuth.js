@@ -82,7 +82,7 @@ function transitionModalStep(currentStepId, nextStepId) {
   } else {
     console.error('Transition error: Step elements not found');
   }
-}step
+}
 
 async function signUp(email, password) {
   try {
