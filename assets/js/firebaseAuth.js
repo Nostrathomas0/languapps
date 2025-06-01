@@ -32,8 +32,11 @@ function clearAuthToken() {
 
 // Function to set the JWT token - SIMPLIFIED to use only JWT cookie
 function setAuthToken(token) {
-  // Set only JWT cookie (our standardized name)
-  document.cookie = `JWT=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; secure; SameSite=None`;
+  // Set only JWT cookie (our standardized name) with proper security settings
+  const isSecure = window.location.protocol === 'https:';
+  const sameSite = isSecure ? 'None' : 'Lax'; // SameSite=None requires Secure=true
+  
+  document.cookie = `JWT=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; ${isSecure ? 'secure; ' : ''}SameSite=${sameSite}`;
   
   console.log("JWT cookie set successfully");
 } 
@@ -155,6 +158,12 @@ async function signUp(email, password) {
     console.error('Sign-up error:', error);
     alert('Sign-up failed: ' + error.message);
   }
+}
+
+// Function to handle redirects
+function executeRedirect(url) {
+  console.log("executeRedirect called with URL:", url);
+  window.location.href = url;
 }
 
 async function signIn(email, password) {
