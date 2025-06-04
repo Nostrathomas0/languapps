@@ -1,5 +1,5 @@
 //assets/js/lookies.js
-import { signUp } from './firebaseAuth.js';
+import { signUp, signIn } from './firebaseAuth.js';  // Import signIn function
 import { auth } from './firebaseInit.js';
 import { attachBlogPostListener, handleBlogPostSubmit } from './blogFormHandler.js';  // Adjust the path as needed
 // Utility Functions for Modals & Their Event Listeners
@@ -195,6 +195,7 @@ function setupEventListeners() {
     const languageDropdown = document.getElementById('language-dropdown');
     const loginButton = document.getElementById("loginButton");
     const signUpForm = document.getElementById('signupForm');
+    const signInForm = document.getElementById('signinForm');  // Add signin form
     const userDetailsForm = document.getElementById('userDetailsForm');
     const addBlogPostForm = document.getElementById('addBlogPostForm');
     const skipBlogButton = document.getElementById('skipBlogButton')
@@ -222,6 +223,13 @@ function setupEventListeners() {
         // Remove previous listener before adding a new one
         signUpForm.removeEventListener('submit', handleSignUp);
         signUpForm.addEventListener('submit', handleSignUp);
+    }
+
+    // Add signin form handler
+    if (signInForm) {
+        signInForm.removeEventListener('submit', handleSignIn);
+        signInForm.addEventListener('submit', handleSignIn);
+        console.log("Sign-in form listener attached");
     }
 
     if (userDetailsForm) {
@@ -272,7 +280,7 @@ function handleDeclineClick() {
 function handleLanguageChange(event) {
     const language = event.target.value;
     setLanguagePreference(language);
-    console.log("Language preference set to:", language);b
+    console.log("Language preference set to:", language);
 }
 
 function handleSignUp(event) {
@@ -291,6 +299,33 @@ function handleSignUp(event) {
         submitButton.disabled = false; // Re-enable if error occurs
     });
 }
+
+// NEW: Add signin handler
+function handleSignIn(event) {
+    event.preventDefault();
+    console.log("Sign-in form submitted");
+    
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    submitButton.disabled = true; // Prevent double submission
+
+    const email = event.target.querySelector('#loginEmail').value;
+    const password = event.target.querySelector('#loginPassword').value;
+
+    console.log("Attempting sign-in for:", email);
+    
+    signIn(email, password).then(function(success) {
+        if (success) {
+            console.log("Sign-in successful, should redirect");
+        } else {
+            console.log("Sign-in failed");
+            submitButton.disabled = false; // Re-enable if error occurs
+        }
+    }).catch(function(error) {
+        console.error("Error during sign-in:", error);
+        submitButton.disabled = false; // Re-enable if error occurs
+    });
+}
+
 function handleUserDetails(event) {
     event.preventDefault();
     const userName = event.target.querySelector('#userName').value;
