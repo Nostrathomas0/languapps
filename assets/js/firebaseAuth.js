@@ -174,8 +174,26 @@ async function signIn(email, password) {
     console.log("User signed in:", userCredential.user);
 
     // Retrieve JWT token from Firestore
-    const jwtToken = await getJwtFromFirestore(userId);
+    let jwtToken = await getJwtFromFirestore(userId);
+    
     if (jwtToken) {
+      // Check if token is expired before using it
+      try {
+        const decoded = JSON.parse(atob(jwtToken.split('.')[1]));
+        const currentTime = Math.floor(Date.now() / 1000);
+        
+        if (decoded.exp && decoded.exp < currentTime) {
+          console.log("Stored JWT token is expired, requesting new one");
+          // Token is expired, we need a new one from backend
+          alert("Your session has expired. Please sign up again to get a new token.");
+          return false;
+        }
+      } catch (decodeError) {
+        console.error("Error decoding JWT:", decodeError);
+        alert("Invalid token format. Please sign up again.");
+        return false;
+      }
+      
       console.log("JWT token retrieved from Firestore:", jwtToken);
 
       // Set the JWT token as a cookie for subdomain access
