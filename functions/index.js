@@ -161,6 +161,96 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
   }
 });
 
+// JWT Refresh endpoint that preserves progress
+app.post("/refreshJWTWithProgress", async (req, res) => {
+  console.log("JWT Refresh with Progress requested");
+
+  try {
+    const {userId, email, existingProgress} = req.body;
+
+    if (!userId || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: userId, email",
+      });
+    }
+
+    console.log("Refreshing JWT for:", email);
+    console.log("Preserving progress:", existingProgress);
+
+    // Verify the user exists in Firebase Auth
+    try {
+      await admin.auth().getUser(userId);
+    } catch (authError) {
+      console.error("User verification failed:", authError);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid user credentials",
+      });
+    }
+
+    // Create new JWT payload with preserved progress
+    const jwtPayload = {
+      uid: userId,
+      email: email,
+
+      // Preserve existing progress data
+      currentSession: (existingProgress &&
+         existingProgress.currentSession) || null,
+      recentProgress: (existingProgress &&
+         existingProgress.recentProgress) || [],
+      overallStats: (existingProgress && existingProgress.overallStats) || {
+        totalTopicsCompleted: 0,
+        averageScore: 0,
+        totalTimeSpent: 0,
+        streak: 0,
+        lastActiveDate: new Date().toISOString().split("T")[0],
+      },
+
+      // Token metadata
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
+
+      // Refresh metadata
+      refreshedAt: new Date().toISOString(),
+      originalCreation: (existingProgress &&
+        existingProgress.originalCreation) ||
+        new Date().toISOString(),
+    };
+
+    // Sign the new JWT using the same secret as signup
+    const jwtToken = jwt.sign(jwtPayload, functions.config().jwt.secret, {
+      expiresIn: "24h",
+    });
+
+    console.log("New JWT generated successfully for:", email);
+    console.log("Progress items preserved:", {
+      currentSession: !!jwtPayload.currentSession,
+      recentProgressCount: jwtPayload.recentProgress.length,
+      overallStats: !!jwtPayload.overallStats,
+    });
+
+    // Return success response (same format as signup)
+    res.status(200).json({
+      success: true,
+      message: "JWT refreshed with preserved progress",
+      jwtToken: jwtToken,
+      preservedProgress: {
+        currentSession: !!jwtPayload.currentSession,
+        recentProgressCount: jwtPayload.recentProgress.length,
+        totalTopicsCompleted: jwtPayload.overallStats.totalTopicsCompleted,
+      },
+    });
+  } catch (error) {
+    console.error("JWT refresh error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error during JWT refresh",
+      error: error.message,
+    });
+  }
+});
+
 // Only send further transactional emails once the user is verified
 exports.sendTransactionalEmail =
 functions.https.onCall(async (data, context) => {

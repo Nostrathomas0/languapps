@@ -177,29 +177,84 @@ async function signIn(email, password) {
     let jwtToken = await getJwtFromFirestore(userId);
     
     if (jwtToken) {
-      // Check if token is expired before using it
+      // Check if token is expired and extract progress if needed
       try {
         const decoded = JSON.parse(atob(jwtToken.split('.')[1]));
         const currentTime = Math.floor(Date.now() / 1000);
         
         if (decoded.exp && decoded.exp < currentTime) {
-          console.log("Stored JWT token is expired, requesting new one");
-          // Token is expired, we need a new one from backend
-          alert("Your session has expired. Please sign up again to get a new token.");
-          return false;
+          console.log("Stored JWT token is expired, requesting new one with preserved progress");
+          
+          // Extract existing progress data from expired JWT
+          const existingProgress = {
+            currentSession: decoded.currentSession || null,
+            recentProgress: decoded.recentProgress || [],
+            overallStats: decoded.overallStats || {
+              totalTopicsCompleted: 0,
+              averageScore: 0,
+              totalTimeSpent: 0,
+              streak: 0,
+              lastActiveDate: new Date().toISOString().split('T')[0]
+            },
+            originalCreation: decoded.originalCreation || decoded.iat
+          };
+          
+          console.log('Preserving progress from expired JWT:', {
+            currentSession: !!existingProgress.currentSession,
+            recentProgressCount: existingProgress.recentProgress.length,
+            totalCompleted: existingProgress.overallStats.totalTopicsCompleted
+          });
+          
+          // Request new JWT with preserved progress
+          try {
+            const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/refreshJWTWithProgress', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                userId: userId,
+                email: email,
+                existingProgress: existingProgress
+              }),
+            });
+            
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`JWT refresh failed: ${response.status} - ${errorText}`);
+            }
+            
+            const data = await response.json();
+            if (data.success && data.jwtToken) {
+              jwtToken = data.jwtToken;
+              
+              // Store the new JWT back to Firestore
+              await storeJwtInFirestore(userId, data.jwtToken);
+              
+              console.log("Fresh JWT generated with preserved progress:", data.preservedProgress);
+            } else {
+              throw new Error(data.message || 'JWT refresh response invalid');
+            }
+            
+          } catch (refreshError) {
+            console.error("Error refreshing JWT with progress:", refreshError);
+            alert("Unable to refresh your session while preserving progress. Please try signing in again.");
+            return false;
+          }
+        } else {
+          console.log("JWT is still valid, using existing token");
         }
+        
       } catch (decodeError) {
         console.error("Error decoding JWT:", decodeError);
-        alert("Invalid token format. Please sign up again.");
+        alert("Invalid token format. Please sign up again to get a fresh token.");
         return false;
       }
       
-      console.log("JWT token retrieved from Firestore:", jwtToken);
+      console.log("JWT token ready for use:", jwtToken ? "✓" : "✗");
 
       // Set the JWT token as a cookie for subdomain access
       setAuthToken(jwtToken);
       
-      // Pre redirect
+      // Prepare redirect to subdomain
       const subdomain = "https://labase.languapps.com";
       const redirectUrl = `${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`;
       
@@ -215,16 +270,16 @@ async function signIn(email, password) {
       cleanUrl.search = '';
       window.history.pushState({}, '', cleanUrl);
 
-      console.log("Redirecting to:", subdomain);
+      console.log("Redirecting to subdomain with fresh JWT");
 
       // Execute redirect
       executeRedirect(redirectUrl);
 
       return true;
     } else {
-      console.error("No Token found for user", userId);
-      alert("Sign-in failed: Unable to retrieve auth token.");
-      return false
+      console.error("No JWT token found for user", userId);
+      alert("Sign-in failed: Unable to retrieve auth token. Please try signing up first.");
+      return false;
     }
   } catch (error) {
     console.error("Error during sign-in process:", error);
