@@ -8,47 +8,102 @@ import {
 } from './firebaseInit.js';
 import { storeJwtInFirestore, getJwtFromFirestore } from './firebaseUtils.js'
 
+// Utility function to get cookie value
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
 /// Utility function to clear the JWT token from cookies and localStorage
 function clearAuthToken() {
+  console.log("🔍 [DEBUG] Clearing auth tokens...");
   console.log("Before clearing:", document.cookie);
   
-  // Use a hardcoded past date string instead of using date variable
   const pastDateStr = 'Thu, 01 Jan 1970 00:00:00 GMT';
+  const isSecure = window.location.protocol === 'https:';
+  const domain = '.languapps.com';
   
-  // Clear JWT cookie (standardized name)
-  document.cookie = `JWT=; expires=${pastDateStr}; path=/; domain=.languapps.com; secure; SameSite=None;`;
+  // Clear all possible JWT cookie variations
+  const cookieNames = ['JWT', 'backendJwtToken', 'authToken'];
   
-  // Clean up legacy cookie if it exists
-  document.cookie = `backendJwtToken=; expires=${pastDateStr}; path=/; domain=.languapps.com; secure; SameSite=None;`;
+  cookieNames.forEach(cookieName => {
+    // Clear for current domain
+    document.cookie = `${cookieName}=; expires=${pastDateStr}; path=/;`;
+    // Clear for main domain
+    document.cookie = `${cookieName}=; expires=${pastDateStr}; path=/; domain=${domain};`;
+    // Clear with secure flag if HTTPS
+    if (isSecure) {
+      document.cookie = `${cookieName}=; expires=${pastDateStr}; path=/; domain=${domain}; secure; SameSite=None;`;
+    }
+  });
   
-  // Also clear from localStorage if present
-  if (localStorage) {
+  // Clear from localStorage
+  if (typeof Storage !== "undefined") {
     localStorage.removeItem('JWT');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('emulatorJWT');
   }
   
   console.log("After clearing:", document.cookie);
+  console.log("🔍 [DEBUG] Auth tokens cleared");
 }
 
-// Function to set the JWT token - SIMPLIFIED to use only JWT cookie
-function setAuthToken(token) {
-  // Set only JWT cookie (our standardized name) with proper security settings
+// Updated setAuthToken function with debug logging
+function setAuthToken(token, maxAge = 3600) {
+  console.log("🔍 [DEBUG] setAuthToken called with:", {
+    hasToken: !!token,
+    tokenLength: token ? token.length : 0,
+    maxAge: maxAge
+  });
+
+  if (!token) {
+    console.error("🔍 [DEBUG] setAuthToken ERROR: Cannot set empty token");
+    return false;
+  }
+  
   const isSecure = window.location.protocol === 'https:';
-  const sameSite = isSecure ? 'None' : 'Lax'; // SameSite=None requires Secure=true
+  const domain = '.languapps.com';
   
-  document.cookie = `JWT=${encodeURIComponent(token)}; max-age=3600; path=/; domain=.languapps.com; ${isSecure ? 'secure; ' : ''}SameSite=${sameSite}`;
+  let cookieString = `JWT=${encodeURIComponent(token)}; max-age=${maxAge}; path=/; domain=${domain}`;
   
-  console.log("JWT cookie set successfully");
-} 
+  if (isSecure) {
+    cookieString += '; secure; SameSite=None';
+  } else {
+    cookieString += '; SameSite=Lax';
+  }
+  
+  console.log("🔍 [DEBUG] Setting cookie:", {
+    isSecure: isSecure,
+    domain: domain,
+    cookieLength: cookieString.length
+  });
+  
+  document.cookie = cookieString;
+  
+  // Verify cookie was set
+  const verification = getCookie('JWT');
+  console.log("🔍 [DEBUG] Cookie verification:", {
+    cookieSet: !!verification,
+    matches: verification === token
+  });
+  
+  return !!verification;
+}
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, async (user) => {
-  console.log('Auth state changed:', user);
+  console.log('🔍 [DEBUG] Auth state changed:', user ? user.email : 'signed out');
 
   if (user) {
     // Check if we're in the middle of a signup flow
     if (window.signupJwtToken) {
-      console.log("Signup flow in progress, skipping automatic redirect");
+      console.log("🔍 [DEBUG] Signup flow in progress, skipping automatic redirect");
       return; // Don't redirect during signup
     }
     
@@ -57,17 +112,17 @@ onAuthStateChanged(auth, async (user) => {
       const jwtToken = await getJwtFromFirestore(user.uid);
       if (jwtToken) {
         setAuthToken(jwtToken); // Set the retrieved token as a cookie
-        console.log("JWT token set as cookie successfully:", jwtToken);
+        console.log("🔍 [DEBUG] JWT token set as cookie successfully");
 
         // Only redirect if we're NOT on the main domain during signup
         if (window.location.hostname === 'labase.languapps.com') {
           window.location.href = `https://labase.languapps.com/?authToken=${jwtToken}`;
         }
       } else {
-        console.error("No JWT token found in Firestore for user:", user.uid);
+        console.error("🔍 [DEBUG] No JWT token found in Firestore for user:", user.uid);
       }
     } catch (error) {
-      console.error('Error retrieving JWT token from Firestore:', error);
+      console.error('🔍 [DEBUG] Error retrieving JWT token from Firestore:', error);
     }
   } else {
     // User is signed out: clear the auth token cookies
@@ -166,139 +221,183 @@ function executeRedirect(url) {
   window.location.href = url;
 }
 
-// Replace the entire signIn function in firebaseAuth.js with this:
-
+// Debug version of signIn function with comprehensive logging
 async function signIn(email, password) {
+  console.log("🔍 [DEBUG] Starting sign-in process for:", email);
+  
   try {
-    // Sign in the user with Firebase Authentication
+    // Step 1: Firebase Authentication
+    console.log("🔍 [DEBUG] Step 1: Attempting Firebase sign-in...");
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const userId = userCredential.user.uid;
-    console.log("User signed in:", userCredential.user);
+    console.log("🔍 [DEBUG] Step 1 SUCCESS: Firebase auth completed for user:", userId);
 
-    // Retrieve JWT token from Firestore
-    let jwtToken = await getJwtFromFirestore(userId);
+    // Step 2: Get JWT from Firestore
+    console.log("🔍 [DEBUG] Step 2: Retrieving JWT from Firestore...");
+    let jwtToken;
     
-    if (jwtToken) {
-      // Check if token is expired and extract progress if needed
-      try {
-        const decoded = JSON.parse(atob(jwtToken.split('.')[1]));
-        const currentTime = Math.floor(Date.now() / 1000);
-        
-        if (decoded.exp && decoded.exp < currentTime) {
-          console.log("Stored JWT token is expired, requesting new one with preserved progress");
-          
-          // DEBUG: Add detailed logging
-          console.log("🔍 [DEBUG] JWT is expired, decoded:", decoded);
-          console.log("🔍 [DEBUG] Current time:", currentTime);
-          console.log("🔍 [DEBUG] JWT exp:", decoded.exp);
-          console.log("🔍 [DEBUG] About to call refreshJWTWithProgress...");
-          
-          // Extract existing progress data from expired JWT
-          const existingProgress = {
-            currentSession: decoded.currentSession || null,
-            recentProgress: decoded.recentProgress || [],
-            overallStats: decoded.overallStats || {
-              totalTopicsCompleted: 0,
-              averageScore: 0,
-              totalTimeSpent: 0,
-              streak: 0,
-              lastActiveDate: new Date().toISOString().split('T')[0]
-            },
-            originalCreation: decoded.originalCreation || decoded.iat
-          };
-          
-          console.log('Preserving progress from expired JWT:', {
-            currentSession: !!existingProgress.currentSession,
-            recentProgressCount: existingProgress.recentProgress.length,
-            totalCompleted: existingProgress.overallStats.totalTopicsCompleted
-          });
-          
-          // Request new JWT with preserved progress
-          try {
-            console.log("🔍 [DEBUG] Making fetch request to Firebase Functions...");
-            
-            const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/refreshJWTWithProgress', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                userId: userId,
-                email: email,
-                existingProgress: existingProgress
-              }),
-            });
-            
-            console.log("🔍 [DEBUG] Fetch completed, response status:", response.status);
-            
-            if (!response.ok) {
-              const errorText = await response.text();
-              console.log("🔍 [DEBUG] Response error text:", errorText);
-              throw new Error(`JWT refresh failed: ${response.status} - ${errorText}`);
-            }
-            
-            const data = await response.json();
-            console.log("🔍 [DEBUG] Response data:", data);
-            
-            if (data.success && data.jwtToken) {
-              jwtToken = data.jwtToken;
-              
-              // Store the new JWT back to Firestore
-              await storeJwtInFirestore(userId, data.jwtToken);
-              
-              console.log("Fresh JWT generated with preserved progress:", data.preservedProgress);
-            } else {
-              throw new Error(data.message || 'JWT refresh response invalid');
-            }
-            
-          } catch (refreshError) {
-            console.error("🔍 [DEBUG] Error in refresh catch block:", refreshError);
-            console.error("Error refreshing JWT with progress:", refreshError);
-            alert("Unable to refresh your session while preserving progress. Please try signing in again.");
-            return false;
-          }
-        } else {
-          console.log("JWT is still valid, using existing token");
-        }
-        
-      } catch (decodeError) {
-        console.error("Error decoding JWT:", decodeError);
-        alert("Invalid token format. Please sign up again to get a fresh token.");
-        return false;
-      }
-      
-      console.log("JWT token ready for use:", jwtToken ? "✓" : "✗");
-
-      // Set the JWT token as a cookie for subdomain access
-      setAuthToken(jwtToken);
-      
-      // Prepare redirect to subdomain
-      const subdomain = "https://labase.languapps.com";
-      const redirectUrl = `${subdomain}/?authToken=${encodeURIComponent(jwtToken)}`;
-      
-      // Close modals
-      document.querySelectorAll('.modal').forEach(modal => {
-        if (modal.style.display === 'block') {
-          modal.style.display = 'none';
-        }
-      });
-
-      // Clear URL
-      const cleanUrl = new URL(window.location);
-      cleanUrl.search = '';
-      window.history.pushState({}, '', cleanUrl);
-
-      console.log("Redirecting to subdomain with fresh JWT");
-
-      // Execute redirect
-      executeRedirect(redirectUrl);
-
-      return true;
-    } else {
-      console.error("No JWT token found for user", userId);
-      alert("Sign-in failed: Unable to retrieve auth token. Please try signing up first.");
+    try {
+      jwtToken = await getJwtFromFirestore(userId);
+      console.log("🔍 [DEBUG] Step 2 RESULT: JWT retrieved:", jwtToken ? "✓ Found" : "✗ Not found");
+    } catch (firestoreError) {
+      console.error("🔍 [DEBUG] Step 2 ERROR: Firestore retrieval failed:", firestoreError);
+      alert("Failed to retrieve authentication data. Please try again.");
       return false;
     }
+
+    if (!jwtToken) {
+      console.error("🔍 [DEBUG] FATAL: No JWT token found for user");
+      alert("Sign-in failed: No authentication token found. Please sign up first.");
+      return false;
+    }
+
+    // Step 3: Check if token is expired
+    console.log("🔍 [DEBUG] Step 3: Checking token expiration...");
+    let isExpired = false;
+    let tokenPayload = null;
+    
+    try {
+      tokenPayload = JSON.parse(atob(jwtToken.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      isExpired = tokenPayload.exp && tokenPayload.exp < currentTime;
+      
+      console.log("🔍 [DEBUG] Step 3 RESULT:", {
+        currentTime: currentTime,
+        tokenExp: tokenPayload.exp,
+        isExpired: isExpired,
+        expiredBy: isExpired ? (currentTime - tokenPayload.exp) + " seconds" : "N/A"
+      });
+    } catch (parseError) {
+      console.error("🔍 [DEBUG] Step 3 ERROR: Token parsing failed:", parseError);
+      alert("Invalid token format. Please sign up again.");
+      return false;
+    }
+
+    // Step 4: Refresh token if expired
+    if (isExpired) {
+      console.log("🔍 [DEBUG] Step 4: Token is expired, attempting refresh...");
+      
+      try {
+        // Extract existing progress
+        const existingProgress = {
+          currentSession: tokenPayload.currentSession || null,
+          recentProgress: tokenPayload.recentProgress || [],
+          overallStats: tokenPayload.overallStats || {
+            totalTopicsCompleted: 0,
+            averageScore: 0,
+            totalTimeSpent: 0,
+            streak: 0,
+            lastActiveDate: new Date().toISOString().split('T')[0]
+          },
+          originalCreation: tokenPayload.originalCreation || tokenPayload.iat
+        };
+        
+        console.log("🔍 [DEBUG] Step 4a: Extracted progress data:", {
+          hasCurrentSession: !!existingProgress.currentSession,
+          recentProgressCount: existingProgress.recentProgress.length,
+          totalCompleted: existingProgress.overallStats.totalTopicsCompleted
+        });
+
+        // Make the refresh request
+        console.log("🔍 [DEBUG] Step 4b: Making refresh request to Firebase Function...");
+        
+        const refreshResponse = await fetch('https://us-central1-languapps.cloudfunctions.net/app/refreshJWTWithProgress', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ 
+            userId: userId,
+            email: email,
+            existingProgress: existingProgress
+          }),
+        });
+        
+        console.log("🔍 [DEBUG] Step 4c: Refresh response status:", refreshResponse.status);
+        console.log("🔍 [DEBUG] Step 4c: Refresh response headers:", Object.fromEntries(refreshResponse.headers.entries()));
+
+        if (!refreshResponse.ok) {
+          const errorText = await refreshResponse.text();
+          console.error("🔍 [DEBUG] Step 4c ERROR: Refresh failed with response:", errorText);
+          throw new Error(`JWT refresh failed: ${refreshResponse.status} - ${errorText}`);
+        }
+
+        const refreshData = await refreshResponse.json();
+        console.log("🔍 [DEBUG] Step 4d: Refresh response data:", {
+          success: refreshData.success,
+          hasJwtToken: !!refreshData.jwtToken,
+          message: refreshData.message,
+          preservedProgress: refreshData.preservedProgress
+        });
+
+        if (!refreshData.success || !refreshData.jwtToken) {
+          throw new Error(refreshData.message || 'JWT refresh response invalid');
+        }
+
+        jwtToken = refreshData.jwtToken;
+        console.log("🔍 [DEBUG] Step 4 SUCCESS: JWT refreshed successfully");
+
+        // Store refreshed token back to Firestore
+        console.log("🔍 [DEBUG] Step 4e: Storing refreshed token to Firestore...");
+        try {
+          await storeJwtInFirestore(userId, jwtToken);
+          console.log("🔍 [DEBUG] Step 4e SUCCESS: Refreshed token stored to Firestore");
+        } catch (storeError) {
+          console.error("🔍 [DEBUG] Step 4e ERROR: Failed to store refreshed token:", storeError);
+          // Continue anyway, we have the token
+        }
+
+      } catch (refreshError) {
+        console.error("🔍 [DEBUG] Step 4 FATAL ERROR: Token refresh failed:", refreshError);
+        alert("Unable to refresh your session. Please try signing in again.");
+        return false;
+      }
+    } else {
+      console.log("🔍 [DEBUG] Step 4: Token is still valid, skipping refresh");
+    }
+
+    // Step 5: Set the JWT cookie
+    console.log("🔍 [DEBUG] Step 5: Setting JWT cookie...");
+    const cookieSet = setAuthToken(jwtToken);
+    if (!cookieSet) {
+      console.error("🔍 [DEBUG] Step 5 ERROR: Failed to set JWT cookie");
+      return false;
+    }
+    console.log("🔍 [DEBUG] Step 5 SUCCESS: JWT cookie set");
+
+    // Step 6: Clean up UI and redirect
+    console.log("🔍 [DEBUG] Step 6: Cleaning up and redirecting...");
+    
+    // Close modals
+    document.querySelectorAll('.modal').forEach(modal => {
+      if (modal.style.display === 'block') {
+        modal.style.display = 'none';
+        console.log("🔍 [DEBUG] Step 6a: Closed modal:", modal.id);
+      }
+    });
+
+    // Clean URL
+    const cleanUrl = new URL(window.location);
+    cleanUrl.search = '';
+    window.history.pushState({}, '', cleanUrl);
+    console.log("🔍 [DEBUG] Step 6b: URL cleaned");
+
+    // Redirect
+    const redirectUrl = `https://labase.languapps.com/?authToken=${encodeURIComponent(jwtToken)}`;
+    console.log("🔍 [DEBUG] Step 6c: Redirecting to:", redirectUrl);
+    
+    window.location.href = redirectUrl;
+    
+    console.log("🔍 [DEBUG] SIGN-IN PROCESS COMPLETED SUCCESSFULLY");
+    return true;
+
   } catch (error) {
-    console.error("Error during sign-in process:", error);
+    console.error("🔍 [DEBUG] FATAL ERROR in sign-in process:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     alert("Sign-in failed: " + error.message);
     return false;
   }
@@ -315,12 +414,26 @@ async function sendPasswordResetEmail(email) {
 
 async function handleSignOut() {
   try {
+    console.log("🔍 [DEBUG] Starting sign-out process...");
+    
+    // Sign out from Firebase
     await firebaseSignOut(auth);
-    alert('Signed out successfully.');
+    
+    // Clear all auth tokens and cookies
     clearAuthToken();
-    window.location.href = "https://languapps.com";
+    
+    // Clear any signup flow tokens
+    if (window.signupJwtToken) {
+      delete window.signupJwtToken;
+    }
+    
+    // Redirect to main domain
+    window.location.href = "https://languapps.com/?signed-out=true";
+    
+    console.log("🔍 [DEBUG] Sign-out completed successfully");
+    
   } catch (error) {
-    console.error('Error during sign out:', error);
+    console.error('🔍 [DEBUG] Error during sign out:', error);
     alert('Sign-out failed: ' + error.message);
   }
 }
