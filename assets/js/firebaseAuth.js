@@ -166,6 +166,8 @@ function executeRedirect(url) {
   window.location.href = url;
 }
 
+// Replace the entire signIn function in firebaseAuth.js with this:
+
 async function signIn(email, password) {
   try {
     // Sign in the user with Firebase Authentication
@@ -184,6 +186,12 @@ async function signIn(email, password) {
         
         if (decoded.exp && decoded.exp < currentTime) {
           console.log("Stored JWT token is expired, requesting new one with preserved progress");
+          
+          // DEBUG: Add detailed logging
+          console.log("🔍 [DEBUG] JWT is expired, decoded:", decoded);
+          console.log("🔍 [DEBUG] Current time:", currentTime);
+          console.log("🔍 [DEBUG] JWT exp:", decoded.exp);
+          console.log("🔍 [DEBUG] About to call refreshJWTWithProgress...");
           
           // Extract existing progress data from expired JWT
           const existingProgress = {
@@ -207,6 +215,8 @@ async function signIn(email, password) {
           
           // Request new JWT with preserved progress
           try {
+            console.log("🔍 [DEBUG] Making fetch request to Firebase Functions...");
+            
             const response = await fetch('https://us-central1-languapps.cloudfunctions.net/app/refreshJWTWithProgress', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -217,12 +227,17 @@ async function signIn(email, password) {
               }),
             });
             
+            console.log("🔍 [DEBUG] Fetch completed, response status:", response.status);
+            
             if (!response.ok) {
               const errorText = await response.text();
+              console.log("🔍 [DEBUG] Response error text:", errorText);
               throw new Error(`JWT refresh failed: ${response.status} - ${errorText}`);
             }
             
             const data = await response.json();
+            console.log("🔍 [DEBUG] Response data:", data);
+            
             if (data.success && data.jwtToken) {
               jwtToken = data.jwtToken;
               
@@ -235,6 +250,7 @@ async function signIn(email, password) {
             }
             
           } catch (refreshError) {
+            console.error("🔍 [DEBUG] Error in refresh catch block:", refreshError);
             console.error("Error refreshing JWT with progress:", refreshError);
             alert("Unable to refresh your session while preserving progress. Please try signing in again.");
             return false;
