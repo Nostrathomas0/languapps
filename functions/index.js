@@ -144,7 +144,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     // Return the response with JWT token
     const tokenPayload = {uid: userRecord.uid, email: email};
     const jwtToken = jwt.sign(tokenPayload,
-        functions.config().jwt.secret, {expiresIn: "24h"});
+        functions.config().jwt.secret, {expiresIn: "7d"});
 
     res.json({
       success: true,
@@ -209,7 +209,6 @@ app.post("/refreshJWTWithProgress", async (req, res) => {
 
       // Token metadata
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
 
       // Refresh metadata
       refreshedAt: new Date().toISOString(),
@@ -220,7 +219,7 @@ app.post("/refreshJWTWithProgress", async (req, res) => {
 
     // Sign the new JWT using the same secret as signup
     const jwtToken = jwt.sign(jwtPayload, functions.config().jwt.secret, {
-      expiresIn: "24h",
+      expiresIn: "7d",
     });
 
     console.log("New JWT generated successfully for:", email);
