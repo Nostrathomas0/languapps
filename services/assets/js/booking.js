@@ -1,6 +1,6 @@
 // booking.js - Calendar booking system for languapps.com/services
 import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
-// Reads JWT cookie, shows calendar, handles booking → Stripe
+
 (function() {
     'use strict';
 
@@ -58,6 +58,11 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
             updateAuthUI(user);
         });
     }
+
+    // ============================================================================
+    // 2. CALENDAR DISPLAY
+    // ============================================================================
+
     /**
      * Available time slots (you can modify this)
      */
@@ -173,10 +178,9 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
      * Confirm booking and redirect to Stripe
      */
     function confirmBooking() {
-        const user = checkAuth();
-        
-        if (!user) {
+        if (!currentUser) {
             alert('Please log in to continue');
+            window.location.href = 'https://languapps.com/?auth-modal';
             return;
         }
         
@@ -185,23 +189,24 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
             return;
         }
         
+        // Get JWT from cookie for metadata
+        const jwtToken = getCookie('JWT');
+        
         // Prepare metadata for Stripe
         const bookingData = {
-            user_email: user.email,
-            user_id: user.uid,
+            user_email: currentUser.email,
+            user_id: currentUser.uid,
             slots: selectedSlots,
-            booked_at: new Date().toISOString()
+            booked_at: new Date().toISOString(),
+            jwt: jwtToken ? jwtToken.substring(0, 50) + '...' : 'none'
         };
         
         // Encode booking data for URL
         const encodedData = encodeURIComponent(JSON.stringify(bookingData));
         
-        // TODO: Replace with your actual Stripe payment link
-        // You'll create a new product in Stripe for "2x 15min weekly lessons"
         const stripeLink = 'https://buy.stripe.com/3cs7tWgOt14odsAfZ0';
         
         // Redirect to Stripe with metadata
-        // Note: Stripe will pass this back in the webhook
         window.location.href = `${stripeLink}?client_reference_id=${encodedData}`;
     }
 
@@ -213,20 +218,15 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
      * Initialize booking system
      */
     function init() {
-        console.log('Booking system initializing...');
+        console.log('🔍 [Booking] Booking system initializing...');
         
-        // Check authentication
-        const user = checkAuth();
+        // Initialize Firebase auth listener
+        initAuth();
         
-        if (user) {
-            // Render calendar
-            renderCalendar();
-            
-            // Add confirm button handler
-            const confirmButton = document.getElementById('confirm-booking');
-            if (confirmButton) {
-                confirmButton.addEventListener('click', confirmBooking);
-            }
+        // Add confirm button handler
+        const confirmButton = document.getElementById('confirm-booking');
+        if (confirmButton) {
+            confirmButton.addEventListener('click', confirmBooking);
         }
     }
 
