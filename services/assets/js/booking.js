@@ -1,5 +1,5 @@
 // booking.js - Calendar booking system for languapps.com/services
-import { auth, onAuthStateChanged } from '/assets/js/firebaseAuth.js';
+import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
 // Reads JWT cookie, shows calendar, handles booking → Stripe
 (function() {
     'use strict';
