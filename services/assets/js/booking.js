@@ -204,7 +204,7 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
         // Encode booking data for URL
         const encodedData = encodeURIComponent(JSON.stringify(bookingData));
         
-        const stripeLink = 'https://buy.stripe.com/3cs7tWgOt14odsAfZ0';
+        const stripeLink = 'https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04';
         
         // Redirect to Stripe with metadata
         window.location.href = `${stripeLink}?client_reference_id=${encodedData}`;
