@@ -27,6 +27,9 @@
 			<header id="header">
 				<h1>Click to an<a href= "https://labase.languapps.com"> English Grammar for Learners</a></h1>
 
+				<!-- Booking Button -->
+
+				<button class="book-now-header-btn" id="openBookingButton">Book Lessons, 2x per - €19.90/week </button>
 				<!-- Hamburger Menu Button -->
 				<button class="hamburger-menu" id="hamburger-toggle">&#9776;</button>
 				<nav id="navigation">
@@ -309,14 +312,41 @@
 				</div>
 			</div>
 
-			
-		
-			
-		
-			
-			
-			
+			</div>
+
+		<!-- Booking Modal -->
+		<div id="booking-modal" class="modal">
+			<div class="modal-content">
+				<span class="close">&times;</span>
 				
+				<h2>English Practice That Fits Your Life</h2>
+				<ul class="benefits-list">
+					<li>☕ Morning coffee chat or lunch break lesson</li>
+					<li> You choose when</li>
+					<li> Starting at €19.90/week</li>
+				</ul>
+				
+				<p id="booking-user-status" style="margin: 15px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+					Loading...
+				</p>
+				
+				<div id="booking-calendar-container">
+					<!-- Calendar will be injected here -->
+				</div>
+				
+				<div id="booking-form" style="display: none;">
+					<h3>Select Your Time Slots</h3>
+					<p>Choose 2 weekly time slots (15 minutes each)</p>
+					
+					<div id="slot-selection">
+						<!-- Slot picker will be injected here -->
+					</div>
+					
+					<button id="confirm-booking" class="cta-button">Confirm & Pay - €19.90/week</button>
+				</div>
+			</div>
+		</div>
+
 		<!-- jQuery and Related Plugins -->
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/jquery.poptrox.min.js"></script>

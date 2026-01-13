@@ -369,7 +369,129 @@ function userIsAuthenticated() {
     return !!auth.currentUser;
 };
 
+// ========== BOOKING MODAL HANDLERS ==========
+
+function setupBookingModal() {
+    const openBookingBtn = document.getElementById('openBookingButton');
+    
+    if (openBookingBtn) {
+        console.log("Booking button found, attaching listener");
+        openBookingBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("Booking button clicked");
+            openBookingModal();
+        });
+    } else {
+        console.log("Booking button not found on this page");
+    }
+    
+    // Setup marketing triggers
+    setupBookingTriggers();
+}
+
+function openBookingModal() {
+    console.log("Opening booking modal");
+    openModalById('booking-modal');
+    
+    // Load iframe only once
+    const container = document.getElementById('booking-calendar-container');
+    if (container && !container.querySelector('iframe')) {
+        console.log("Loading booking calendar iframe");
+        container.innerHTML = `
+            <iframe 
+                src="/services/index.html" 
+                style="width: 100%; height: 600px; border: none; border-radius: 8px;"
+                title="Booking Calendar"
+            ></iframe>
+        `;
+    }
+    
+    // Track with Google Analytics if available
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'booking_modal_opened', {
+            'event_category': 'conversion',
+            'event_label': 'Booking Modal'
+        });
+        console.log("Booking modal tracked with GA");
+    }
+}
+
+function setupBookingTriggers() {
+    let bookingModalShown = sessionStorage.getItem('booking_modal_shown') === 'true';
+    let gameCount = parseInt(sessionStorage.getItem('game_count') || '0');
+    
+    console.log("Setting up booking triggers, modal shown:", bookingModalShown);
+    
+    // Trigger 1: After cookie acceptance (3 seconds delay)
+    const acceptBtn = document.getElementById('accept-cookies');
+    if (acceptBtn) {
+        // Store original handler
+        const originalHandler = acceptBtn.onclick;
+        
+        acceptBtn.addEventListener('click', function() {
+            console.log("Cookie accepted, scheduling booking modal");
+            setTimeout(function() {
+                if (!bookingModalShown && !localStorage.getItem('booking_post_cookie')) {
+                    console.log("Showing booking modal after cookie acceptance");
+                    openBookingModal();
+                    localStorage.setItem('booking_post_cookie', 'true');
+                    bookingModalShown = true;
+                    sessionStorage.setItem('booking_modal_shown', 'true');
+                }
+            }, 3000);
+        });
+    }
+    
+    // Trigger 2: After 2 games completed
+    const newGameBtn = document.getElementById('start-game');
+    if (newGameBtn) {
+        newGameBtn.addEventListener('click', function() {
+            gameCount++;
+            sessionStorage.setItem('game_count', gameCount);
+            console.log("Game started, count:", gameCount);
+            
+            if (gameCount === 2 && !bookingModalShown) {
+                console.log("Showing booking modal after 2 games");
+                setTimeout(function() {
+                    openBookingModal();
+                    bookingModalShown = true;
+                    sessionStorage.setItem('booking_modal_shown', 'true');
+                }, 2000);
+            }
+        });
+    }
+    
+    // Trigger 3: Exit intent
+    let exitIntentShown = sessionStorage.getItem('exit_intent_shown') === 'true';
+    document.addEventListener('mouseleave', function(e) {
+        if (e.clientY < 10 && !bookingModalShown && !exitIntentShown) {
+            console.log("Exit intent detected, showing booking modal");
+            openBookingModal();
+            bookingModalShown = true;
+            exitIntentShown = true;
+            sessionStorage.setItem('booking_modal_shown', 'true');
+            sessionStorage.setItem('exit_intent_shown', 'true');
+        }
+    });
+    
+    // Trigger 4: Time-based (45 seconds)
+    let timeBasedShown = sessionStorage.getItem('time_based_shown') === 'true';
+    setTimeout(function() {
+        if (!bookingModalShown && !timeBasedShown) {
+            console.log("Time-based trigger: showing booking modal after 45s");
+            openBookingModal();
+            bookingModalShown = true;
+            sessionStorage.setItem('booking_modal_shown', 'true');
+            sessionStorage.setItem('time_based_shown', 'true');
+        }
+    }, 45000);
+    
+    console.log("Booking triggers initialized");
+}
+
+// Initialize everything
 setupEventListeners();
+setupBookingModal();
 checkForModalOpening();
        
-export { closeModalById, openModalById, showModalStep, transitionModalStep, userIsAuthenticated };
+export { closeModalById, openModalById, showModalStep, transitionModalStep, userIsAuthenticated, openBookingModal };
