@@ -32,7 +32,7 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
         const calendarContainer = document.getElementById('calendar-container');
         
         if (!user) {
-            userStatus.innerHTML = '🔒 Please <a href="https://languapps.com/?auth-modal">log in</a> to book lessons';
+            userStatus.innerHTML = '🔒 Please <a href="https://languapps.com/?openModal=auth-modal">log in</a> to book lessons';
             userStatus.style.color = '#e74c3c';
             calendarContainer.style.display = 'none';
             currentUser = null;
