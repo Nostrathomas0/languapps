@@ -2636,23 +2636,27 @@ input, select, textarea {
 
 /* Header booking button */
 .book-now-header-btn {
-    background: #4CAF50;
-    color: white;
+    background: #f35e08;
+    color: #000000;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 10px;
     font-size: 14px;
     font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 15px;
+	display: block;
+	width: auto;
+    margin: 10px auto;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: all 0.2s;
+	
 }
 
 .book-now-header-btn:hover {
     background: #45a049;
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    
 }
 
 @media (max-width: 768px) {
@@ -2660,5 +2664,6 @@ input, select, textarea {
         display: block;
         width: calc(100% - 30px);
         margin: 10px 15px;
+		
     }
 }
