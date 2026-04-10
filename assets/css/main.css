@@ -2667,3 +2667,255 @@ input, select, textarea {
 		
     }
 }
+/* ---- PROMO HEADLINE BLOCK ---- */
+.promo-headline-wrap {
+  position: relative;
+  padding: 3.5rem 2rem 2.5rem;
+  overflow: hidden;
+  text-align: center;
+}
+ 
+.promo-headline-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(243,94,8,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 60%, rgba(243,94,8,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+ 
+/* "Pick any" label */
+.promo-eyebrow {
+  font-family: 'Caveat', cursive;
+  font-size: 1.6rem;
+  color: #f35e08;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 0.2rem;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+ 
+/* Giant "2" */
+.promo-big-number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(6rem, 20vw, 11rem);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 0.85;
+  display: block;
+ 
+  background: linear-gradient(
+    135deg,
+    #f35e08 0%,
+    #ffaa5e 30%,
+    #f35e08 50%,
+    #c44200 70%,
+    #f35e08 85%,
+    #ffd4a8 100%
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: foil-shift 4s ease-in-out infinite;
+ 
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.7s ease 0.15s, transform 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.15s;
+}
+ 
+@keyframes foil-shift {
+  0%   { background-position: 0% 50%;   }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%;   }
+}
+ 
+/* "lessons" */
+.promo-lessons-word {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 700;
+  font-style: italic;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+  display: block;
+  margin-top: -0.3rem;
+ 
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+}
+ 
+/* divider line */
+.promo-rule {
+  width: 60px;
+  height: 2px;
+  background: #f35e08;
+  margin: 1rem auto;
+  transform-origin: center;
+ 
+  opacity: 0;
+  transform: scaleX(0);
+  transition: opacity 0.5s ease 0.45s, transform 0.5s ease 0.45s;
+}
+ 
+/* "for under 20€" */
+.promo-price-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  color: #333;
+  display: block;
+ 
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s ease 0.55s, transform 0.6s ease 0.55s;
+}
+ 
+.promo-price-line strong {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 1.15em;
+  color: #f35e08;
+}
+ 
+/* separator dot */
+.promo-separator {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0.8rem 0;
+ 
+  opacity: 0;
+  transition: opacity 0.6s ease 0.7s;
+}
+ 
+/* "classes for all" */
+.promo-tagline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 3.5vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  display: block;
+  position: relative;
+ 
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.6s ease 0.8s, transform 0.6s ease 0.8s;
+}
+ 
+.promo-tagline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f35e08, transparent);
+  transition: transform 0.6s ease 1.2s;
+}
+ 
+/* course list */
+.promo-course-list {
+  margin: 1.8rem auto 0;
+  max-width: 560px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: center;
+  padding: 0;
+  list-style: none;
+ 
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s ease 0.95s, transform 0.6s ease 0.95s;
+}
+ 
+.promo-course-list li {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: #555;
+  letter-spacing: 0.03em;
+}
+ 
+.promo-course-list li::before {
+  content: '·';
+  color: #f35e08;
+  margin-right: 0.4rem;
+}
+ 
+/* CTA button */
+.promo-cta-wrap {
+  margin-top: 2rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease 1.1s, transform 0.6s ease 1.1s;
+}
+ 
+.promo-cta-wrap .cta-button {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  padding: 14px 36px;
+  border-radius: 2px;
+  background: #f35e08;
+  color: #fff;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 4px 4px 0 rgba(243,94,8,0.25);
+}
+ 
+.promo-cta-wrap .cta-button::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.4s ease;
+}
+ 
+.promo-cta-wrap .cta-button:hover {
+  background: #c44200;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 rgba(243,94,8,0.3);
+}
+ 
+.promo-cta-wrap .cta-button:hover::after {
+  left: 140%;
+}
+ 
+/* ---- ANIMATE-IN STATE ---- */
+.promo-headline-wrap.is-visible .promo-eyebrow,
+.promo-headline-wrap.is-visible .promo-big-number,
+.promo-headline-wrap.is-visible .promo-lessons-word,
+.promo-headline-wrap.is-visible .promo-rule,
+.promo-headline-wrap.is-visible .promo-price-line,
+.promo-headline-wrap.is-visible .promo-separator,
+.promo-headline-wrap.is-visible .promo-tagline,
+.promo-headline-wrap.is-visible .promo-course-list,
+.promo-headline-wrap.is-visible .promo-cta-wrap {
+  opacity: 1;
+  transform: none;
+}
+ 
+.promo-headline-wrap.is-visible .promo-tagline::after {
+  transform: translateX(-50%) scaleX(1);
+}
