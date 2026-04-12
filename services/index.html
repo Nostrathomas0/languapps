@@ -28,6 +28,24 @@
         <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1" />
     </noscript>
     <!-- End Facebook Pixel Code -->
+     <script>
+        $(function () {
+        var $block = $('#promo-block');
+        
+        function checkVisible() {
+            if ($block.length === 0) return;
+            var top = $block[0].getBoundingClientRect().top;
+            var winH = window.innerHeight || document.documentElement.clientHeight;
+            if (top < winH * 0.88) {
+            $block.addClass('is-visible');
+            $(window).off('scroll.promo resize.promo');
+            }
+        }
+        
+        $(window).on('scroll.promo resize.promo', checkVisible);
+        checkVisible(); // fire immediately if already in view
+        });
+    </script>
 </head>
 
 <body>
@@ -169,24 +187,7 @@
             setInterval(rotateImages, 3000); // Rotate every 3 seconds
         });
     </script>
-    <script>
-        $(function () {
-        var $block = $('#promo-block');
-        
-        function checkVisible() {
-            if ($block.length === 0) return;
-            var top = $block[0].getBoundingClientRect().top;
-            var winH = window.innerHeight || document.documentElement.clientHeight;
-            if (top < winH * 0.88) {
-            $block.addClass('is-visible');
-            $(window).off('scroll.promo resize.promo');
-            }
-        }
-        
-        $(window).on('scroll.promo resize.promo', checkVisible);
-        checkVisible(); // fire immediately if already in view
-        });
-    </script>
+    
     <script type="module" src="/services/assets/js/booking.js"></script>
 </body>
 </html>
