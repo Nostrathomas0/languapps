@@ -162,7 +162,8 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
         
         let html = '<ul>';
         selectedSlots.forEach(slot => {
-            const [day, time] = slot.split('-');
+            const [day, ...rest] = slot.split('-');
+            const time = rest.join('-'); // rejoins "09:00"
             html += `<li><strong>${day}</strong> at ${time}</li>`;
         });
         html += '</ul>';
@@ -207,7 +208,7 @@ import { auth, onAuthStateChanged } from '/assets/js/firebaseInit.js';
         const stripeLink = 'https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04';
         
         // Redirect to Stripe with metadata
-        window.location.href = `${stripeLink}?client_reference_id=${encodedData}`;
+        window.top.location.href = `${stripeLink}?client_reference_id=${encodedData}`;
     }
 
     // ============================================================================

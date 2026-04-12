@@ -108,6 +108,7 @@ onAuthStateChanged(auth, async (user) => {
     }
     
     try {
+      if (window._signingUp) return;
       // Get the JWT token from Firestore for the authenticated user
       const jwtToken = await getJwtFromFirestore(user.uid);
       if (jwtToken) {
@@ -149,6 +150,7 @@ function transitionModalStep(currentStepId, nextStepId) {
 }
 
 async function signUp(email, password) {
+  window._signingUp = true;
   try {
     console.log("Initiating sign-up process for:", email);
 
@@ -194,7 +196,7 @@ async function signUp(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const userId = userCredential.user.uid;
     console.log("User authenticated with Firebase:", userId);
-
+    window._signingUp = false;
     // Step 5: Store JWT in Firestore
     await storeJwtInFirestore(userId, data.jwtToken);
     console.log("User data stored in Firestore with JWT token:", userId);

@@ -492,6 +492,6 @@ function setupBookingTriggers() {
 // Initialize everything
 setupEventListeners();
 setupBookingModal();
-checkForModalOpening();
+
        
 export { closeModalById, openModalById, showModalStep, transitionModalStep, userIsAuthenticated, openBookingModal };
