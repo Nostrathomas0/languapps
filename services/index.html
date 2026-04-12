@@ -46,6 +46,23 @@
         checkVisible(); // fire immediately if already in view
         });
     </script>
+    <script>
+        // jQuery for rotating images in the profile section
+        $(document).ready(function () {
+            let images = $('.profile-images img').not('.main-image');
+            let index = 0;
+
+            function rotateImages() {
+                images.css('opacity', '0');
+                images.eq(index).css('opacity', '1');
+                index = (index + 1) % images.length;
+            }
+
+            setInterval(rotateImages, 3000); // Rotate every 3 seconds
+        });
+    </script>
+    
+    <script type="module" src="/services/assets/js/booking.js"></script>
 </head>
 
 <body>
@@ -127,34 +144,34 @@
             <!-- Custom Services -->
             <div class="service-box" role="region" aria-label="Pick 2 lessons promotion">
  
-    <div class="promo-headline-wrap" id="promo-block">
-      <span class="promo-eyebrow">pick any</span>
-      <span class="promo-big-number">2</span>
-      <span class="promo-lessons-word">lessons</span>
-      <span class="promo-rule"></span>
-      <span class="promo-price-line">for under <strong>20€</strong></span>
-      <span class="promo-separator">· · ·</span>
-      <span class="promo-tagline">classes for all</span>
+            <div class="promo-headline-wrap" id="promo-block">
+            <span class="promo-eyebrow">pick any</span>
+            <span class="promo-big-number">2</span>
+            <span class="promo-lessons-word">lessons</span>
+            <span class="promo-rule"></span>
+            <span class="promo-price-line">for under <strong>20€</strong></span>
+            <span class="promo-separator">· · ·</span>
+            <span class="promo-tagline">classes for all</span>
+        
+            <ul class="promo-course-list">
+                <li>Exam prep</li>
+                <li>Diction &amp; accents</li>
+                <li>English awakening (6+)</li>
+                <li>English for specific purposes</li>
+                <li>Reading levels 1–4 (8+)</li>
+                <li>Water cooler classes</li>
+            </ul>
+        
+            <div class="promo-cta-wrap">
+                <a href="https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04" class="cta-button">
+                Book 2 lessons — €19.90
+                </a>
+            </div>
+            </div>
  
-      <ul class="promo-course-list">
-        <li>Exam prep</li>
-        <li>Diction &amp; accents</li>
-        <li>English awakening (6+)</li>
-        <li>English for specific purposes</li>
-        <li>Reading levels 1–4 (8+)</li>
-        <li>Water cooler classes</li>
-      </ul>
- 
-      <div class="promo-cta-wrap">
-        <a href="https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04" class="cta-button">
-          Book 2 lessons — €19.90
-        </a>
-      </div>
-    </div>
- 
-  </div>
+            </div>
+        </section>
     </section>
-
     <!-- Footer Section with Social Icons and Contact Links -->
     <footer class="links">
         <a class="left" href="https://nostrathomas0.github.io/Web_CV" alt="CV">Curriculum Vitae</a>
@@ -171,23 +188,5 @@
             </ul>
         </div>
     </footer>
-
-    <script>
-        // jQuery for rotating images in the profile section
-        $(document).ready(function () {
-            let images = $('.profile-images img').not('.main-image');
-            let index = 0;
-
-            function rotateImages() {
-                images.css('opacity', '0');
-                images.eq(index).css('opacity', '1');
-                index = (index + 1) % images.length;
-            }
-
-            setInterval(rotateImages, 3000); // Rotate every 3 seconds
-        });
-    </script>
-    
-    <script type="module" src="/services/assets/js/booking.js"></script>
 </body>
 </html>
