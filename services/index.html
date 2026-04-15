@@ -10,25 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-    <!-- Facebook Pixel Code -->
+    <script type="module" src="/services/assets/js/booking.js"></script>
     <script>
-        !function (f, b, e, v, n, t, s) {
-            if (f.fbq) return; n = f.fbq = function () {
-                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
-            t = b.createElement(e); t.async = !0; t.src = v;
-            s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
-        }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '348427750356175'); fbq('track', 'PageView');
-    </script>
-    <noscript>
-        <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1" />
-    </noscript>
-    <!-- End Facebook Pixel Code -->
-     <script>
         $(function () {
         var $block = $('#promo-block');
         
@@ -61,8 +44,23 @@
             setInterval(rotateImages, 3000); // Rotate every 3 seconds
         });
     </script>
-    
-    <script type="module" src="/services/assets/js/booking.js"></script>
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+            t = b.createElement(e); t.async = !0; t.src = v;
+            s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
+        }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '348427750356175'); fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" src="https://www.facebook.com/tr?id=348427750356175&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->    
 </head>
 
 <body>
@@ -75,7 +73,7 @@
     <!-- Main Section with Profile and Service Offerings -->
     <section class="main-content">
          <section class="schedule-widget">
-            <h2>2 quick online lessons</h2>
+            <h2>Pick 2 quick lessons to start</h2>
             <p id="user-status">Loading...</p>
             
             <div id="calendar-container">
@@ -109,11 +107,11 @@
         </section>
 
         <!-- Article with Purchase Options -->
-        <section class="services right-aligned">
+        <section class="services left-aligned">
             <!-- Trial Service -->
             <div class="service-box" role="region" aria-label="Trial Lesson Information">
-                <h4 id="trial-heading" >Trial Lesson</h4>
-                <p id="trial-desc">Book a free 25-minute lesson and see how our courses can help you achieve your goals.</p>
+                <h4 id="trial-heading" >Set Lessons</h4>
+                <p id="trial-desc">Know what you want? Book a free 25-minute lesson with Thomas and see how our courses can help you achieve your goals.</p>
                 <a href="https://buy.stripe.com/9AQ4gUgyNdIIaKQbIL">
                     <img src="images/trial lesson.png" alt="25 minute free trial illustration" class="service-image" />
                 </a>
@@ -123,7 +121,7 @@
             <!-- Basic Unit -->
             <div class="service-box">
                 <h4>Basic Unit</h4>
-                <p>10 hours of personalized English lessons with resources</p>
+                <p>10 hours of Personalized English lessons with Resources</p>
                 <a href="https://buy.stripe.com/aEU6p2aapawwbOUbIJ">
                     <img src="images/10.png" alt="10 hours" class="service-image" />
                 </a>
@@ -133,7 +131,7 @@
             <!-- Full Course -->
             <div class="service-box">
                 <h4>Full Course</h4>
-                <p>25 hours of in-depth English lessons : Market Leader, Highly Recommended, Explore our World, Touchstone, and New Success.</p>
+                <p>25 hours of in-depth English lessons comprising a quarter level by CEFR & a specialization : From a Leadership level, our Recommended experience is to Explore the synergy between Touchstone and unframed language, and New manners of speaking.</p>
                 <a href="https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04">
                     <img src="images/25.png" alt="25 hours" class="service-image" />
                 </a>
