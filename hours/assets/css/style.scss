@@ -560,21 +560,37 @@ a {
   }
 }
 /* INLINE TIME + NAME DISPLAY */
-.cd-schedule__event a {
-  display: flex !important;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
+/* INLINE TIME + NAME DISPLAY FIX */
+.cd-schedule__event {
+  a {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 
-.cd-schedule__event a::before {
-  font-size: 1em !important;
-  margin-bottom: 0 !important;
-  display: inline-block;
-  opacity: 0.85;
-  white-space: nowrap;
-  padding-right: 8px;
-  border-right: 2px solid rgba(255, 255, 255, 0.3);
+    &::before {
+      font-size: 1em !important;
+      margin-bottom: 0 !important;
+      display: inline-block;
+      opacity: 0.85;
+      white-space: nowrap;
+      padding-right: 8px;
+      border-right: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+
+      &::before {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding-right: 0;
+        padding-bottom: 4px;
+      }
+    }
+  }
 }
 
 .cd-schedule__name {
@@ -583,6 +599,10 @@ a {
   display: inline-block;
   line-height: 1.2;
   flex: 1;
+
+  @include breakpoint(md) {   // uses the CodyHouse mixin you already have
+    font-size: 0.9em !important;
+  }
 }
 
 @media (max-width: 480px) {
