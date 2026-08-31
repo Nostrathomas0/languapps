@@ -73,9 +73,7 @@ input, select, textarea {
 	-ms-appearance: none;
 	appearance: none;
 }
-.lang-label {
-    display: none;
-}
+
 /* Basic */
 
 	@-ms-viewport {
@@ -504,14 +502,26 @@ input, select, textarea {
 /* Type */
 
 	body, input, textarea, select {
-		font-family: "Source Sans Pro", "sans-serif";
+		font-family: "Caveat", "cursive";
 		font-weight: 300;
 		font-size: 18pt;
 		line-height: 1.75em;
 		color: #39454b;
 		letter-spacing: 0.025em;
 	}
-
+h1, h2, h3, h4,
+.hamburger-menu,
+button,
+nav ul li a,
+.auth-tab,
+label,
+.promo-eyebrow,
+.promo-big-number,
+.promo-lessons-word {
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
 		@media screen and (max-width: 1920px) {
 
 			body, input, textarea, select {
@@ -2362,7 +2372,7 @@ input, select, textarea {
 #intro p {
 	color: black; /* Change text color to black */
 	font-size: 40px; /* Adjust size as needed */
-	font-family: "Patrick Hand", "Segoe Print", cursive; /* Change font */
+	font-family: "Caveat", cursive; /* Change font */
 }
 
 #button-a, #button-b, #button-c, #button-d, #button-e, #button-f, #button-g,
@@ -2476,6 +2486,7 @@ input, select, textarea {
 		font-size: 16px; /* Adjust the font size for mobile screens */
 		padding: 0 10px; /* Add some padding if needed for better spacing */
 		text-align: center; /* Center the text if it fits your design better */
+		font-family: "Caveat", cursive; /* Ensure the font remains consistent */
 	}
 
 	#letter-buttons button {
@@ -2939,4 +2950,7 @@ input, select, textarea {
  
 .promo-headline-wrap.is-visible .promo-tagline::after {
   transform: translateX(-50%) scaleX(1);
+}
+.lang-label {
+    display: none;
 }
