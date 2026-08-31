@@ -248,10 +248,33 @@ async function signIn(email, password) {
     }
 
     if (!jwtToken) {
-      console.error("🔍 [DEBUG] FATAL: No JWT token found for user");
-      alert("Sign-in failed: No authentication token found. Please sign up first.");
-      return false;
-    }
+      console.log("🔍 [DEBUG] No JWT in Firestore, requesting fresh token...");
+      try {
+          const refreshResponse = await fetch(
+              'https://us-central1-languapps.cloudfunctions.net/app/refreshJWTWithProgress',
+              {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                      userId: userId,
+                      email: email,
+                      existingProgress: {}
+                  }),
+              }
+          );
+          const refreshData = await refreshResponse.json();
+          if (!refreshData.success || !refreshData.jwtToken) {
+              throw new Error('Could not generate token');
+          }
+          jwtToken = refreshData.jwtToken;
+          await storeJwtInFirestore(userId, jwtToken);
+          console.log("🔍 [DEBUG] Fresh JWT generated and stored");
+      } catch (err) {
+          console.error("🔍 [DEBUG] Could not generate JWT:", err);
+          alert("Sign-in failed. Please try again.");
+          return false;
+      }
+  }
 
     // Step 3: Check if token is expired
     console.log("🔍 [DEBUG] Step 3: Checking token expiration...");
