@@ -73,7 +73,9 @@ input, select, textarea {
 	-ms-appearance: none;
 	appearance: none;
 }
-
+.lang-label {
+    display: none;
+}
 /* Basic */
 
 	@-ms-viewport {
@@ -2360,7 +2362,7 @@ input, select, textarea {
 #intro p {
 	color: black; /* Change text color to black */
 	font-size: 40px; /* Adjust size as needed */
-	font-family: 'FancyFont', cursive; /* Change font - replace 'FancyFont' with your actual font */
+	font-family: "Patrick Hand", "Segoe Print", cursive; /* Change font */
 }
 
 #button-a, #button-b, #button-c, #button-d, #button-e, #button-f, #button-g,
@@ -2438,7 +2440,6 @@ input, select, textarea {
 	position: absolute; /* Position the menu absolutely within the header */
 	top: 50%; /* Center it vertically */
 	right: 15px; /* Place it towards the right */
-	display: inline-block;
 	cursor: pointer;
 	background-color: white; /* White background */
 	border: none; /* No border */
@@ -2491,11 +2492,31 @@ input, select, textarea {
 	}
 
 	nav ul {
-	display: none; /* Hide navigation menu by default on mobile */
+		display: none; /* Hide navigation menu by default on mobile */
 	}
 
 	nav ul.active {
-	display: block; /* Show menu when active */
+		display: block; /* Show menu when active */
+		background: #000;
+		padding: 10px 20px;
+		position: absolute;
+		top: 60px;
+		right: 0;
+		width: 200px;
+		z-index: 999;
+	}
+	/* Style the nav items inside the dropdown */
+    nav ul.active li {
+        display: block;
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+    }
+
+    nav ul.active li a {
+        color: #fff;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
 	}
 }
 
