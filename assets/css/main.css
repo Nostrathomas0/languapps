@@ -502,7 +502,7 @@ input, select, textarea {
 /* Type */
 
 	body, input, textarea, select {
-		font-family: "Caveat", "cursive";
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 		font-weight: 300;
 		font-size: 18pt;
 		line-height: 1.75em;
@@ -2125,8 +2125,13 @@ label,
 	margin-bottom: 0; /* Remove bottom margin from last paragraph in each post */
 	color: #39454b; /* Dark grey color for text, ensuring readability */
 	line-height: 1.6; /* Improved line spacing for readability */
+	font-style: normal; /* Ensure normal font style for body text */
 }
 		
+/* Force markdown italics inside the blog to slant perfectly */
+.blog-post em, .blog-post i {
+	font-style: italic !important;
+}
 		@media screen and (max-width: 1920px) {
 
 			.main.style2 .content {
@@ -2372,7 +2377,7 @@ label,
 #intro p {
 	color: black; /* Change text color to black */
 	font-size: 40px; /* Adjust size as needed */
-	font-family: "Caveat", cursive; /* Change font */
+	font-family: "-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 #button-a, #button-b, #button-c, #button-d, #button-e, #button-f, #button-g,
@@ -2486,7 +2491,6 @@ label,
 		font-size: 16px; /* Adjust the font size for mobile screens */
 		padding: 0 10px; /* Add some padding if needed for better spacing */
 		text-align: center; /* Center the text if it fits your design better */
-		font-family: "Caveat", cursive; /* Ensure the font remains consistent */
 	}
 
 	#letter-buttons button {
