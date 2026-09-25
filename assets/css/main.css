@@ -2415,10 +2415,16 @@ label,
 }
 
 .modal-content {
-	margin: auto;
+    background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
 	display: block;
 	width: 80%;
 	max-width: 700px;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	text-align: center;
+	position: relative; /* Ensure it positions relative to the modal-content */
 }
 
 .close {
@@ -2431,15 +2437,7 @@ label,
 	cursor: pointer;
 }
 
-
-.modal-content {
-	margin: 15% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 80%;
-	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-	text-align: center;
-}
+	
 .blur-background .main-content{
 	filter: blur(5px);
 }			
@@ -2589,14 +2587,7 @@ label,
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    position: relative; /* Ensure it positions relative to the modal-content */
-}
+
 
 .modal .close {
     color: #aaa;

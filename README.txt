@@ -15,6 +15,8 @@ styling for basic page elements, and thoroughly commented code for your editing 
 Many thanks to my good friends Steve Anderson github id - bootladder for helping me with 
 the initial code commits. 
 
+/blog/ is gitignored but still nested in the languapsp 
+
 Thomas@languapps.com | Anglais.plus
 
 PS: That contact form is from formspree.io. It's awesome free for the last 4 years.

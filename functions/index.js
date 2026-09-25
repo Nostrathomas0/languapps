@@ -142,7 +142,23 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     console.log("Verification email sent to:", email);
 
     // Return the response with JWT token
-    const tokenPayload = {uid: userRecord.uid, email: email};
+    // Check premium status from Firestore
+    let isPremium = false;
+    try {
+      const userDoc = await admin.firestore()
+          .collection("users").doc(userRecord.uid).get();
+      if (userDoc.exists) {
+        isPremium = userDoc.data().premium === true;
+      }
+    } catch (e) {
+      console.log("Premium check failed, defaulting to false:", e.message);
+    }
+
+    const tokenPayload = {
+      uid: userRecord.uid,
+      email: email,
+      premium: isPremium,
+    };
     const jwtToken = jwt.sign(tokenPayload,
         functions.config().jwt.secret, {expiresIn: "7d"});
 
@@ -193,6 +209,11 @@ app.post("/refreshJWTWithProgress", async (req, res) => {
     const jwtPayload = {
       uid: userId,
       email: email,
+
+      premium: await admin.firestore()
+          .collection("users").doc(userId).get()
+          .then((doc) => doc.exists && doc.data().premium === true)
+          .catch(() => false),
 
       // Preserve existing progress data
       currentSession: (existingProgress &&
