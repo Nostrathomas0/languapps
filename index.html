@@ -20,7 +20,7 @@
 		 <meta property="og:image" content="https://languapps.com/images/thumbs/ail.png">
 		<link rel="stylesheet" href="assets/css/main.css">
 		<link rel="shortcut icon" href="images/yata.svg">
-		<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&amp;family=Caveat:wght@400;700&amp;display=swap" rel="stylesheet">
 	</head>
 	<body class="is-preload">
 		
@@ -76,7 +76,8 @@
 					<div class="gallery">
 						<article class="from-left">
 							<video width="320" height="240" controls class="image fit" poster="images/thumbs/01.jpg">
-								<source src="images/fulls/01.mp4" type="video/mp4" alt="Your browser does not support the video tag.">
+								<source src="images/fulls/01.mp4" type="video/mp4"/>
+								 Your browser does not support the video tag. 
 							</video>
 						</article>
 						
@@ -122,7 +123,10 @@
 					<header>
 						<h2>Play</h2>
 						<p data-translate="is">hangman, get your fortune told, read first impressions and check out the bulliten board. </p> 
-						<p data-translate="statement">Hangman <br>Guess letters to solve <br> Hint : fruits and vegetables. </p>
+						<p data-translate="statement">Hangman 
+							<br>Guess letters to solve 
+							<br> Hint : fruits and vegetables. 
+						</p>
 					</header>
 					<!-- Hangman Game Elements -->
 						<div id="hangman-container">
@@ -166,10 +170,8 @@
 							
 							<div id="blog">
 								<h2>The Spinning Wheel</h2> 
-									<div id="blog-posts"></div>
-							</div>	
-						</div>
-					
+								<div id="blog-posts"></div>
+					</div>	
 				</div>
 				<a href="#work" class="button style2 down anchored">Next</a>
 			</section>
@@ -190,8 +192,16 @@
 			<section id="contact" class="main style3 secondary">
 				<div class="content">
 					<header>
-						<h2>Contact</h2>\
-						<p data-translate="does">Digital Publishing<br>Review Software<br>Live stream<br>Independant<br>Writing Contests<br>Puppet Shows<br>Random Sentences!<br><a href="https://nostrathomas0.github.io/Web_CV" target="_blank" rel="noopener noreferrer">Curriculum Vitae</a></nr></p>
+						<h2>Contact</h2>
+						<p data-translate="does">Digital Publishing
+							<br>Review Software
+							<br>Live stream
+							<br>Independant
+							<br>Writing Contests
+							<br>Puppet Shows
+							<br>Random Sentences!
+							<br><a href="https://nostrathomas0.github.io/Web_CV" target="_blank" rel="noopener noreferrer">Curriculum Vitae</a>
+						</p>
 					</header>
 					<div class="box">
 						<form method="post" action="https://formspree.io/mknqjaeg">
@@ -200,38 +210,12 @@
 								<div class="field half"><input type="email" name="email" placeholder="Email" /></div>
 								<div class="field"><textarea name="message" placeholder="Message" rows="6"></textarea></div>
 							</div>
+							<input type="text" name="_gotcha" class="honeypot" tabindex="-1" autocomplete="off" />
 							<ul class="actions special">
-								<li><input type="submit" value="H O N E Y P O T" /></li>
+								<li><input type="submit" value="Send Message" /></li>
 							</ul>
 						</form>
 					</div>
-					<div>
-				
-						<title>Sign-Up Form</title>
-						<style>
-							.honeypot {
-								display: none;
-							}
-						</style>
-										<body>
-						<form id="sign-up-form" action="/signup" method="POST">
-							<!-- Normal email input -->
-							<label for="email">Email:</label>
-							<input type="email" id="email" name="email" required>
-							
-							<!-- Honeypot field (should not be filled by legitimate users) -->
-							<div class="honeypot">
-								<label for="username">Username:</label>
-								<input type="text" id="username" name="username">
-							</div>
-							
-							<button type="submit">Sign Up, not really</button>
-						</form>
-					</body>
-					</html>
-
-					</div>
-				</div>
 			</section>
 
 		<!-- Footer -->
@@ -289,11 +273,11 @@
 					<div id="step2" class="modal-step" style="display:none;">
 						<h1>Welcome! Would you like to sign the guestbook?</h1>
 						<form id="addBlogPostForm" accept-charset="utf-8">
-							<label for="title">Title:</label><br>
+							<label for="blogTitle">Title:</label><br>
 							<input type="text" id="blogTitle" name="title" required maxlength="100" 
 								   pattern="[A-Za-z0-9 ]+" title="Letters and numbers only"><br>
 					
-							<label for="content">Content:</label><br>
+							<label for="blogContent">Content:</label><br>
 							<textarea id="blogContent" name="content" required maxlength="5000"></textarea><br>
 					
 							<button type="submit" id="blogSubmit">Add Post</button>
@@ -308,8 +292,6 @@
 					<span class="close">&times;</span>
 					<p>You are already logged in!</p>
 				</div>
-			</div>
-
 			</div>
 
 		<!-- Booking Modal -->
