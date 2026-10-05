@@ -2641,50 +2641,37 @@ label,
     border-radius: 4px;
 }
 
-.cta-button {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 20px;
-    transition: all 0.3s;
+
+/* Shared base — shape, type, sizing. Every CTA button uses this. */
+.site-cta {
+  display: inline-block;
+  padding: 8px 24 px 12px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.site-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.cta-button:hover {
-    background: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
+/* Color variants — this is the only thing that changes per button */
+.site-cta--orange { background: #f35e08; color: #ffffff; }
+.site-cta--orange:hover { background: #d94e00; }   /* darker orange, not green */
 
-/* Header booking button */
-.book-now-header-btn {
-    background: #f35e08;
-    color: #000000;
-    border: none;
-    padding: 10px 10px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-	display: block;
-	width: auto;
-    margin: 10px auto;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s;
-	
-}
+.site-cta--green { background: #4CAF50; color: #ffffff; }
+.site-cta--green:hover { background: #45a049; }
 
-.book-now-header-btn:hover {
-    background: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    
-}
+.site-cta--blue { background: #59454b; color: #ffffff; }  /* using your own brand text-color as a neutral "third" tone, not an arbitrary new blue */
+.site-cta--blue:hover { background: #2b343a; }
 
 @media (max-width: 768px) {
     .book-now-header-btn {
