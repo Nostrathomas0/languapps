@@ -8,6 +8,27 @@ const nodemailer = require("nodemailer");
 const {verifyRecaptcha} = require("./recaptchaUtils");
 const {SESClient, SendEmailCommand} = require("@aws-sdk/client-ses");
 const sesClient = new SESClient({region: "us-east-1"});
+const Stripe = require("stripe");
+
+// Lazily create the Stripe client on first real request, not at module
+// load time — firebase deploy's local analysis pass runs this file before
+// secrets are injected into process.env, so calling Stripe(...) up here
+// at the top level crashes that analysis step with "Neither apiKey nor
+// config.authenticator provided", even though the secret is set correctly.
+let stripeClient = null;
+/**
+ * Lazily creates and caches the Stripe client on first real request.
+ * Deferred until then because firebase deploy's local analysis pass
+ * loads this file before secrets are injected into process.env, so
+ * constructing it at module load time crashes that step.
+ * @return {Stripe} the cached Stripe client instance.
+ */
+function getStripeClient() {
+  if (!stripeClient) {
+    stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return stripeClient;
+}
 admin.initializeApp();
 const app = express();
 
@@ -32,7 +53,131 @@ app.options("/*", (req, res) => {
   res.set("Access-Control-Allow-Credentials", "true");
   res.status(204).send(""); // Send no content for preflight
 });
-app.use(express.json()); // For parsing application/json
+
+// ─────────────────────────────────────────────────────────────────────────
+// Stripe webhook — MUST be registered before app.use(express.json()) below.
+// Signature verification needs the raw, untouched request body; the global
+// JSON parser would otherwise consume and reformat it first, breaking the
+// signature check. This route uses its own scoped express.raw() instead.
+// ─────────────────────────────────────────────────────────────────────────
+app.post(
+    "/stripeWebhook",
+    express.raw({type: "application/json"}),
+    async (req, res) => {
+      const sig = req.headers["stripe-signature"];
+      const stripe = getStripeClient();
+      let event;
+
+      try {
+        event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET,
+        );
+      } catch (err) {
+        console.error("Stripe signature verification failed:", err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+
+      if (event.type === "checkout.session.completed") {
+        const session = event.data.object;
+        const rawReference = session.client_reference_id;
+
+        // New format: "uid|classId1,classId2" — the old format was just a
+        // bare uid, back when each class had its own Payment Link. Now that
+        // all classes share one link, the reference has to carry which 2
+        // classes were picked too.
+        if (!rawReference || !rawReference.includes("|")) {
+          console.error("Malformed/missing client_reference_id:", session.id);
+          return res.status(200)
+              .json({received: true, warning: "Bad reference"});
+        }
+
+        const [uid, classIdsRaw] = rawReference.split("|");
+        const classIds = (classIdsRaw || "").split(",").filter(Boolean);
+
+        if (!uid || classIds.length !== 2) {
+          console.error("Unexpected reference format:", rawReference);
+          return res.status(200).json({received: true, warning: "Bad format"});
+        }
+
+        try {
+          // Fetch the 2 booked classes for the confirmation emails below.
+          const classDocs = await Promise.all(
+              classIds.map((id) =>
+                admin.firestore().collection("classes").doc(id).get()),
+          );
+          const bookedClasses = classDocs
+              .filter((d) => d.exists)
+              .map((d) => ({id: d.id, ...d.data()}));
+
+          // accessGranted is the field checkAccess.js at labase actually
+          // checks — this is the one that matters for real access.
+          // lessonsRemaining now reflects the 2 classes actually purchased
+          // (increment, not a flat overwrite) rather than a guessed number.
+          await admin.firestore().collection("users").doc(uid).set({
+            accessGranted: true,
+            premium: true,
+            lessonsRemaining: admin.firestore.FieldValue.increment(2),
+            bookedClasses: admin.firestore.FieldValue.arrayUnion(...classIds),
+            lastPaymentTime: admin.firestore.FieldValue.serverTimestamp(),
+          }, {merge: true});
+
+          console.log("Access granted for user:", uid, "classes:", classIds);
+
+          // Prefer the Auth record's email (tied to the uid we're actually
+          // granting access to) over Stripe's, falling back if that lookup
+          // fails for any reason.
+          let buyerEmail =
+            session.customer_details && session.customer_details.email;
+          try {
+            const userRecord = await admin.auth().getUser(uid);
+            buyerEmail = userRecord.email || buyerEmail;
+          } catch (e) {
+            console.error("Could not look up user email:", e.message);
+          }
+
+          const classListHtml = bookedClasses
+              .map((c) => `<li>${c.name} — ${c.day} ${c.time} CET</li>`)
+              .join("");
+
+          if (buyerEmail) {
+            await transporter.sendMail({
+              from: `Languapps <noreply@languapps.com>`,
+              to: buyerEmail,
+              subject: "Your Languapps classes are booked!",
+              html: `
+                <p>You're booked in for:</p>
+                <ul>${classListHtml}</ul>
+                <p>Need to adjust your times? Reply to this email and
+                we'll sort it out.</p>
+              `,
+            });
+          }
+
+          await transporter.sendMail({
+            from: `Languapps <noreply@languapps.com>`,
+            to: "thomas@languapps.com",
+            subject: "New booking received",
+            html: `
+              <p>${buyerEmail || uid} just booked:</p>
+              <ul>${classListHtml}</ul>
+            `,
+          });
+        } catch (err) {
+          console.error("Failed to process booking for",
+              rawReference, ":", err.message);
+          // Still return 200 — Stripe retries on non-2xx, and the payment
+          // already succeeded; a failure here needs manual follow-up, not
+          // an infinite Stripe retry loop.
+        }
+      }
+
+      res.status(200).json({received: true});
+    },
+);
+
+app.use(express.json()); // For parsing application/json (all routes below)
 
 // Create Nodemailer SES transporter
 const transporter = nodemailer.createTransport({
@@ -317,4 +462,6 @@ functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.app = functions.https.onRequest(app);
+exports.app = functions
+    .runWith({secrets: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]})
+    .https.onRequest(app);
