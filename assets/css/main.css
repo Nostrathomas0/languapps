@@ -814,6 +814,16 @@ label,
 				width: calc(100% - 1.5em);
 			}
 
+				/* --- NEW: Direct Grid Proportion Modifiers --- */
+				form > .fields > .field.subscription-email {
+					width: calc(75% - 1.125em); /* Takes up exactly 75% of the line */
+				}
+
+				form > .fields > .field.subscription-btn {
+					width: calc(25% - 0.375em);  /* Takes up exactly 25% of the line */
+				}
+				/* ---------------------------------------------- */
+
 				form > .fields > .field.half {
 					width: calc(50% - 0.75em);
 				}
@@ -838,6 +848,16 @@ label,
 					width: calc(100% - 1em);
 				}
 
+					/* --- NEW: Clean Mobile Stacking Overrides --- */
+					form > .fields > .field.subscription-email {
+						width: calc(100% - 1em);
+					}
+
+					form > .fields > .field.subscription-btn {
+						width: calc(100% - 1em);
+					}
+					/* --------------------------------------------- */
+
 					form > .fields > .field.half {
 						width: calc(100% - 1em);
 					}
@@ -851,6 +871,8 @@ label,
 					}
 
 		}
+
+
 
 	label {
 		display: block;
@@ -2645,7 +2667,7 @@ label,
 /* Shared base — shape, type, sizing. Every CTA button uses this. */
 .site-cta {
   display: inline-block;
-  padding: 8px 24 px 12px 24px;
+  padding: 8px 24px 12px 24px;
   font-size: 15px;
   font-weight: bold;
   font-family: 'Oswald', sans-serif;
