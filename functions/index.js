@@ -83,23 +83,19 @@ app.post(
         const session = event.data.object;
         const rawReference = session.client_reference_id;
 
-        // New format: "uid|classId1,classId2" — the old format was just a
-        // bare uid, back when each class had its own Payment Link. Now that
-        // all classes share one link, the reference has to carry which 2
-        // classes were picked too.
-        if (!rawReference || !rawReference.includes("|")) {
+        // Format: uid_classId1_classId2. A Payment Link silently drops any
+        // client_reference_id character other than letters, digits, dashes
+        // and underscores, so "|" and "," can't be used as separators.
+        // Firebase UIDs and Firestore auto-IDs never contain "_", so
+        // splitting on it is safe as long as class doc IDs stay auto-IDs.
+        const parts = (rawReference || "").split("_");
+
+        if (parts.length !== 3 || parts.some((p) => !p)) {
           console.error("Malformed/missing client_reference_id:", session.id);
-          return res.status(200)
-              .json({received: true, warning: "Bad reference"});
+          return res.status(200).json({received: true, warning: "Bad ref"});
         }
 
-        const [uid, classIdsRaw] = rawReference.split("|");
-        const classIds = (classIdsRaw || "").split(",").filter(Boolean);
-
-        if (!uid || classIds.length !== 2) {
-          console.error("Unexpected reference format:", rawReference);
-          return res.status(200).json({received: true, warning: "Bad format"});
-        }
+        const [uid, ...classIds] = parts;
 
         try {
           // Fetch the 2 booked classes for the confirmation emails below.
