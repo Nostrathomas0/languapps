@@ -393,19 +393,7 @@ function openBookingModal() {
     console.log("Opening booking modal");
     openModalById('booking-modal');
     
-    // Load iframe only once
-    const container = document.getElementById('booking-calendar-container');
-    if (container && !container.querySelector('iframe')) {
-        console.log("Loading booking calendar iframe");
-        container.innerHTML = `
-            <iframe 
-                src="/services/index.html" 
-                style="width: 100%; height: 600px; border: none; border-radius: 8px;"
-                title="Booking Calendar"
-            ></iframe>
-        `;
-    }
-    
+      
     // Track with Google Analytics if available
     if (typeof gtag !== 'undefined') {
         gtag('event', 'booking_modal_opened', {

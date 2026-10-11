@@ -2319,6 +2319,22 @@ label,
 
 /* Intro */
 
+	#intro .content a {
+		position: relative;
+		z-index: 5;
+		display: inline-block;
+		vertical-align: middle;
+		padding: 5px 10px; /* Expands the invisible "hitbox" so they are easy to click */
+		color: #ffffff;    /* Match your text color */
+		text-decoration: underline; 
+		transition: opacity 0.2s ease;
+		}
+
+		#intro .content a:hover {
+		opacity: 0.8;      /* Subtle feedback on hover without turning it into a button */
+		}
+
+
 	#intro {
 		background: url("images/overlay.png"), url("../../images/intro.jpg");
 		background-size: 256px 256px, cover;
