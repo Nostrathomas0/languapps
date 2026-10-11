@@ -18,7 +18,7 @@ import {
     'use strict';
 
     // TODO: paste the Payment Link created for this modal only.
-    const STRIPE_LINK = 'https://buy.stripe.com/REPLACE_WITH_MODAL_LINK';
+    const STRIPE_LINK = 'https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04';
 
     // Only used to keep the list in weekday order; days are never shown.
     const DAY_ORDER = { Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5 };
