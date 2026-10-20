@@ -458,6 +458,9 @@ functions.https.onCall(async (data, context) => {
   }
 });
 
+const {dailyGenerator} = require("./sessionGenerator");
+
 exports.app = functions
     .runWith({secrets: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]})
     .https.onRequest(app);
+exports.dailyGenerator = dailyGenerator;

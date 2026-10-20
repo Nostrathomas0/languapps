@@ -1,0 +1,211 @@
+/* /hours rolling 28-day calendar.
+   Extra rules only. Colors, spacing, type and the pop-out modal all come
+   from style.css (CodyHouse), through its CSS variables. */
+
+.cd-cal { padding: 0 var(--component-padding); }
+
+@media (min-width: 64rem) {
+  .js .cd-cal { padding: 0; }
+}
+
+.cd-cal__tz {
+  font-size: var(--text-sm);
+  margin-top: var(--space-xs);
+}
+
+.cd-cal__status {
+  text-align: center;
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-md);
+}
+
+/* ---- phones and small tablets: a list of the days that have classes ---- */
+
+.cd-cal__weekdays { display: none; }
+
+.cd-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-sm);
+}
+
+.cd-cal__day {
+  -webkit-appearance: none;
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+  padding: var(--space-xs);
+  font: inherit;
+  text-align: left;
+  color: var(--cd-color-text);
+  background: var(--color-white);
+  border: 1px solid var(--cd-color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.cd-cal__day:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+
+.cd-cal__day:focus-visible {
+  outline: 2px solid var(--cd-color-event-1);
+  outline-offset: 2px;
+}
+
+.cd-cal__day--empty,
+.cd-cal__day--muted {
+  display: none;
+  cursor: default;
+}
+
+.cd-cal__day--empty:hover,
+.cd-cal__day--muted:hover { box-shadow: none; }
+
+.cd-cal__day--today { box-shadow: inset 0 0 0 2px var(--cd-color-event-1); }
+
+.cd-cal__daynum { display: none; }
+
+.cd-cal__daynum,
+.cd-cal__daylabel {
+  font-size: var(--text-sm);
+  font-weight: bold;
+}
+
+.cd-cal__day--today .cd-cal__daynum,
+.cd-cal__day--today .cd-cal__daylabel { color: var(--cd-color-event-1); }
+
+.cd-cal__chips { display: block; margin-top: var(--space-xxs); }
+
+.cd-cal__chip {
+  display: block;
+  margin-top: var(--space-xxxs);
+  padding: var(--space-xxxs) var(--space-xxs);
+  font-size: var(--text-sm);
+  font-weight: bold;
+  line-height: 1.3;
+  color: var(--color-white);
+  border-radius: 2px;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cd-cal__chip[data-event="event-1"] { background: var(--cd-color-event-1); }
+.cd-cal__chip[data-event="event-2"] { background: var(--cd-color-event-2); }
+.cd-cal__chip[data-event="event-3"] { background: var(--cd-color-event-3); }
+.cd-cal__chip[data-event="event-4"] { background: var(--cd-color-event-4); }
+
+.cd-cal__more {
+  display: none;
+  margin-top: var(--space-xxxs);
+  font-size: var(--text-xs);
+  opacity: 0.7;
+}
+
+/* ---- desktop: 7 columns, Monday to Sunday ---- */
+
+@media (min-width: 64rem) {
+  .cd-cal__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    padding: var(--space-xs) 0;
+    font-size: var(--text-sm);
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid var(--cd-color-border);
+    border-bottom: 0;
+  }
+
+  .cd-cal__grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--cd-color-border);
+    border-left: 1px solid var(--cd-color-border);
+  }
+
+  .cd-cal__day {
+    min-height: 7.5rem;
+    border-width: 0 1px 1px 0;
+    border-radius: 0;
+  }
+
+  .cd-cal__day--empty,
+  .cd-cal__day--muted { display: flex; }
+
+  .cd-cal__day--muted {
+    color: hsl(0, 0%, 65%);
+    background: hsl(0, 0%, 97%);
+  }
+
+  .cd-cal__daylabel { display: none; }
+  .cd-cal__daynum { display: inline-block; }
+
+  .cd-cal__chip { font-size: var(--text-xs); }
+  .cd-cal__chips .cd-cal__chip:nth-child(n+4) { display: none; }
+  .cd-cal__more { display: block; }
+}
+
+/* the day cell hides while its pop-out panel is open (desktop animation) */
+@media (min-width: 64rem) {
+  .js .cd-cal__day--selected { visibility: hidden; }
+}
+
+/* ---- inside the pop-out panel ---- */
+
+.cd-cal__session {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--cd-color-border);
+}
+
+.cd-cal__session:last-of-type { border-bottom: 0; }
+
+.cd-cal__session::before {
+  content: '';
+  flex: 0 0 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--cd-cal-color, var(--cd-color-event-1));
+}
+
+.cd-cal__session[data-event="event-1"] { --cd-cal-color: var(--cd-color-event-1); }
+.cd-cal__session[data-event="event-2"] { --cd-cal-color: var(--cd-color-event-2); }
+.cd-cal__session[data-event="event-3"] { --cd-cal-color: var(--cd-color-event-3); }
+.cd-cal__session[data-event="event-4"] { --cd-cal-color: var(--cd-color-event-4); }
+
+.cd-cal__session-main { flex: 1 1 auto; min-width: 0; }
+
+.cd-cal__session-name,
+.cd-cal__session-meta,
+.cd-cal__session-time { display: block; }
+
+.cd-cal__session-meta,
+.cd-cal__session-time {
+  font-size: 0.9em;
+  opacity: 0.75;
+}
+
+.cd-cal__spots {
+  flex: 0 0 auto;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cd-cal__spots--low { font-weight: bold; color: hsl(14, 70%, 38%); }
+.cd-cal__spots--full { opacity: 0.6; }
+
+.cd-cal__note {
+  margin-top: var(--space-sm);
+  font-size: 0.9em;
+  opacity: 0.75;
+}
