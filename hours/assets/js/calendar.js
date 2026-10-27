@@ -11,7 +11,7 @@
 
   const WINDOW_DAYS = 28;
   const PARIS = 'Europe/Paris';
-  const BOOKING_ENABLED = false; // switch on once the cart exists
+  const PRODUCT_CATEGORY = 'quick-lesson'; // the €19.90 promo classes
   const DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
   const MODAL_MAX_W = 800;
   const MODAL_MAX_H = 480;
@@ -53,6 +53,8 @@
   let selectedKey = null;
   let animating = false;
   let renderPending = false;
+  let cartApi = null; // set once the cart has loaded
+  let cartState = {user: null, booking: null, picks: []};
 
   // ---------------------------------------------------------------------
   // helpers
@@ -170,8 +172,10 @@
       if (inWindow && list.length) {
         const chips = el('span', 'cd-cal__chips');
         list.forEach((s) => {
-          const chip = el('span', 'cd-cal__chip',
-              `${timeLabel(s.startsAt).chip} ${s.name}`);
+          const picked = inCart(s);
+          const chip = el('span', 'cd-cal__chip' +
+              (picked ? ' cd-cal__chip--picked' : ''),
+          `${picked ? '✓ ' : ''}${timeLabel(s.startsAt).chip} ${s.name}`);
           chip.dataset.event = colorFor(s);
           chips.append(chip);
         });
@@ -229,15 +233,72 @@
     }
 
     const spots = spotsInfo(s);
-    row.append(main, el('span', 'cd-cal__spots ' + spots.cls, spots.text));
+    const side = el('div', 'cd-cal__side');
+    side.append(el('span', 'cd-cal__spots ' + spots.cls, spots.text));
+    const action = actionFor(s, main);
+    if (action) side.append(action);
+    row.append(main, side);
     return row;
+  }
+
+  function inCart(s) {
+    return !!(cartState.booking && cartState.booking.sessionIds.includes(s.id));
+  }
+
+  const MESSAGES = {
+    full: 'That class just filled up.',
+    limit: 'Your cart already has 2 classes.',
+    locked: 'Your cart is waiting for payment. Edit it first.',
+    duplicate: 'That class is already in your cart.',
+    category: 'This class is not part of the €19.90 offer.',
+    auth: 'Please log in first.',
+    inactive: 'This class was cancelled.',
+    missing: 'That class is no longer available.',
+  };
+
+  // The Add / Remove control for one session, or a short reason why not.
+  function actionFor(s, main) {
+    if (!cartApi) return null;
+    if (s.category !== PRODUCT_CATEGORY) {
+      return el('span', 'cd-cal__msg', 'Booking opens soon.');
+    }
+    if (!cartState.user) {
+      const link = el('a', 'cd-cal__btn', 'Log in to add');
+      link.href = '/?openModal=auth-modal';
+      link.target = '_top';
+      return link;
+    }
+    const mine = inCart(s);
+    const locked = cartState.booking && cartState.booking.status !== 'pending';
+    const full = Math.max(0, (s.capacity || 0) - (s.bookedCount || 0)) === 0;
+    const cartFull = cartState.booking &&
+      cartState.booking.sessionIds.length >= cartApi.MAX_ITEMS;
+
+    if (!mine && full) return null;
+    const button = el('button',
+        'cd-cal__btn' + (mine ? ' cd-cal__btn--remove' : ''),
+        locked ? 'In checkout' : mine ? 'Remove' : cartFull ? 'Cart full' : 'Add');
+    button.type = 'button';
+    button.disabled = !!locked || (!mine && !!cartFull);
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      const result = await cartApi[mine ? 'remove' : 'add'](s.id);
+      if (!result.ok) {
+        button.disabled = false;
+        const old = main.querySelector('.cd-cal__msg');
+        if (old) old.remove();
+        main.append(el('span', 'cd-cal__msg',
+            MESSAGES[result.code] || 'Could not update your cart. Try again.'));
+      }
+    });
+    return button;
   }
 
   function renderPanel() {
     const list = byDay.get(selectedKey) || [];
     const wrap = el('div');
     list.forEach((s) => wrap.append(sessionRow(s)));
-    if (!BOOKING_ENABLED) {
+    if (!cartApi) {
       wrap.append(el('p', 'cd-cal__note', 'Booking opens soon.'));
     }
     modalInfo.replaceChildren(wrap);
@@ -480,6 +541,7 @@
           name: t.name,
           level: t.level,
           color: t.color,
+          category: t.id === 'weekend-lab' ? 'workshop' : 'quick-lesson',
           startsAt: parisToDate(d.getFullYear(), d.getMonth(), d.getDate(), h, min),
           durationMin: 20,
           capacity: 5,
@@ -492,9 +554,68 @@
 
   // ---------------------------------------------------------------------
 
+  // In-memory stand-in for the real cart, used only by ?demo=1.
+  function demoCart() {
+    const state = {user: {uid: 'demo'}, booking: null, picks: []};
+    const subs = new Set();
+    const emit = () => subs.forEach((fn) => fn({...state, max: 2}));
+    const find = (id) => sessions.find((s) => s.id === id);
+    return {
+      MAX_ITEMS: 2,
+      subscribe(fn) {
+        subs.add(fn);
+        fn({...state, max: 2});
+      },
+      async add(id) {
+        const s = find(id);
+        if (!state.booking) {
+          state.booking = {id: 'demo', sessionIds: [], status: 'pending'};
+        }
+        if (state.booking.sessionIds.length >= 2) return {ok: false, code: 'limit'};
+        if ((s.bookedCount || 0) >= s.capacity) return {ok: false, code: 'full'};
+        s.bookedCount += 1;
+        state.booking.sessionIds.push(id);
+        emit();
+        onData(sessions.slice());
+        return {ok: true};
+      },
+      async remove(id) {
+        const s = find(id);
+        s.bookedCount = Math.max(0, s.bookedCount - 1);
+        state.booking.sessionIds = state.booking.sessionIds.filter((x) => x !== id);
+        emit();
+        onData(sessions.slice());
+        return {ok: true};
+      },
+    };
+  }
+
+  async function loadCart() {
+    if (DEMO) {
+      cartApi = demoCart();
+    } else {
+      try {
+        cartApi = (await import('/assets/js/cart.js')).cart;
+      } catch (error) {
+        console.error('The cart could not be loaded:', error);
+        return;
+      }
+    }
+    cartApi.subscribe((state) => {
+      cartState = state;
+      if (isOpen() && selectedKey) {
+        renderPanel();
+        renderPending = true;
+      } else if (sessions.length || DEMO) {
+        renderGrid();
+      }
+    });
+  }
+
   if (DEMO) {
     onData(demoSessions());
   } else {
     loadFromFirestore();
   }
+  loadCart();
 })();

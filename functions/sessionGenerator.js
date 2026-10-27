@@ -26,13 +26,27 @@ function planSessions(classes, settings, existingIds, now) {
   const blackout = new Set(settings.blackoutDates || []);
 
   const today = now.setZone(zone).startOf("day");
+  if (!today.isValid) {
+    throw new Error(`settings/schedule timezone "${zone}" is not valid`);
+  }
   const lastDay = today.plus({days: windowDays - 1});
 
   // Nothing is created before the start date, so templates can sit ready
   // for months without filling the calendar.
   let first = today;
   if (settings.startDate) {
+    // Fail loudly on a bad start date: ignoring it would quietly start
+    // creating sessions today.
+    if (typeof settings.startDate !== "string") {
+      throw new Error(
+          "settings/schedule startDate must be a text field like 2026-12-12");
+    }
     const start = DateTime.fromISO(settings.startDate, {zone}).startOf("day");
+    if (!start.isValid) {
+      throw new Error(
+          `settings/schedule startDate "${settings.startDate}" must look ` +
+          "like 2026-12-12");
+    }
     if (start > first) first = start;
   }
 
@@ -59,6 +73,7 @@ function planSessions(classes, settings, existingIds, now) {
           classId: cls.id,
           name: cls.name || "",
           level: cls.level || "",
+          category: cls.category || "",
           color: cls.color || "",
           description: cls.description || "",
           startsAt: day.set({hour, minute}).toJSDate(),
