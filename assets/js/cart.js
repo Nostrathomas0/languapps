@@ -33,6 +33,7 @@ let booking = null; // {id, sessionIds, status}
 let picks = [];     // [{id, name, startsAt}] for the sessions in the cart
 let stopWatching = null;
 let panelOpen = false;
+let ready = false; // true once the first login check has finished
 let notice = '';
 const sessionCache = new Map();
 const listeners = new Set();
@@ -42,7 +43,7 @@ const listeners = new Set();
 // ---------------------------------------------------------------------------
 
 function snapshot() {
-    return { user, booking, picks, max: MAX_ITEMS };
+    return { user, booking, picks, ready, max: MAX_ITEMS };
 }
 
 function notify() {
@@ -133,6 +134,7 @@ onAuthStateChanged(auth, async (u) => {
             console.error('Could not load the cart:', error);
         }
     }
+    ready = true;
     notify();
 });
 
@@ -253,8 +255,14 @@ async function unlock() {
     }
 }
 
+function openPanel() {
+    panelOpen = true;
+    renderWidget();
+}
+
 export const cart = {
     subscribe,
+    openPanel,
     add,
     remove,
     checkout,

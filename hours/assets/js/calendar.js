@@ -54,6 +54,13 @@
   let animating = false;
   let renderPending = false;
   let cartApi = null; // set once the cart has loaded
+  // ?pick=classA,classB comes from the main-site modal: the next open
+  // session of each class is put in the cart as soon as everything has loaded.
+  let pickIds = (new URLSearchParams(window.location.search).get('pick') || '')
+      .split(',').filter(Boolean).slice(0, 2);
+  let applyingPicks = false;
+  let sessionsLoaded = false;
+  let pickMessage = '';
   let cartState = {user: null, booking: null, picks: []};
 
   // ---------------------------------------------------------------------
@@ -202,6 +209,7 @@
         (sessions.length === 1 ? 'class' : 'classes') +
         ' in the next 4 weeks. Tap a day for details.';
     }
+    if (pickMessage) statusEl.textContent = pickMessage;
   }
 
   // ---------------------------------------------------------------------
@@ -457,6 +465,7 @@
 
   function onData(list) {
     sessions = list;
+    sessionsLoaded = true;
     if (isOpen() && selectedKey) {
       // keep the open panel live (spots left) and redraw the grid afterwards
       groupByDay();
@@ -465,6 +474,7 @@
     } else {
       renderGrid();
     }
+    maybeApplyPicks();
   }
 
   async function loadFromFirestore() {
@@ -556,12 +566,13 @@
 
   // In-memory stand-in for the real cart, used only by ?demo=1.
   function demoCart() {
-    const state = {user: {uid: 'demo'}, booking: null, picks: []};
+    const state = {user: {uid: 'demo'}, booking: null, picks: [], ready: true};
     const subs = new Set();
     const emit = () => subs.forEach((fn) => fn({...state, max: 2}));
     const find = (id) => sessions.find((s) => s.id === id);
     return {
       MAX_ITEMS: 2,
+      openPanel() {},
       subscribe(fn) {
         subs.add(fn);
         fn({...state, max: 2});
@@ -609,7 +620,52 @@
       } else if (sessions.length || DEMO) {
         renderGrid();
       }
+      maybeApplyPicks();
     });
+  }
+
+  // Puts the next open session of each picked class in the cart, one at a
+  // time (two parallel adds could create two carts), then opens the cart.
+  async function maybeApplyPicks() {
+    if (!pickIds.length || applyingPicks || !cartApi || !sessionsLoaded) return;
+    if (!cartState.ready) return; // still checking whether they're logged in
+    if (!cartState.user) {
+      pickMessage = 'Log in to add the classes you picked.';
+      renderGrid();
+      return;
+    }
+    applyingPicks = true;
+    const ids = pickIds;
+    pickIds = [];
+    window.history.replaceState(null, '', window.location.pathname);
+
+    const now = new Date();
+    const notes = [];
+    let added = 0;
+    for (const classId of ids) {
+      const open = sessions
+          .filter((s) => s.classId === classId &&
+            s.category === PRODUCT_CATEGORY && s.startsAt >= now &&
+            (s.capacity || 0) - (s.bookedCount || 0) > 0)
+          .sort((a, b) => a.startsAt - b.startsAt);
+      const name = (sessions.find((s) => s.classId === classId) || {}).name ||
+        'one of your picks';
+      if (!open.length) {
+        notes.push(`No open session for ${name} in the next 4 weeks.`);
+        continue;
+      }
+      if (inCart(open[0])) continue;
+      const result = await cartApi.add(open[0].id);
+      if (result.ok) added += 1;
+      else notes.push(`${name}: ${MESSAGES[result.code] || 'could not be added.'}`);
+    }
+    pickMessage = (added ?
+      'We added the next open session of each class you picked. ' +
+      'Check your cart, then confirm & pay. ' : '') + notes.join(' ');
+    pickMessage = pickMessage.trim() || 'Your cart is up to date.';
+    if (cartApi.openPanel) cartApi.openPanel();
+    applyingPicks = false;
+    renderGrid();
   }
 
   if (DEMO) {
