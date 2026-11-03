@@ -80,7 +80,12 @@ import {
         const closeButton = document.querySelector('#booking-modal .close');
         const loginButton = document.getElementById('openModalButton');
         if (closeButton) closeButton.click();
-        if (loginButton) loginButton.click();
+        if (loginButton) {
+            loginButton.click();
+        } else {
+            // Pages without the login modal (e.g. /services): go to the home page's.
+            window.location.href = '/?openModal=auth-modal';
+        }
     }
 
     function goToSchedule() {
