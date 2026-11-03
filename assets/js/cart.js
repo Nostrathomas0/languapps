@@ -23,7 +23,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // TODO: paste the Payment Link made for the €19.90 quick-lesson product.
-const STRIPE_LINK = 'https://buy.stripe.com/REPLACE_WITH_QUICK_LESSON_LINK';
+const STRIPE_LINK = 'https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04';
 const PRODUCT_CATEGORY = 'quick-lesson';
 const MAX_ITEMS = 2;
 const PRICE_LABEL = '€19.90';
