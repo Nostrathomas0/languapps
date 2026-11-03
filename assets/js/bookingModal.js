@@ -1,27 +1,38 @@
 // assets/js/bookingModal.js
-// Quick-lesson picker for the main-site booking modal. Lists the classes
-// from Firestore with live spots left, lets the student add 2 to a cart,
-// then sends them to the shared Stripe Payment Link.
+// Quick-lesson picker in the main-site booking modal.
+// The student ticks two classes. Nothing is saved and no seats are held; the
+// second tick sends them to /hours/, which puts the next open session of each
+// class in their cart. Logged-out visitors can browse and tick, and are asked
+// to log in at the second tick.
 
 import { auth, db, onAuthStateChanged } from './firebaseInit.js';
 import {
     collection,
-    doc,
     query,
     where,
     onSnapshot,
-    updateDoc,
-    increment,
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 (function () {
     'use strict';
 
-    // TODO: paste the Payment Link created for this modal only.
-    const STRIPE_LINK = 'https://buy.stripe.com/7sY4gsg8C2u0aMqcGpefC04';
+    const PRODUCT_CATEGORY = 'quick-lesson';
+    const SCHEDULE_URL = '/hours/';
+    const MAX_PICKS = 2;
+    const STORE_KEY = 'quickPicks';
 
-    // Only used to keep the list in weekday order; days are never shown.
-    const DAY_ORDER = { Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5 };
+    // Only used to keep the list in weekday order.
+    const DAY_ORDER = {
+        Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5,
+        Saturday: 6, Sunday: 7,
+    };
+
+    const BASE = 'display:flex;justify-content:space-between;align-items:center;' +
+        'gap:12px;width:100%;margin:0 0 8px;padding:10px 14px;text-align:left;' +
+        'font:inherit;color:#39454b;background:#fff;border:2px solid #e5e6e7;' +
+        'border-radius:6px;cursor:pointer;';
+    const ON = 'background:#fff1e8;border-color:#f35e08;';
+    const OFF = 'opacity:.5;cursor:default;';
 
     const status = document.getElementById('booking-user-status');
     const container = document.getElementById('booking-calendar-container');
@@ -30,162 +41,172 @@ import {
     if (!status || !container) return;
 
     let currentUser = null;
-    let unsubscribe = null;
     let classes = [];
-    let cart = []; // class ids, max 2
+    let loaded = false;
+    let picked = [];
+    let waitingForLogin = false;
+
+    try {
+        const saved = JSON.parse(sessionStorage.getItem(STORE_KEY) || 'null');
+        if (saved) {
+            picked = saved.picked || [];
+            waitingForLogin = !!saved.waitingForLogin;
+        }
+    } catch (error) {
+        picked = [];
+    }
+
+    function remember() {
+        try {
+            sessionStorage.setItem(STORE_KEY,
+                JSON.stringify({ picked, waitingForLogin }));
+        } catch (error) {
+            // private browsing: the picks just won't survive a reload
+        }
+    }
 
     // ========================================================================
     // AUTH
     // ========================================================================
 
-    function setStatus(html, color) {
-        status.innerHTML = html;
+    function setStatus(text, color) {
+        status.textContent = text;
         status.style.color = color;
     }
 
-    function openLogin(event) {
-        event.preventDefault();
-        // Reuse the site's own login button so its modal logic runs.
-        const modal = document.getElementById('booking-modal');
+    // Close the booking modal with the site's own close handler, then open
+    // the site's own login modal through its existing button.
+    function openLogin() {
+        const closeButton = document.querySelector('#booking-modal .close');
         const loginButton = document.getElementById('openModalButton');
-        if (modal) modal.style.display = 'none';
+        if (closeButton) closeButton.click();
         if (loginButton) loginButton.click();
+    }
+
+    function goToSchedule() {
+        picked = picked.slice(0, MAX_PICKS);
+        waitingForLogin = false;
+        remember();
+        window.location.href = `${SCHEDULE_URL}?pick=${picked.join(',')}`;
+    }
+
+    // Called whenever the picks change or the login state changes.
+    function maybeGo() {
+        if (picked.length !== MAX_PICKS) return;
+        if (currentUser) {
+            goToSchedule();
+        } else if (!waitingForLogin) {
+            waitingForLogin = true;
+            remember();
+            openLogin();
+        }
     }
 
     onAuthStateChanged(auth, (user) => {
         currentUser = user;
-
-        // Always drop the previous listener so signing in twice never
-        // stacks two live queries on top of each other.
-        if (unsubscribe) {
-            unsubscribe();
-            unsubscribe = null;
+        if (user) {
+            setStatus(`Logged in as ${user.email}`, '#27ae60');
+            if (waitingForLogin) maybeGo();
+        } else {
+            setStatus('Pick any 2. You\'ll log in on the next step.', '#39454b');
         }
-
-        if (!user) {
-            cart = [];
-            container.innerHTML = '';
-            setStatus('Please <a href="#" id="booking-login-link">log in</a> to book.', '#e74c3c');
-            const link = document.getElementById('booking-login-link');
-            if (link) link.addEventListener('click', openLogin);
-            return;
-        }
-
-        setStatus(`Logged in as ${user.email}`, '#27ae60');
-        listen();
+        render();
     });
 
     // ========================================================================
-    // CLASS LIST — live from Firestore
+    // CLASS LIST, live from Firestore (public read)
     // ========================================================================
 
-    function listen() {
-        const classesQuery = query(
-            collection(db, 'classes'),
-            where('active', '==', true),
-        );
-
-        unsubscribe = onSnapshot(classesQuery, (snapshot) => {
-            classes = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    onSnapshot(
+        query(collection(db, 'classes'), where('active', '==', true)),
+        (snapshot) => {
+            classes = snapshot.docs
+                .map((d) => ({ id: d.id, ...d.data() }))
+                .filter((c) => c.category === PRODUCT_CATEGORY);
 
             classes.sort((a, b) =>
                 ((DAY_ORDER[a.day] || 9) - (DAY_ORDER[b.day] || 9)) ||
                 (a.time || '').localeCompare(b.time || ''));
 
-            // Forget cart entries for classes that were retired meanwhile.
-            cart = cart.filter((id) => classes.some((c) => c.id === id));
+            picked = picked.filter((id) => classes.some((c) => c.id === id));
+            loaded = true;
             render();
-        }, (error) => {
+        },
+        (error) => {
             console.error('Failed to load classes:', error);
-            container.innerHTML = '<p>Classes are unavailable right now. Please try again shortly.</p>';
-        });
+            container.textContent =
+                'Classes are unavailable right now. Please try again shortly.';
+        },
+    );
+
+    // ========================================================================
+    // DISPLAY
+    // ========================================================================
+
+    function whenText(c) {
+        const slot = [c.day ? `${c.day}s` : '', c.time || '']
+            .filter(Boolean).join(' ');
+        return [c.level, slot ? `${slot} Paris time` : '']
+            .filter(Boolean).join(' · ');
     }
 
     function render() {
+        if (!loaded) {
+            container.textContent = 'Loading classes…';
+            return;
+        }
         if (classes.length === 0) {
-            container.innerHTML = '<p>No classes are open right now. Check back soon.</p>';
+            container.textContent = 'No classes are open right now. Check back soon.';
             return;
         }
 
-        const rows = classes.map((c) => {
-            const left = (c.capacity || 0) - (c.bookedCount || 0);
-            const full = left <= 0;
-            const picked = cart.includes(c.id);
-            const blocked = !picked && (full || cart.length >= 2);
-            const label = full ? 'Full' : `${left} ${left === 1 ? 'spot' : 'spots'} left`;
+        container.replaceChildren();
+        classes.forEach((c) => {
+            const on = picked.includes(c.id);
+            const blocked = !on && picked.length >= MAX_PICKS;
 
-            return `
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e6e7;">
-                    <div><strong>${c.name}</strong><br><small>${label}</small></div>
-                    <button type="button" class="site-cta ${picked ? 'site-cta--orange' : 'site-cta--green'}" data-id="${c.id}" ${blocked ? 'disabled' : ''}>${picked ? 'Remove' : 'Add'}</button>
-                </div>`;
-        }).join('');
+            const row = document.createElement('button');
+            row.type = 'button';
+            row.dataset.id = c.id;
+            row.setAttribute('aria-pressed', String(on));
+            row.disabled = blocked;
+            row.style.cssText = BASE + (on ? ON : '') + (blocked ? OFF : '');
 
-        const picks = cart
-            .map((id) => classes.find((c) => c.id === id))
-            .filter(Boolean);
+            const text = document.createElement('span');
+            const name = document.createElement('strong');
+            name.textContent = c.name;
+            const when = document.createElement('small');
+            when.textContent = whenText(c);
+            text.append(name, document.createElement('br'), when);
 
-        let cartHtml;
-        if (picks.length === 0) {
-            cartHtml = '<p>Pick 2 classes.</p>';
-        } else if (picks.length === 1) {
-            cartHtml = `<p><strong>Your picks:</strong> ${picks[0].name}</p><p>Pick 1 more.</p>`;
-        } else {
-            cartHtml = `<p><strong>Your picks:</strong> ${picks.map((c) => c.name).join(' + ')}</p>
-                <button type="button" id="booking-checkout" class="site-cta site-cta--orange">Confirm &amp; pay — €19.90</button>`;
-        }
+            const mark = document.createElement('span');
+            mark.textContent = on ? '✓ Selected' : '';
+            mark.style.cssText = 'font-weight:700;color:#f35e08;white-space:nowrap;';
 
-        container.innerHTML = `${rows}<div style="padding-top:14px;">${cartHtml}</div>`;
-
-        container.querySelectorAll('button[data-id]').forEach((button) => {
-            button.addEventListener('click', () => toggle(button.dataset.id));
+            row.append(text, mark);
+            row.addEventListener('click', () => toggle(c.id));
+            container.append(row);
         });
 
-        const checkout = document.getElementById('booking-checkout');
-        if (checkout) checkout.addEventListener('click', goToStripe);
+        const help = document.createElement('p');
+        help.style.cssText = 'margin-top:10px;font-size:.9em;';
+        help.textContent = picked.length === 0 ?
+            'Pick 2 classes. Next you will see the next open session of each.' :
+            picked.length === 1 ? 'Pick 1 more.' :
+            waitingForLogin ? 'Log in to continue to the schedule.' :
+            'Taking you to the schedule…';
+        container.append(help);
     }
 
-    // ========================================================================
-    // CART — bookedCount moves the moment a class is added or removed
-    // ========================================================================
-
-    async function toggle(id) {
-        if (!currentUser) return;
-
-        const adding = !cart.includes(id);
-        if (adding && cart.length >= 2) return;
-
-        // Update the cart first so the UI answers instantly; undo on failure.
-        cart = adding ? [...cart, id] : cart.filter((x) => x !== id);
+    function toggle(id) {
+        if (picked.includes(id)) {
+            picked = picked.filter((x) => x !== id);
+            waitingForLogin = false;
+        } else if (picked.length < MAX_PICKS) {
+            picked = [...picked, id];
+        }
+        remember();
         render();
-
-        try {
-            await updateDoc(doc(db, 'classes', id), {
-                bookedCount: increment(adding ? 1 : -1),
-            });
-        } catch (error) {
-            console.error('Could not update the class count:', error);
-            cart = adding ? cart.filter((x) => x !== id) : [...cart, id];
-            render();
-        }
-    }
-
-    // ========================================================================
-    // STRIPE
-    // ========================================================================
-
-    function goToStripe() {
-        if (!currentUser || cart.length !== 2) return;
-
-        if (STRIPE_LINK.includes('REPLACE')) {
-            alert('The payment link is not set up yet.');
-            return;
-        }
-
-        // Stripe Payment Links keep only letters, digits, dashes and
-        // underscores in client_reference_id, so this is uid_class1_class2.
-        // The webhook splits it back apart on "_".
-        const reference = [currentUser.uid, ...cart].join('_');
-        window.location.href = `${STRIPE_LINK}?client_reference_id=${reference}`;
+        maybeGo();
     }
 })();
