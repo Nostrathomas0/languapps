@@ -1,20 +1,31 @@
 name: Upload Website
 
-on: 
+on:
   push:
     branches:
-    - master
-    
+      - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks --delete --exclude '.git/*' --exclude '.github/*' --exclude '.github/workflows/*'
-      env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-west-1'  # optional: defaults to us-east-1      
+      - uses: actions/checkout@v4
+
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: >-
+            --acl public-read --follow-symlinks --delete
+            --exclude '.git/*' --exclude '.github/*'
+            --exclude 'blog/*' --exclude 'images/blog/*'
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-west-1'   # must be the bucket's real region
+
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id E34IBHMBCDJKRU --paths "/*"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1

@@ -37,6 +37,8 @@ const corsOptions = {
   origin: [
     "http://127.0.0.1:2000",
     "https://languapps.com",
+    "https://www.languapps.com",
+    "https://labase.languapps.com",
     "https://www.labase.languapps.com"],
   credentials: true,
   methods: ["GET", "POST", "OPTIONS"],
@@ -323,28 +325,41 @@ app.post("/refreshJWTWithProgress", async (req, res) => {
   console.log("JWT Refresh with Progress requested");
 
   try {
-    const {userId, email, existingProgress} = req.body;
+    // The caller must prove who they are with a Firebase ID token. The
+    // uid and email come from the verified token, never from the body.
+    const authHeader = req.headers.authorization || "";
+    const idToken = authHeader.startsWith("Bearer ") ?
+      authHeader.slice(7) : null;
+    if (!idToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Missing Authorization bearer token",
+      });
+    }
 
-    if (!userId || !email) {
+    let decoded;
+    try {
+      decoded = await admin.auth().verifyIdToken(idToken);
+    } catch (authError) {
+      console.error("ID token verification failed:", authError.code);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or expired sign-in. Please sign in again.",
+      });
+    }
+
+    const userId = decoded.uid;
+    const email = decoded.email;
+    const {existingProgress} = req.body;
+
+    if (!email) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: userId, email",
+        message: "Account has no email address",
       });
     }
 
     console.log("Refreshing JWT for:", email);
-    console.log("Preserving progress:", existingProgress);
-
-    // Verify the user exists in Firebase Auth
-    try {
-      await admin.auth().getUser(userId);
-    } catch (authError) {
-      console.error("User verification failed:", authError);
-      return res.status(401).json({
-        success: false,
-        message: "Invalid user credentials",
-      });
-    }
 
     // Create new JWT payload with preserved progress
     const jwtPayload = {
@@ -458,9 +473,6 @@ functions.https.onCall(async (data, context) => {
   }
 });
 
-const {dailyGenerator} = require("./sessionGenerator");
-
 exports.app = functions
     .runWith({secrets: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]})
     .https.onRequest(app);
-exports.dailyGenerator = dailyGenerator;

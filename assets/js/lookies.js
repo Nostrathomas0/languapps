@@ -1,6 +1,6 @@
 //assets/js/lookies.js
-import { signUp, signIn } from './firebaseAuth.js';  // Import signIn function
-import { auth } from './firebaseInit.js';
+import { signUp, signIn, handleSignOut } from './firebaseAuth.js';
+import { auth, onAuthStateChanged } from './firebaseInit.js';
 import { attachBlogPostListener, handleBlogPostSubmit } from './blogFormHandler.js';  // Adjust the path as needed
 // Utility Functions for Modals & Their Event Listeners
 console.log("Lookies loaded");
@@ -477,8 +477,41 @@ function setupBookingTriggers() {
     console.log("Booking triggers initialized");
 }
 
+// ========== SIGN OUT ==========
+
+function setupSignOut() {
+    const signOutButton = document.getElementById('signOut');
+    const signedInBox = document.getElementById('signedInBox');
+    const signedInAs = document.getElementById('signedInAs');
+    const loggedOutParts = document.querySelectorAll('#step1 > h2, #signupForm, #signinForm');
+
+    // Labase clears its cookie, then sends people to /?logout=1 so this
+    // site's own Firebase session ends too.
+    if (new URLSearchParams(window.location.search).get('logout') === '1') {
+        handleSignOut();
+    }
+
+    if (signOutButton) {
+        signOutButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            signOutButton.disabled = true;
+            handleSignOut();
+        });
+    }
+
+    // Forms when signed out, "Signed in as" + Sign Out when signed in.
+    onAuthStateChanged(auth, function(user) {
+        if (!signedInBox) return;
+        loggedOutParts.forEach(function(el) { el.style.display = user ? 'none' : ''; });
+        signedInBox.style.display = user ? '' : 'none';
+        if (signedInAs) signedInAs.textContent = user ? 'Signed in as ' + user.email : '';
+        if (signOutButton) signOutButton.disabled = false;
+    });
+}
+
 // Initialize everything
 setupEventListeners();
+setupSignOut();
 setupBookingModal();
 
        

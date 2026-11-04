@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
 	HTML5UPg thanks JPAvery
-  _         __      __   _     _       _     _      __      ___      ___      __  
+  _         __      __   _     _ _     _     _      __      ___      ___      __  
  | |       /  \    |  \ | |   //  __  | |   | |    /  \    |   \    |   \    / _/
  | |      / /\ \   | |\\| |  ((  |_ | | |   | |   / /\ \   | () )   | () )  ( (
  | |__   /  __  \  | | \  |   \\__//  |  \_/  |  /  __  \  | __/    | __/   _) )
@@ -302,9 +302,11 @@
 							<input type="password" id="loginPassword" placeholder="Enter your password" required>
 							<button type="submit" id="submitAuth">Sign In</button>
 							<button type="button" id="forgotPasswordButton">Forgot Password?</button>
-							<button id="signOut">Sign Out</button>
 						</form>
-						
+						<div id="signedInBox" style="display:none;">
+							<p id="signedInAs"></p>
+							<button type="button" id="signOut">Sign Out</button>
+						</div>
 					</div>
 					<div id="step2" class="modal-step" style="display:none;">
 						<h1>Welcome! Would you like to sign the guestbook?</h1>
@@ -366,6 +368,7 @@
 	
 		<!-- Authentication script -->
 		<script type="module" src="assets/js/firebaseAuth.js"></script>
+		<script type="module" src="assets/js/authModal.js"></script>
 		<script type="module" src="assets/js/recapAuth.js"></script>
 		<script type="module" src="assets/js/bookingModal.js"></script>
 

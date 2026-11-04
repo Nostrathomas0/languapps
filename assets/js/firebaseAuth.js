@@ -111,6 +111,9 @@ onAuthStateChanged(auth, async (user) => {
       if (window._signingUp) return;
       // Get the JWT token from Firestore for the authenticated user
       const jwtToken = await getJwtFromFirestore(user.uid);
+      // Signed out (or signing out) while the lookup was in flight:
+      // don't bring the cookie back.
+      if (window._signingOut || !auth.currentUser) return;
       if (jwtToken) {
         setAuthToken(jwtToken); // Set the retrieved token as a cookie
         console.log("🔍 [DEBUG] JWT token set as cookie successfully");
@@ -254,12 +257,11 @@ async function signIn(email, password) {
               'https://us-central1-languapps.cloudfunctions.net/app/refreshJWTWithProgress',
               {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                      userId: userId,
-                      email: email,
-                      existingProgress: {}
-                  }),
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${await userCredential.user.getIdToken()}`
+                  },
+                  body: JSON.stringify({ existingProgress: {} }),
               }
           );
           const refreshData = await refreshResponse.json();
@@ -330,13 +332,10 @@ async function signIn(email, password) {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${await userCredential.user.getIdToken()}`
           },
-          body: JSON.stringify({ 
-            userId: userId,
-            email: email,
-            existingProgress: existingProgress
-          }),
+          body: JSON.stringify({ existingProgress: existingProgress }),
         });
         
         console.log("🔍 [DEBUG] Step 4c: Refresh response status:", refreshResponse.status);
@@ -438,6 +437,7 @@ async function sendPasswordResetEmail(email) {
 }
 
 async function handleSignOut() {
+  window._signingOut = true;
   try {
     console.log("🔍 [DEBUG] Starting sign-out process...");
     
