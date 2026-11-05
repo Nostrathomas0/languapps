@@ -180,7 +180,8 @@ async function previewSlots(event) {
     const startTime = $('slotStart').value;
     const endTime = $('slotEnd').value;
     const lengthMin = Number($('slotLength').value);
-    const gapMin = Number($('slotGap').value);
+    const stepMin = Number($('slotStep').value);
+    const gapMin = stepMin - lengthMin;
     const weekdays = [...document.querySelectorAll('input[name="weekday"]:checked')]
         .map((c) => Number(c.value));
 
@@ -188,7 +189,7 @@ async function previewSlots(event) {
     if (daysBetween(from, to) > MAX_RANGE_DAYS) return say(`Keep the range under ${MAX_RANGE_DAYS} days.`, 'error');
     if (endTime <= startTime) return say('The window must end after it starts.', 'error');
     if (weekdays.length === 0) return say('Pick at least one day.', 'error');
-    if (gapMin < MIN_GAP_MIN) return say(`The gap must be at least ${MIN_GAP_MIN} minutes.`, 'error');
+    if (gapMin < MIN_GAP_MIN) return say(`Lessons must start at least ${lengthMin + MIN_GAP_MIN} minutes apart (${lengthMin} min lesson + ${MIN_GAP_MIN} min gap).`, 'error');
 
     const raw = planSlots({from, to, weekdays, startTime, endTime, lengthMin, gapMin});
     if (raw.length === 0) return say('No slots fit in that window.', 'error');

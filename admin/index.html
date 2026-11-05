@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Languapps admin</title>
     <link rel="stylesheet" href="/admin/assets/css/admin.css">
-    <script type="module" src="/admin/assets/js/admin.js?v=1"></script>
+    <script type="module" src="/admin/assets/js/admin.js?v=2"></script>
 </head>
 <body>
     <main class="admin">
@@ -40,7 +40,7 @@
                     <label>Window starts (Paris) <input type="time" id="slotStart" value="09:00" required></label>
                     <label>Window ends (Paris) <input type="time" id="slotEnd" value="12:00" required></label>
                     <label>Lesson length (min) <input type="number" id="slotLength" value="25" min="10" max="60" required></label>
-                    <label>Gap after each lesson (min, 5 or more) <input type="number" id="slotGap" value="5" min="5" max="120" required></label>
+                    <label>Start a lesson every (min) <input type="number" id="slotStep" value="30" min="15" max="180" required></label>
                     <button type="submit">Preview</button>
                 </form>
                 <ul id="preview"></ul>
