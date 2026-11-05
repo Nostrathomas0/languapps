@@ -264,9 +264,115 @@
     missing: 'That class is no longer available.',
   };
 
+  // ---- private and trial slots: booked by a server function, paid in credits
+  const API = 'https://us-central1-languapps.cloudfunctions.net/app';
+  const PRIVATE_MESSAGES = {
+    credits: 'Not enough credits. Message Thomas to add some.',
+    trialUsed: 'You have already used your free trial.',
+    full: 'That slot was just taken.',
+    tooSoon: 'Too late to book this one online.',
+    duplicate: 'You already booked this slot.',
+    inactive: 'That slot is no longer available.',
+    missing: 'That slot is no longer available.',
+    auth: 'Please log in first.',
+  };
+  let privateState = {uid: null, balance: 0, booked: new Set()};
+  let privateUnsubs = [];
+
+  async function watchPrivate(uid) {
+    if (privateState.uid === uid) return;
+    privateUnsubs.forEach((u) => u());
+    privateUnsubs = [];
+    privateState = {uid, balance: 0, booked: new Set()};
+    if (!uid || DEMO) return;
+    const {db} = await import('/assets/js/firebaseInit.js');
+    const fs = await import(
+        'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js');
+    const refresh = () => {
+      if (isOpen() && selectedKey) renderPanel();
+    };
+    privateUnsubs.push(fs.onSnapshot(fs.doc(db, 'credits', uid), (snap) => {
+      privateState.balance = snap.exists() ? snap.data().balance || 0 : 0;
+      refresh();
+    }, () => {}));
+    privateUnsubs.push(fs.onSnapshot(
+        fs.query(fs.collection(db, 'privateBookings'),
+            fs.where('uid', '==', uid)),
+        (snap) => {
+          privateState.booked = new Set(snap.docs
+              .filter((d) => d.data().status === 'booked')
+              .map((d) => d.data().sessionId));
+          refresh();
+        }, () => {}));
+  }
+
+  function privateAction(s, main) {
+    if (!cartState.user) {
+      const link = el('a', 'cd-cal__btn', 'Log in to book');
+      link.href = '/?openModal=auth-modal';
+      link.target = '_top';
+      return link;
+    }
+    if (privateState.booked.has(s.id)) {
+      return el('span', 'cd-cal__msg', 'You are booked ✓');
+    }
+    if ((s.bookedCount || 0) >= (s.capacity || 1)) return null;
+    const trial = s.category === 'trial';
+    const cost = s.credits || 1;
+    const idle = trial ? 'Book free trial' : `Book (${cost} credit)`;
+    const button = el('button', 'cd-cal__btn', idle);
+    button.type = 'button';
+    let armed = false;
+    button.addEventListener('click', async () => {
+      if (!armed) {
+        armed = true;
+        button.textContent = 'Tap again to confirm';
+        setTimeout(() => {
+          armed = false;
+          button.textContent = idle;
+        }, 4000);
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Booking…';
+      let result;
+      try {
+        const {auth} = await import('/assets/js/firebaseInit.js');
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(`${API}/bookPrivateSlot`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`},
+          body: JSON.stringify({sessionId: s.id}),
+        });
+        result = await res.json();
+      } catch (e) {
+        result = {ok: false, code: 'network'};
+      }
+      const old = main.querySelector('.cd-cal__msg');
+      if (old) old.remove();
+      if (result.ok) {
+        privateState.booked.add(s.id);
+        main.append(el('span', 'cd-cal__msg',
+            'Booked! A confirmation email is on its way.'));
+        button.remove();
+      } else {
+        button.disabled = false;
+        armed = false;
+        button.textContent = idle;
+        main.append(el('span', 'cd-cal__msg',
+            PRIVATE_MESSAGES[result.code] || 'Could not book. Try again.'));
+      }
+    });
+    return button;
+  }
+
   // The Add / Remove control for one session, or a short reason why not.
   function actionFor(s, main) {
     if (!cartApi) return null;
+    if (s.category === 'private' || s.category === 'trial') {
+      return privateAction(s, main);
+    }
     if (s.category !== PRODUCT_CATEGORY) {
       return el('span', 'cd-cal__msg', 'Booking opens soon.');
     }
@@ -305,6 +411,10 @@
   function renderPanel() {
     const list = byDay.get(selectedKey) || [];
     const wrap = el('div');
+    if (cartState.user && list.some((s) => s.category === 'private')) {
+      wrap.append(el('p', 'cd-cal__note',
+          `Your credits: ${privateState.balance}`));
+    }
     list.forEach((s) => wrap.append(sessionRow(s)));
     if (!cartApi) {
       wrap.append(el('p', 'cd-cal__note', 'Booking opens soon.'));
@@ -493,8 +603,7 @@
     fs.onSnapshot(q, (snap) => {
       onData(snap.docs
           .map((d) => ({id: d.id, ...d.data()}))
-          .filter((s) => s.active !== false && s.startsAt &&
-            !['private', 'trial'].includes(s.category))
+          .filter((s) => s.active !== false && s.startsAt)
           .map((s) => ({...s, startsAt: s.startsAt.toDate()})));
     }, (error) => {
       console.error('Failed to load sessions:', error);
@@ -615,6 +724,7 @@
     }
     cartApi.subscribe((state) => {
       cartState = state;
+      watchPrivate(state.user ? state.user.uid : null);
       if (isOpen() && selectedKey) {
         renderPanel();
         renderPending = true;

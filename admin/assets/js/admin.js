@@ -13,6 +13,7 @@ const ADMIN_UID = 'v8Zomt6yfhheZexXQJCCm6b2v502';
 const TZ = 'Europe/Paris';
 const MIN_GAP_MIN = 5;
 const MAX_RANGE_DAYS = 120;
+const API = 'https://us-central1-languapps.cloudfunctions.net/app';
 
 const $ = (id) => document.getElementById(id);
 
@@ -409,6 +410,26 @@ async function loadSessions(event) {
 // START
 // ============================================================================
 
+async function grantCredits(event) {
+    event.preventDefault();
+    const amount = Number($('creditAmount').value);
+    const email = $('creditEmail').value.trim();
+    if (!window.confirm(`${amount > 0 ? 'Add' : 'Remove'} ${Math.abs(amount)} credit(s) for ${email}?`)) return;
+    try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(`${API}/adminGrantCredits`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+            body: JSON.stringify({email, amount, note: $('creditNote').value}),
+        });
+        const data = await res.json();
+        if (data.ok) say(`Done. ${data.email} now has ${data.balance} credit(s).`, 'ok');
+        else say({nouser: 'No account with that email.', negative: 'That would take the balance below zero.', invalid: 'Check the email and amount.'}[data.code] || 'Could not change credits.', 'error');
+    } catch (e) {
+        say('Could not change credits: ' + e.message, 'error');
+    }
+}
+
 function startPanel() {
     const today = parisDateKey(new Date());
     ['slotFrom', 'blockFrom', 'listFrom'].forEach((id) => { $(id).value = today; });
@@ -419,6 +440,7 @@ function startPanel() {
     $('createSlots').addEventListener('click', createSlots);
     $('blockForm').addEventListener('submit', blockDates);
     $('listForm').addEventListener('submit', loadSessions);
+    $('creditForm').addEventListener('submit', grantCredits);
 
     loadBlackouts().catch((e) => say('Could not read blocked dates: ' + e.message, 'error'));
     loadSessions();

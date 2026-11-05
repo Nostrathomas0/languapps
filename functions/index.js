@@ -473,6 +473,10 @@ functions.https.onCall(async (data, context) => {
   }
 });
 
+require("./privateLessons")(app, {admin, transporter});
+
+exports.dailyGenerator = require("./sessionGenerator").dailyGenerator;
+
 exports.app = functions
     .runWith({secrets: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]})
     .https.onRequest(app);

@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Languapps admin</title>
     <link rel="stylesheet" href="/admin/assets/css/admin.css">
-    <script type="module" src="/admin/assets/js/admin.js?v=2"></script>
+    <script type="module" src="/admin/assets/js/admin.js?v=3"></script>
 </head>
 <body>
     <main class="admin">
@@ -57,6 +57,17 @@
                 </form>
                 <p>Blocking closes every session on those dates that nobody has booked, and tells the session generator to skip them.</p>
                 <ul id="blackoutList"></ul>
+            </section>
+
+            <section>
+                <h2>Credits</h2>
+                <form id="creditForm">
+                    <label>Student email <input type="email" id="creditEmail" required></label>
+                    <label>Credits (use a minus to remove; halves allowed) <input type="number" id="creditAmount" value="10" step="0.5" required></label>
+                    <label>Note <input type="text" id="creditNote" placeholder="e.g. paid by transfer"></label>
+                    <button type="submit">Add credits</button>
+                </form>
+                <p>The student must already have an account. One credit books one 25-minute private lesson.</p>
             </section>
 
             <section>
