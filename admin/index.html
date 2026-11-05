@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Languapps admin</title>
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <script type="module" src="/admin/assets/js/admin.js?v=1"></script>
+</head>
+<body>
+    <main class="admin">
+        <h1>Schedule admin</h1>
+        <p id="gate">Checking sign-in…</p>
+        <p id="message" role="status"></p>
+
+        <div id="panel" hidden>
+
+            <section>
+                <h2>Open slots</h2>
+                <form id="slotForm">
+                    <label>Type
+                        <select id="slotCategory">
+                            <option value="private">Private lesson (1 credit)</option>
+                            <option value="trial">Free trial</option>
+                        </select>
+                    </label>
+                    <label>From <input type="date" id="slotFrom" required></label>
+                    <label>To <input type="date" id="slotTo" required></label>
+                    <fieldset>
+                        <legend>Days</legend>
+                        <label><input type="checkbox" name="weekday" value="1" checked> Mon</label>
+                        <label><input type="checkbox" name="weekday" value="2" checked> Tue</label>
+                        <label><input type="checkbox" name="weekday" value="3" checked> Wed</label>
+                        <label><input type="checkbox" name="weekday" value="4" checked> Thu</label>
+                        <label><input type="checkbox" name="weekday" value="5" checked> Fri</label>
+                        <label><input type="checkbox" name="weekday" value="6"> Sat</label>
+                        <label><input type="checkbox" name="weekday" value="0"> Sun</label>
+                    </fieldset>
+                    <label>Window starts (Paris) <input type="time" id="slotStart" value="09:00" required></label>
+                    <label>Window ends (Paris) <input type="time" id="slotEnd" value="12:00" required></label>
+                    <label>Lesson length (min) <input type="number" id="slotLength" value="25" min="10" max="60" required></label>
+                    <label>Gap after each lesson (min, 5 or more) <input type="number" id="slotGap" value="5" min="5" max="120" required></label>
+                    <button type="submit">Preview</button>
+                </form>
+                <ul id="preview"></ul>
+                <p id="previewSummary"></p>
+                <button type="button" id="createSlots" hidden>Create slots</button>
+            </section>
+
+            <section>
+                <h2>Vacations and blocked dates</h2>
+                <form id="blockForm">
+                    <label>From <input type="date" id="blockFrom" required></label>
+                    <label>To <input type="date" id="blockTo" required></label>
+                    <button type="submit">Block these dates</button>
+                </form>
+                <p>Blocking closes every session on those dates that nobody has booked, and tells the session generator to skip them.</p>
+                <ul id="blackoutList"></ul>
+            </section>
+
+            <section>
+                <h2>Upcoming sessions</h2>
+                <form id="listForm">
+                    <label>From <input type="date" id="listFrom" required></label>
+                    <label>To <input type="date" id="listTo" required></label>
+                    <label>Show
+                        <select id="listCategory">
+                            <option value="">All</option>
+                            <option value="private">Private</option>
+                            <option value="trial">Free trial</option>
+                            <option value="quick-lesson">Quick lessons</option>
+                        </select>
+                    </label>
+                    <button type="submit">Load</button>
+                </form>
+                <table id="sessionTable">
+                    <thead>
+                        <tr><th>When (Paris)</th><th>Name</th><th>Type</th><th>Booked</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

@@ -493,7 +493,8 @@
     fs.onSnapshot(q, (snap) => {
       onData(snap.docs
           .map((d) => ({id: d.id, ...d.data()}))
-          .filter((s) => s.active !== false && s.startsAt)
+          .filter((s) => s.active !== false && s.startsAt &&
+            !['private', 'trial'].includes(s.category))
           .map((s) => ({...s, startsAt: s.startsAt.toDate()})));
     }, (error) => {
       console.error('Failed to load sessions:', error);
