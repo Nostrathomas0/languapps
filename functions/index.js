@@ -3,7 +3,6 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const {verifyRecaptcha} = require("./recaptchaUtils");
 const {SESClient, SendEmailCommand} = require("@aws-sdk/client-ses");
@@ -284,31 +283,9 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log("Verification email sent to:", email);
 
-    // Return the response with JWT token
-    // Check premium status from Firestore
-    let isPremium = false;
-    try {
-      const userDoc = await admin.firestore()
-          .collection("users").doc(userRecord.uid).get();
-      if (userDoc.exists) {
-        isPremium = userDoc.data().premium === true;
-      }
-    } catch (e) {
-      console.log("Premium check failed, defaulting to false:", e.message);
-    }
-
-    const tokenPayload = {
-      uid: userRecord.uid,
-      email: email,
-      premium: isPremium,
-    };
-    const jwtToken = jwt.sign(tokenPayload,
-        functions.config().jwt.secret, {expiresIn: "7d"});
-
     res.json({
       success: true,
       message: "User registered and verification email sent.",
-      jwtToken,
     });
   } catch (error) {
     console.error("Error during signup:", error);
@@ -320,110 +297,31 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
   }
 });
 
-// JWT Refresh endpoint that preserves progress
-app.post("/refreshJWTWithProgress", async (req, res) => {
-  console.log("JWT Refresh with Progress requested");
-
+// Website → app hand-off. The website sends the signed-in user's Firebase ID
+// token; we answer with a short-lived, one-time custom token that the app
+// uses to sign the same user in (signInWithCustomToken).
+// The function's service account needs the "Service Account Token Creator"
+// role (iam.serviceAccounts.signBlob) for createCustomToken to work.
+app.post("/appHandoff", async (req, res) => {
+  const authHeader = req.headers.authorization || "";
+  const idToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  if (!idToken) {
+    return res.status(401).json({success: false, message: "Not signed in"});
+  }
+  let decoded;
   try {
-    // The caller must prove who they are with a Firebase ID token. The
-    // uid and email come from the verified token, never from the body.
-    const authHeader = req.headers.authorization || "";
-    const idToken = authHeader.startsWith("Bearer ") ?
-      authHeader.slice(7) : null;
-    if (!idToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Missing Authorization bearer token",
-      });
-    }
-
-    let decoded;
-    try {
-      decoded = await admin.auth().verifyIdToken(idToken);
-    } catch (authError) {
-      console.error("ID token verification failed:", authError.code);
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired sign-in. Please sign in again.",
-      });
-    }
-
-    const userId = decoded.uid;
-    const email = decoded.email;
-    const {existingProgress} = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Account has no email address",
-      });
-    }
-
-    console.log("Refreshing JWT for:", email);
-
-    // Create new JWT payload with preserved progress
-    const jwtPayload = {
-      uid: userId,
-      email: email,
-
-      premium: await admin.firestore()
-          .collection("users").doc(userId).get()
-          .then((doc) => doc.exists && doc.data().premium === true)
-          .catch(() => false),
-
-      // Preserve existing progress data
-      currentSession: (existingProgress &&
-         existingProgress.currentSession) || null,
-      recentProgress: (existingProgress &&
-         existingProgress.recentProgress) || [],
-      overallStats: (existingProgress && existingProgress.overallStats) || {
-        totalTopicsCompleted: 0,
-        averageScore: 0,
-        totalTimeSpent: 0,
-        streak: 0,
-        lastActiveDate: new Date().toISOString().split("T")[0],
-      },
-
-      // Token metadata
-      iat: Math.floor(Date.now() / 1000),
-
-      // Refresh metadata
-      refreshedAt: new Date().toISOString(),
-      originalCreation: (existingProgress &&
-        existingProgress.originalCreation) ||
-        new Date().toISOString(),
-    };
-
-    // Sign the new JWT using the same secret as signup
-    const jwtToken = jwt.sign(jwtPayload, functions.config().jwt.secret, {
-      expiresIn: "7d",
-    });
-
-    console.log("New JWT generated successfully for:", email);
-    console.log("Progress items preserved:", {
-      currentSession: !!jwtPayload.currentSession,
-      recentProgressCount: jwtPayload.recentProgress.length,
-      overallStats: !!jwtPayload.overallStats,
-    });
-
-    // Return success response (same format as signup)
-    res.status(200).json({
-      success: true,
-      message: "JWT refreshed with preserved progress",
-      jwtToken: jwtToken,
-      preservedProgress: {
-        currentSession: !!jwtPayload.currentSession,
-        recentProgressCount: jwtPayload.recentProgress.length,
-        totalTopicsCompleted: jwtPayload.overallStats.totalTopicsCompleted,
-      },
-    });
+    decoded = await admin.auth().verifyIdToken(idToken, true);
   } catch (error) {
-    console.error("JWT refresh error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error during JWT refresh",
-      error: error.message,
-    });
+    return res.status(401)
+        .json({success: false, message: "Sign-in expired"});
+  }
+  try {
+    const token = await admin.auth().createCustomToken(decoded.uid);
+    res.set("Cache-Control", "no-store");
+    return res.json({success: true, token});
+  } catch (error) {
+    console.error("App hand-off failed:", error.code || error.message);
+    return res.status(500).json({success: false, message: "Hand-off failed"});
   }
 });
 

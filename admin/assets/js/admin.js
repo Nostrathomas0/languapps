@@ -456,7 +456,7 @@ onAuthStateChanged(auth, (user) => {
     if (!user) {
         gate.innerHTML = '';
         const a = document.createElement('a');
-        a.href = '/?openModal=auth-modal';
+        a.href = '/?openModal=auth-modal&returnTo=/admin/';
         a.textContent = 'Sign in';
         gate.append(a, ' to continue.');
         $('panel').hidden = true;

@@ -1,5 +1,5 @@
 //assets/js/lookies.js
-import { signUp, signIn, handleSignOut } from './firebaseAuth.js';
+import { signUp, signIn, handleSignOut, sendPasswordResetEmail, goToApp } from './firebaseAuth.js';
 import { auth, onAuthStateChanged } from './firebaseInit.js';
 import { attachBlogPostListener, handleBlogPostSubmit } from './blogFormHandler.js';  // Adjust the path as needed
 // Utility Functions for Modals & Their Event Listeners
@@ -292,11 +292,10 @@ function handleSignUp(event) {
     const password = event.target.querySelector('#signupPassword').value;
 
     signUp(email, password).then(function() {
-        console.log("Sending validation email to:", email);
         transitionModalStep('step1', 'step2');
     }).catch(function(error) {
-        console.error("Error during sign-up:", error);
-        submitButton.disabled = false; // Re-enable if error occurs
+        alert(error.message);
+        submitButton.disabled = false; // Re-enable so they can try again
     });
 }
 
@@ -485,8 +484,7 @@ function setupSignOut() {
     const signedInAs = document.getElementById('signedInAs');
     const loggedOutParts = document.querySelectorAll('#step1 > h2, #signupForm, #signinForm');
 
-    // Labase clears its cookie, then sends people to /?logout=1 so this
-    // site's own Firebase session ends too.
+    // https://languapps.com/?logout=1 signs this site out (handy for support)
     if (new URLSearchParams(window.location.search).get('logout') === '1') {
         handleSignOut();
     }
@@ -496,6 +494,30 @@ function setupSignOut() {
             event.preventDefault();
             signOutButton.disabled = true;
             handleSignOut();
+        });
+    }
+
+    const goToAppButton = document.getElementById('goToApp');
+    if (goToAppButton) {
+        goToAppButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            goToAppButton.disabled = true;
+            goToApp('/');
+        });
+    }
+
+    const forgotPasswordButton = document.getElementById('forgotPasswordButton');
+    if (forgotPasswordButton) {
+        forgotPasswordButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('loginEmail');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email) {
+                alert('Type your email address above, then press Forgot Password again.');
+                if (emailInput) emailInput.focus();
+                return;
+            }
+            sendPasswordResetEmail(email);
         });
     }
 

@@ -1,7 +1,7 @@
 // Import the Firebase modules needed
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js'; // Import getFirestore
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, sendEmailVerification, signOut } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js'
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js'
 
 // Firebase configuration
 const firebaseConfig = {
@@ -21,7 +21,6 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 // Attach db to the window object for global access
 window.db = db;
-console.log('Firestore initialized:', db);
 
 // Exporting necessary variables and functions for use in other modules
-export { app, db, auth, onAuthStateChanged, sendEmailVerification, signInWithEmailAndPassword, signOut  };
+export { app, db, auth, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut };

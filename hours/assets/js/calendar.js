@@ -309,7 +309,7 @@
   function privateAction(s, main) {
     if (!cartState.user) {
       const link = el('a', 'cd-cal__btn', 'Log in to book');
-      link.href = '/?openModal=auth-modal';
+      link.href = '/?openModal=auth-modal&returnTo=' + encodeURIComponent(window.top.location.pathname);
       link.target = '_top';
       return link;
     }
@@ -378,7 +378,7 @@
     }
     if (!cartState.user) {
       const link = el('a', 'cd-cal__btn', 'Log in to add');
-      link.href = '/?openModal=auth-modal';
+      link.href = '/?openModal=auth-modal&returnTo=' + encodeURIComponent(window.top.location.pathname);
       link.target = '_top';
       return link;
     }

@@ -84,7 +84,7 @@ import {
             loginButton.click();
         } else {
             // Pages without the login modal (e.g. /services): go to the home page's.
-            window.location.href = '/?openModal=auth-modal';
+            window.location.href = '/?openModal=auth-modal&returnTo=' + encodeURIComponent(window.location.pathname);
         }
     }
 
