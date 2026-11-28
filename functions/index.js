@@ -258,7 +258,7 @@ app.post("/verifyRecaptchaAndSignup", async (req, res) => {
       });
     }
 
-    const userRecord = await admin.auth().createUser({
+    await admin.auth().createUser({
       email: email,
       password: password,
       emailVerified: false,
