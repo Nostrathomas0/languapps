@@ -20,3 +20,22 @@ table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14p
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eee; }
 td.inactive { color: #b00020; }
 td button { margin-right: 6px; }
+/* Student progress */
+.muted { color: #777; }
+.good { color: #1b7f3b; }
+.bad { color: #b00020; }
+.nowrap { white-space: nowrap; }
+.error { color: #b00020; font-weight: 600; }
+.report-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.report-head h2 { margin: 0; }
+.stats { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; padding: 0; }
+.stats li { background: #f6f6f4; border-radius: 6px; padding: 8px 12px; }
+.stats strong { font-size: 18px; margin-right: 4px; }
+#report h3 { margin-top: 24px; }
+
+@media print {
+    body { background: #fff; }
+    h1, #gate, #message, #panel > section:not(#report), .no-print { display: none !important; }
+    #report { border: none; padding: 0; }
+    table { font-size: 12px; }
+}

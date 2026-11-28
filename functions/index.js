@@ -372,6 +372,7 @@ functions.https.onCall(async (data, context) => {
 });
 
 require("./privateLessons")(app, {admin, transporter});
+require("./studentReports")(app, {admin});
 
 exports.dailyGenerator = require("./sessionGenerator").dailyGenerator;
 

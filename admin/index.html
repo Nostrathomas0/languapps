@@ -7,14 +7,32 @@
     <title>Languapps admin</title>
     <link rel="stylesheet" href="/admin/assets/css/admin.css">
     <script type="module" src="/admin/assets/js/admin.js?v=3"></script>
+    <script type="module" src="/admin/assets/js/progress.js?v=1"></script>
 </head>
 <body>
     <main class="admin">
-        <h1>Schedule admin</h1>
+        <h1>Admin</h1>
         <p id="gate">Checking sign-in…</p>
         <p id="message" role="status"></p>
 
         <div id="panel" hidden>
+
+            <section id="progressSection">
+                <h2>Student progress</h2>
+                <form onsubmit="return false">
+                    <label>Find a student <input type="search" id="studentFilter" placeholder="name or email"></label>
+                    <button type="button" id="reloadStudents">Refresh</button>
+                </form>
+                <p id="studentCount" class="muted"></p>
+                <table id="studentTable">
+                    <thead>
+                        <tr><th>Student</th><th>Last active</th><th>Pages finished</th><th>Average</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="report" hidden></section>
 
             <section>
                 <h2>Open slots</h2>
